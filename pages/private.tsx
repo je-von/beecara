@@ -9,6 +9,7 @@ const Home: NextPage = () => {
 
   if (!user) return <h1>U need to login</h1>
 
+  console.log(user.claims)
   return (
     <>
       <Head>

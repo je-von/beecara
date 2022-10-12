@@ -59,7 +59,8 @@ const Home: NextPage = () => {
       tenant: 'binusianorg.onmicrosoft.com',
     })
 
-    // outlookProvider.addScope('mail.read');
+    // outlookProvider.addScope('mail.read')
+    // outlookProvider.addScope('calendars.read') // todo: calendar need admin approval
     outlookProvider.addScope('openid')
     outlookProvider.addScope('profile')
     signInWithPopup(auth, outlookProvider)
