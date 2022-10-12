@@ -1,15 +1,25 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
+import { useAuth } from '../lib/authContext'
 
 const Home: NextPage = () => {
-  return (
-    <>
-      {/* <Head>
-        <title>Home</title>
-      </Head> */}
+  const { user, loading } = useAuth()
+  const router = useRouter()
 
-      <main>Sweet home</main>
-    </>
+  if (loading) return <h1>Loading...</h1>
+
+  if (!user) {
+    router.push('/')
+    return null
+  }
+
+  return (
+    <div className="flex w-full px-40 ">
+      <h1>
+        Welcome, <b>{user?.claims.name}</b> ({user?.claims.email}) !
+      </h1>
+    </div>
   )
 }
 

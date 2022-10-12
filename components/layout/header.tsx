@@ -20,7 +20,7 @@ export default function Header(props: any) {
           <ul className="list-reset flex justify-end flex-1 items-center">
             {!user && !loading ? (
               <>
-                <li className="mr-3">
+                {/* <li className="mr-3">
                   <Link href="/signup">
                     <a className="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4"> Signup</a>
                   </Link>
@@ -30,12 +30,12 @@ export default function Header(props: any) {
                   <Link href="/">
                     <a className="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4"> Signin</a>
                   </Link>
-                </li>
+                </li> */}
               </>
             ) : null}
             {user ? (
               <>
-                <li className="mr-3">
+                {/* <li className="mr-3">
                   <Link href="/privatessr">
                     <a className="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4"> PrivateSSR</a>
                   </Link>
@@ -45,7 +45,7 @@ export default function Header(props: any) {
                   <Link href="/private">
                     <a className="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4"> Private</a>
                   </Link>
-                </li>
+                </li> */}
 
                 <li className="mr-3">
                   <button onClick={signOut} className="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4">
