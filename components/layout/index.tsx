@@ -1,21 +1,25 @@
 import Header from './header'
 import Footer from './footer'
+import Head from 'next/head'
 
 type Props = {
-    children: React.ReactNode;
-};
+  children: React.ReactNode
+}
 
-export default function Layout({children} : Props){
-
-    return <div className="flex flex-col min-h-screen container mx-auto md:w-11/12  lg:w-4/5
-    divide-y divide-black-500">
-        <div className=" h-16 ">
-            <Header />
-        </div>
-        <div className="flex-grow">
-            {children}
-        </div>
-        <Footer />
-
-    </div>
+export default function Layout({ children }: Props) {
+  return (
+    <>
+      <Head>
+        <title>BeeCara</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <div className="flex flex-col min-h-screen w-screen">
+        <Header />
+        {/* <div className="flex-grow"> */}
+        {children}
+        {/* </div> */}
+        {/* <Footer /> */}
+      </div>
+    </>
+  )
 }
