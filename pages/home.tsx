@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useAuth } from '../lib/authContext'
+import Card from '../components/card'
 
 const Home: NextPage = () => {
   const { user, loading } = useAuth()
