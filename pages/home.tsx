@@ -16,10 +16,19 @@ const Home: NextPage = () => {
   }
 
   return (
-    <div className="flex w-full px-40 ">
-      <h1>
+    <div className=" px-40 ">
+      {/* <h1>
         Welcome, <b>{user?.claims.name}</b> ({user?.claims.email}) !
+      </h1> */}
+      <h1 className='text-3xl font-bold'>
+        BeeCara
       </h1>
+      <p>
+        An application for Binusian to seek and join events to get SAT points and Comserv Hour!
+      </p>
+
+      <Card  eventID='' image='/assets/logo_binus.png' name='Event 1' organization='HIMSISFO' capacity={2} maxCapacity={100} eventDate={'27 Oct 2022'} benefit={'SAT'}></Card>
+
     </div>
   )
 }

@@ -18,7 +18,7 @@ export default function Layout({ children }: Props) {
         {/* <div className="flex-grow"> */}
         {children}
         {/* </div> */}
-        {/* <Footer /> */}
+        <Footer />
       </div>
     </>
   )

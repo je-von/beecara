@@ -69,6 +69,7 @@ const Home: NextPage = () => {
     <>
       <div className="bg-gradient-to-tl from-sky-400 to-sky-200 flex flex-grow flex-col w-full px-40 ">
         <div className="pt-24">
+          <div className='flex flex-row w-full'>
           <div className="px-3 mx-auto flex flex-wrap flex-col md:flex-row items-center">
             <div className="flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left">
               <p className="uppercase tracking-loose w-full">Welcome to</p>
@@ -82,6 +83,9 @@ const Home: NextPage = () => {
                 <span className="ml-2">Sign in with Microsoft</span>
               </button>
             </div>
+          </div>
+          <Image src={'/assets/home_vector.png'} width={430} height={10} alt={'Illustration'} />
+
           </div>
         </div>
       </div>

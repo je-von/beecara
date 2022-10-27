@@ -2,6 +2,7 @@ import { useAuth, signOut } from '../../lib/authContext'
 import Link from 'next/link'
 import Image from 'next/image'
 
+
 export default function Header(props: any) {
   const { user, loading } = useAuth()
 
@@ -46,6 +47,12 @@ export default function Header(props: any) {
                     <a className="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4"> Private</a>
                   </Link>
                 </li> */}
+
+                <li>
+                  <p>
+                    Hi <b>{user?.claims.name}</b> !
+                  </p>
+                </li>
 
                 <li className="mr-3">
                   <button onClick={signOut} className="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4">
