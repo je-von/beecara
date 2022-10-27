@@ -2,7 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { ReactNode } from 'react'
-import {FaClock, FaUsers, FaCalendar} from "react-icons/fa";
+import {FaCalendar} from "react-icons/fa";
 import {BsPeopleFill} from "react-icons/bs";
 import {GiAchievement} from "react-icons/gi";
 
@@ -31,7 +31,7 @@ const Card=({ eventID, image, name, organization, capacity, maxCapacity, eventDa
           <div className='flex items-center '>
 
             <div className='mr-8'>
-              <h3 className=''> <b>{name}</b> - {organization}</h3>
+              <h3> <b>{name}</b> - {organization}</h3>
               <p>
                 <div className='flex items-center'>
                   <FaCalendar className='mr-1'/>
