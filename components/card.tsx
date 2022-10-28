@@ -1,10 +1,12 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import {FaCalendar} from "react-icons/fa";
 import {BsPeopleFill} from "react-icons/bs";
 import {GiAchievement} from "react-icons/gi";
+import { collection, onSnapshot, query} from 'firebase/firestore';
+import { db } from '../lib/firebaseConfig/init';
 
 
 interface Event {
@@ -20,8 +22,22 @@ interface Event {
 }
 
 const Card=({ eventID, image, name, organization, capacity, maxCapacity, eventDate, benefit}: Event)=>{
+  // const [events, setEvents] = useState(initialState);
+  useEffect(() => {
+    const collectionRef = collection(db, "event")
+    console.log('hi')
+    const q = query(collectionRef);
+    const test = onSnapshot(q, (querySnapshot) =>{
+      querySnapshot.docs.map(doc => (
+        console.log(doc.data())
+      ))
+    })
+    
+  }, [])
+  
+
   return(
-    <Link href={`eventDetail/${eventID}`} key={eventID}>
+    <Link href={`event/${eventID}`} key={eventID}>
       <div className='rounded-lg p-5 bg-blue-100 flex justify-between items-start mt-4'>
         <div className='flex items-center'>
           <div className='border border-gray-400 rounded-full mr-5 overflow-hidden'>

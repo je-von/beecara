@@ -23,6 +23,7 @@ interface Event {
 
 const EventDetail = ({name, description, organization, capacity, maxCapacity, eventDate, startTime, endTime, benefit} : Event) => {
 
+
   return(
     <div className="px-40">
       <div className="flex items-center">

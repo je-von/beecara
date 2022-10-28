@@ -14,7 +14,7 @@ const Home: NextPage = () => {
     router.push('/')
     return null
   }
-
+  
   return (
     <div className=" px-40 ">
       {/* <h1>
