@@ -66,7 +66,7 @@ const EventDetail = ({name, description, organization, capacity, maxCapacity, ev
       <p>
         <div className="flex items-center">
           <GiAchievement className="mr-1"/>
-          { event.benefit.map(b => 
+          { event.benefit?.map(b => 
             b.type  + ' : ' + b.amount + ' '
           )}
         </div>
