@@ -26,8 +26,8 @@ const EventDetail = () => {
    } 
    fetchData()
   }, [eventId])
-  
-  return 1 == 1? (
+
+  return (
     <div className="px-40">
       <div className="flex items-center">
         <IoMdArrowBack className="mr-2 text-xl cursor-pointer"/>
@@ -59,7 +59,7 @@ const EventDetail = () => {
         <button>Register</button>
       </div>
     </div>
-  ) : <h1>Loading</h1>
+  )
 }
 
 
