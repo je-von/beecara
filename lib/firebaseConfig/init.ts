@@ -5,12 +5,12 @@ import { getApps, initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC6AbD_JOYcR6NMUTWbzrcj29-HT3My3wk",
-  authDomain: "beecara-rig.firebaseapp.com",
-  projectId: "beecara-rig",
+  apiKey: process.env.NEXT_PUBLIC_apiKey,
+  authDomain: process.env.NEXT_PUBLIC_authDomain,
+  projectId: process.env.NEXT_PUBLIC_projectId,
   storageBucket: "beecara-rig.appspot.com",
   messagingSenderId: "493945434144",
-  appId: "1:493945434144:web:67b99f28adf53208784c45"
+  appId: process.env.NEXT_PUBLIC_appId
 };
 
 // Initialize Firebase
