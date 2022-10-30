@@ -5,7 +5,7 @@ import {GiAchievement} from "react-icons/gi";
 import {IoMdArrowBack} from "react-icons/io";
 import Image from 'next/image'
 import { useRouter } from "next/router";
-import { doc, DocumentData, getDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../lib/firebaseConfig/init";
 import { Benefit, Event, eventConverter } from '../../lib/types/Event';
 
@@ -26,7 +26,7 @@ const EventDetail = () => {
    } 
    fetchData()
   }, [eventId])
-  console.log(event)
+  
   return 1 == 1? (
     <div className="px-40">
       <div className="flex items-center">
