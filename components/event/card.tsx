@@ -32,7 +32,7 @@ const Card = ({ event }: Props) => {
               </p>
               <p>
                 <div className="flex items-center">
-                  <BsPeopleFill className="mr-1" />0 / {event.maxCapacity}
+                  <BsPeopleFill className="mr-1" />0 / {event.capacity}
                 </div>
               </p>
               <p>

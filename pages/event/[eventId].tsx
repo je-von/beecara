@@ -1,59 +1,50 @@
-import { useEffect, useState } from 'react'
-import {FaCalendar, FaClock} from "react-icons/fa";
-import {BsPeopleFill} from "react-icons/bs";
-import {GiAchievement} from "react-icons/gi";
-import {IoMdArrowBack} from "react-icons/io";
+import { FaCalendar, FaClock } from 'react-icons/fa'
+import { BsPeopleFill } from 'react-icons/bs'
+import { GiAchievement } from 'react-icons/gi'
+import { IoMdArrowBack } from 'react-icons/io'
 import Image from 'next/image'
-import { useRouter } from "next/router";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../lib/firebaseConfig/init";
-import { Benefit, Event, eventConverter } from '../../lib/types/Event';
+import { useRouter } from 'next/router'
+import { doc } from 'firebase/firestore'
+import { db } from '../../lib/firebaseConfig/init'
+import { Benefit, eventConverter } from '../../lib/types/Event'
+import { useDocumentData } from 'react-firebase-hooks/firestore'
 
 const EventDetail = () => {
   const router = useRouter()
   const { eventId } = router.query
-  const [event, setEvent] = useState<Event>(new Event(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined));
+  const docRef = doc(db, 'event', `${eventId}`).withConverter(eventConverter)
+  const [event, loading, error, snapshot] = useDocumentData(docRef)
 
-  useEffect(() => {
-    async function fetchData() {
-      if (eventId) {
-        const docRef = doc(db, "event", eventId.toString()).withConverter(eventConverter)
-        const docSnap = await getDoc(docRef);
-        if(docSnap.exists()){
-          setEvent(docSnap.data())
-        }
-      }
-   } 
-   fetchData()
-  }, [eventId])
+  if (loading) {
+    return <>Loading</>
+  }
 
   return (
     <div className="px-40">
       <div className="flex items-center">
-        <IoMdArrowBack className="mr-2 text-xl cursor-pointer"/>
-        <h1 className="font-bold text-xl">{event.name} - {event.organization}</h1>
+        <IoMdArrowBack className="mr-2 text-xl cursor-pointer" />
+        <h1 className="font-bold text-xl">
+          {event?.name} - {event?.organization}
+        </h1>
       </div>
-      <div className='overflow-hidden'>
-        <Image className='rounded-xl' objectFit='contain' src={event.image} alt="event-poster" width={150} height={150}/>
+      <div className="overflow-hidden">
+        <Image className="rounded-xl" objectFit="contain" src={`${event?.image}`} alt="event-poster" width={150} height={150} />
       </div>
-      <p className="text-justify">{event.description} </p>
+      <p className="text-justify">{event?.description} </p>
       <p className="flex items-center">
-        <FaCalendar className="mr-1"/>
-        {event.startDate?.toDate().toDateString()}
+        <FaCalendar className="mr-1" />
+        {event?.startDate?.toDate().toDateString()}
       </p>
       <p className="flex items-center">
-        <FaClock className="mr-1"/>
-        {event.startDate?.toDate().toLocaleTimeString('en-US')} - {event.endDate?.toDate().toLocaleTimeString('en-US')}
+        <FaClock className="mr-1" />
+        {event?.startDate?.toDate().toLocaleTimeString('en-US')} - {event?.endDate?.toDate().toLocaleTimeString('en-US')}
       </p>
       <p className="flex items-center">
-        <GiAchievement className="mr-1"/>
-        {event.benefit?.map((b: Benefit) =>  
-          b.type  + ' : ' + b.amount + ' '
-        )}
+        <GiAchievement className="mr-1" />
+        {event?.benefit?.map((b: Benefit) => b.type + ' : ' + b.amount + ' ')}
       </p>
       <p className="flex items-center">
-        <BsPeopleFill className="mr-1"/>
-        2 / {event.capacity}
+        <BsPeopleFill className="mr-1" />0 / {event?.capacity}
       </p>
       <div className="border border-blue-500 rounded-lg bg-blue-500 text-white px-3 cursor-pointer w-fit items-center mt-2">
         <button>Register</button>
@@ -61,6 +52,5 @@ const EventDetail = () => {
     </div>
   )
 }
-
 
 export default EventDetail

@@ -11,7 +11,6 @@ class Event {
     readonly name: string = '',
     readonly organization: string = '',
     readonly capacity: number = 0,
-    readonly maxCapacity: number = 0,
     readonly benefit?: Benefit[],
     readonly startDate?: Timestamp,
     readonly endDate?: Timestamp,
@@ -27,7 +26,6 @@ const eventConverter = {
       name: event.name,
       organization: event.organization,
       capacity: event.capacity,
-      maxCapacity: event.maxCapacity,
       benefit: event.benefit,
       startDate: event.startDate,
       endDate: event.endDate,
@@ -36,7 +34,7 @@ const eventConverter = {
   },
   fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): Event {
     const data = snapshot.data(options)!
-    return new Event(snapshot.id, data.image, data.name, data.organization, data.capacity, data.maxCapacity, data.benefit, data.startDate, data.endDate, data.description)
+    return new Event(snapshot.id, data.image, data.name, data.organization, data.capacity, data.benefit, data.startDate, data.endDate, data.description)
   },
 }
 
