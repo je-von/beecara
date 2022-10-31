@@ -11,7 +11,7 @@ const EventList = () => {
   if (loading) return <h1>Loading...</h1>
 
   return (
-    <div>
+    <div className="pb-5">
       {data?.map((d) => (
         <Card key={d.eventId} event={d} />
       ))}
