@@ -10,7 +10,7 @@ export default function Header(props: any) {
   const { user, loading } = useAuth()
 
   return (
-    <div className="flex h-full flex-row px-40">
+    <div className="flex h-full flex-row lg:px-40 px-8 md:px-16">
       <div className="w-full mx-auto flex flex-wrap items-end justify-between mt-0 pb-5">
         <div className="pl-4 flex items-center">
           <Link passHref href="/">
