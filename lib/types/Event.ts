@@ -1,27 +1,25 @@
 import { DocumentData, QueryDocumentSnapshot, SnapshotOptions, Timestamp, WithFieldValue } from 'firebase/firestore'
 
-class Benefit {
-  constructor(readonly amount: number = 0, readonly type: string = '') {}
+export interface Benefit {
+  amount: number
+  type: string
 }
 
-class Event {
-  constructor(
-    readonly eventId: string = '',
-    readonly image: string = '',
-    readonly name: string = '',
-    readonly organization: string = '',
-    readonly capacity: number = 0,
-    readonly benefit?: Benefit[],
-    readonly startDate?: Timestamp,
-    readonly endDate?: Timestamp,
-    readonly description: string = ''
-  ) {}
+export interface Event {
+  eventId: string
+  image: string
+  name: string
+  organization: string
+  capacity: number
+  benefit?: Benefit[]
+  startDate?: Timestamp
+  endDate?: Timestamp
+  description: string
 }
 
-const eventConverter = {
+export const eventConverter = {
   toFirestore(event: WithFieldValue<Event>): DocumentData {
     return {
-      eventId: event.eventId, // TODO: fix (kayaknya id nya gausah disimpen di fields lagi?)
       image: event.image,
       name: event.name,
       organization: event.organization,
@@ -34,8 +32,16 @@ const eventConverter = {
   },
   fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): Event {
     const data = snapshot.data(options)!
-    return new Event(snapshot.id, data.image, data.name, data.organization, data.capacity, data.benefit, data.startDate, data.endDate, data.description)
+    return {
+      eventId: snapshot.id,
+      image: data.image,
+      name: data.name,
+      organization: data.organization,
+      capacity: data.capacity,
+      benefit: data.benefit,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      description: data.description,
+    }
   },
 }
-
-export { Event, eventConverter, Benefit }
