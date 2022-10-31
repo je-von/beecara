@@ -12,7 +12,7 @@ interface Props {
 const Card = ({ event }: Props) => {
   return (
     <Link href={`event/${event.eventId}`} key={event.eventId} passHref>
-      <div className="cursor-pointer transition-colors duration-500 rounded-lg border border-blue-100 hover:bg-blue-50 flex justify-between gap-2 items-start mt-4 relative md:h-48 p-5 md:flex-row flex-col">
+      <div className="cursor-pointer transition-colors duration-500 rounded-lg border border-blue-100 hover:bg-blue-50 flex justify-between gap-2 items-start relative md:h-48 p-5 md:flex-row flex-col">
         <div className="md:basis-1/6 hidden md:block lg:w-auto w-20 h-10 md:h-full relative">
           <Image className="relative" objectFit="cover" src={event.image} alt={event.name} sizes="100%" layout="fill"></Image>
         </div>
@@ -24,7 +24,7 @@ const Card = ({ event }: Props) => {
             <div className="flex lg:flex-col flex-row gap-6 lg:gap-1">
               <div className="flex items-center">
                 <FaCalendar className="mr-1 text-gray-400" />
-                {event.startDate?.toDate().toDateString()}
+                {event.startDate?.toDate().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
               </div>
               <div className="flex items-center">
                 <BsPeopleFill className="mr-1 text-gray-400" />

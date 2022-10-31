@@ -46,11 +46,12 @@ const EventDetail = () => {
       <p className="text-justify">{event?.description} </p>
       <p className="flex items-center">
         <FaCalendar className="mr-1" />
-        {event?.startDate?.toDate().toDateString()}
+        {event?.startDate?.toDate().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
       </p>
       <p className="flex items-center">
         <FaClock className="mr-1" />
-        {event?.startDate?.toDate().toLocaleTimeString('en-US')} - {event?.endDate?.toDate().toLocaleTimeString('en-US')}
+        {event?.startDate?.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })} -{' '}
+        {event?.endDate?.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
       </p>
       <p className="flex items-center">
         <GiAchievement className="mr-1" />
