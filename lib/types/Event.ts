@@ -1,4 +1,4 @@
-import { DocumentData, QueryDocumentSnapshot, SnapshotOptions, Timestamp, WithFieldValue } from 'firebase/firestore'
+import { DocumentData, DocumentReference, QueryDocumentSnapshot, SnapshotOptions, Timestamp, WithFieldValue } from 'firebase/firestore'
 
 export interface Benefit {
   amount: number
@@ -15,6 +15,7 @@ export interface Event {
   startDate?: Timestamp
   endDate?: Timestamp
   description: string
+  users?: DocumentReference[]
 }
 
 export const eventConverter = {
@@ -28,6 +29,7 @@ export const eventConverter = {
       startDate: event.startDate,
       endDate: event.endDate,
       description: event.description,
+      users: event.users,
     }
   },
   fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): Event {
@@ -42,6 +44,7 @@ export const eventConverter = {
       startDate: data.startDate,
       endDate: data.endDate,
       description: data.description,
+      users: data.users,
     }
   },
 }

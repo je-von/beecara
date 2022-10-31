@@ -29,7 +29,8 @@ const Card = ({ event }: Props) => {
                 {event.startDate?.toDate().toDateString()}
               </div>
               <div className="flex items-center">
-                <BsPeopleFill className="mr-1" />0 / {event.capacity}
+                <BsPeopleFill className="mr-1" />
+                {event.users?.length} / {event.capacity}
               </div>
               <div className="flex items-center">
                 <GiAchievement className="mr-1" />

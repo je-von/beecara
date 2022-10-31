@@ -27,7 +27,9 @@ const EventDetail = () => {
   }
 
   const registerEvent = () => {
-    updateDoc(doc(db, 'event', `${eventId}`), { users: arrayUnion(doc(db, 'user', user?.claims.user_id)) })
+    updateDoc(doc(db, 'event', `${eventId}`), { users: arrayUnion(doc(db, 'user', user?.claims.user_id)) }).then(() => {
+      console.log('Register Success') // TODO: create alert / toast
+    })
   }
 
   return (
@@ -55,7 +57,8 @@ const EventDetail = () => {
         {event?.benefit?.map((b: Benefit) => b.type + ' : ' + b.amount + ' ')}
       </p>
       <p className="flex items-center">
-        <BsPeopleFill className="mr-1" />0 / {event?.capacity}
+        <BsPeopleFill className="mr-1" />
+        {event?.users?.length} / {event?.capacity}
       </p>
       <div className="border border-blue-500 rounded-lg bg-blue-500 text-white px-3 cursor-pointer w-fit items-center mt-2">
         <button onClick={registerEvent}>Register</button>
