@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { useAuth } from '../lib/authContext'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import { doc, setDoc } from 'firebase/firestore'
+import { db } from '../lib/firebaseConfig/init'
 
 const Home: NextPage = () => {
   const [email, setEmail] = useState<string>('')
@@ -55,8 +57,8 @@ const Home: NextPage = () => {
         const accessToken = credential?.accessToken
         const idToken = credential?.idToken
 
-        console.log(credential?.toJSON())
-        console.log(credential)
+        const user = result.user
+        setDoc(doc(db, 'user', user.uid), { name: user.displayName, email: user.email })
       })
       .catch((error) => {
         // Handle error.
@@ -68,23 +70,22 @@ const Home: NextPage = () => {
     <>
       <div className="bg-gradient-to-tl from-sky-400 to-sky-200 flex flex-grow flex-col w-full px-40 ">
         <div className="pt-24">
-          <div className='flex flex-row w-full'>
-          <div className="px-3 mx-auto flex flex-wrap flex-col md:flex-row items-center">
-            <div className="flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left">
-              <p className="uppercase tracking-loose w-full">Welcome to</p>
-              <h1 className="my-4 text-5xl font-bold leading-tight">BeeCara</h1>
-              <p className="leading-normal text-2xl mb-8">An application for Binusian to seek and join events to get SAT points and Comserv Hour!</p>
-              <button
-                onClick={loginWithOutlook}
-                className="flex items-center justify-center mx-auto lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
-              >
-                <Image src={'/assets/icon_microsoft.svg'} width={24} height={24} alt={'Microsoft'} />
-                <span className="ml-2">Sign in with Microsoft</span>
-              </button>
+          <div className="flex flex-row w-full">
+            <div className="px-3 mx-auto flex flex-wrap flex-col md:flex-row items-center">
+              <div className="flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left">
+                <p className="uppercase tracking-loose w-full">Welcome to</p>
+                <h1 className="my-4 text-5xl font-bold leading-tight">BeeCara</h1>
+                <p className="leading-normal text-2xl mb-8">An application for Binusian to seek and join events to get SAT points and Comserv Hour!</p>
+                <button
+                  onClick={loginWithOutlook}
+                  className="flex items-center justify-center mx-auto lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
+                >
+                  <Image src={'/assets/icon_microsoft.svg'} width={24} height={24} alt={'Microsoft'} />
+                  <span className="ml-2">Sign in with Microsoft</span>
+                </button>
+              </div>
             </div>
-          </div>
-          <Image src={'/assets/home_vector.png'} width={430} height={10} alt={'Illustration'} />
-
+            <Image src={'/assets/home_vector.png'} width={430} height={10} alt={'Illustration'} />
           </div>
         </div>
       </div>
