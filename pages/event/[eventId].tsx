@@ -4,14 +4,16 @@ import { GiAchievement } from 'react-icons/gi'
 import { IoMdArrowBack } from 'react-icons/io'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { doc } from 'firebase/firestore'
+import { arrayUnion, doc, updateDoc } from 'firebase/firestore'
 import { db } from '../../lib/firebaseConfig/init'
 import { Benefit, eventConverter } from '../../lib/types/Event'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import NotFoundPage from '../404'
+import { useAuth } from '../../lib/authContext'
 
 const EventDetail = () => {
   const router = useRouter()
+  const { user, loading: loadAuth } = useAuth()
   const { eventId } = router.query
   const docRef = doc(db, 'event', `${eventId}`).withConverter(eventConverter)
   const [event, loading, error, snapshot] = useDocumentData(docRef)
@@ -22,6 +24,10 @@ const EventDetail = () => {
 
   if (!loading && (error || !event)) {
     return <NotFoundPage />
+  }
+
+  const registerEvent = () => {
+    updateDoc(doc(db, 'event', `${eventId}`), { users: arrayUnion(doc(db, 'user', user?.claims.user_id)) })
   }
 
   return (
@@ -52,7 +58,7 @@ const EventDetail = () => {
         <BsPeopleFill className="mr-1" />0 / {event?.capacity}
       </p>
       <div className="border border-blue-500 rounded-lg bg-blue-500 text-white px-3 cursor-pointer w-fit items-center mt-2">
-        <button>Register</button>
+        <button onClick={registerEvent}>Register</button>
       </div>
     </div>
   )
