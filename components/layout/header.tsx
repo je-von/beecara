@@ -17,13 +17,13 @@ export default function Header(props: any) {
             <div className="h-100 flex items-end gap-3 cursor-pointer">
               <Image src={'/assets/ribbon.png'} className="" alt="logo" width={25} height={68} layout={'fixed'} />{' '}
               <Image src={'/assets/logo_binus.png'} className="" alt="logo" width={81.25} height={50} layout={'fixed'} />{' '}
-              {/* <span className="text-2xl text-neutral-300 font-light">|</span> <b className="font-medium text-xl">BEECARA</b> */}
+              <span className="text-2xl text-neutral-300 font-light">|</span> <b className="font-extrabold text-xl font-secondary">BeeCara</b>
             </div>
           </Link>
         </div>
 
         <div className="flex-grow flex items-center w-auto  bg-white bg-transparent text-black z-20">
-          <ul className="list-reset flex justify-end flex-1 items-center py-2">
+          <ul className="list-reset flex justify-end flex-1 items-center">
             {user ? (
               <li className="text-gray-600 transition-colors duration-500 hover:text-primary-50 cursor-pointer">
                 <div className="relative" onMouseOver={() => setShowDropdown(true)} onMouseLeave={() => setShowDropdown(false)}>
