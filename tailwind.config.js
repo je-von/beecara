@@ -6,8 +6,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        primary: ['Ubuntu', ...fontFamily.sans],
-        secondary: ['Montserrat'],
+        primary: ['Public Sans', ...fontFamily.sans],
+        secondary: ['Urbanist'],
       },
       keyframes: {
         flicker: {

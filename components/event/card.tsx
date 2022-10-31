@@ -19,8 +19,8 @@ const Card = ({ event }: Props) => {
             <Image className="rounded-full" objectFit="contain" src={event.image} alt="event-img" width={50} height={50}></Image>
           </div>
           <div className="flex items-center ">
-            <div className="mr-8">
-              <h4>
+            <div className="mr-8 ">
+              <h4 className="font-secondary text-xl mb-2">
                 {' '}
                 <b>{event.name}</b> - {event.organization}
               </h4>

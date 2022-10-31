@@ -508,10 +508,15 @@
   "resolved" "https://registry.npmjs.org/@fontsource/montserrat/-/montserrat-4.5.13.tgz"
   "version" "4.5.13"
 
-"@fontsource/ubuntu@^4.5.11":
-  "integrity" "sha512-c+B8A8r31hJLk8Ek7Svoz4GwjtInhc60LFM6XTr5TKtZbcct8TPNxJuKX4+hnqoWgcvy8s0Gj4mde4TcK/SgDQ=="
-  "resolved" "https://registry.npmjs.org/@fontsource/ubuntu/-/ubuntu-4.5.11.tgz"
+"@fontsource/public-sans@^4.5.11":
+  "integrity" "sha512-waejL3VQnifnLVwQGcW2bULD2vUaevjE9OKmOSAmBACAebZnnYznHL+NL4NgW6B+b1wyltmIr6jBF5XMZVWgYA=="
+  "resolved" "https://registry.npmjs.org/@fontsource/public-sans/-/public-sans-4.5.11.tgz"
   "version" "4.5.11"
+
+"@fontsource/urbanist@^4.5.14":
+  "integrity" "sha512-b2Lcb/hC7ydpM+fk+YJzwtZT3dnWZeNQGQy+0fev7lrA+RVo0cdpP/lNzcfbwvA0CQbSpD3JYe/DOHv15ch3Ug=="
+  "resolved" "https://registry.npmjs.org/@fontsource/urbanist/-/urbanist-4.5.14.tgz"
+  "version" "4.5.14"
 
 "@fortawesome/fontawesome-common-types@6.2.0":
   "integrity" "sha512-rBevIsj2nclStJ7AxTdfsa3ovHb1H+qApwrxcTVo+NNdeJiB9V75hsKfrkG5AwNcRUNxrPPiScGYCNmLMoh8pg=="
