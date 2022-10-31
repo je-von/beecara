@@ -7,17 +7,19 @@ export default function Header(props: any) {
 
   return (
     <div className="flex h-full flex-row px-40">
-      <div className="w-full mx-auto flex flex-wrap items-center justify-between mt-0 py-2">
+      <div className="w-full mx-auto flex flex-wrap items-center justify-between mt-0 ">
         <div className="pl-4 flex items-center">
           <Link passHref href="/">
-            <div className="h-100">
-              <Image src={'/assets/logo_binus.png'} className="cursor-pointer" alt="logo" width={81.25} height={50} layout={'fixed'} />
+            <div className="h-100 flex items-center gap-3 cursor-pointer">
+              <Image src={'/assets/ribbon.png'} className="" alt="logo" width={35} height={80} layout={'fixed'} />{' '}
+              <Image src={'/assets/logo_binus.png'} className="" alt="logo" width={81.25} height={50} layout={'fixed'} />{' '}
+              {/* <span className="text-2xl text-neutral-300 font-light">|</span> <b className="font-medium text-xl">BEECARA</b> */}
             </div>
           </Link>
         </div>
 
         <div className="flex-grow flex items-center w-auto  bg-white bg-transparent text-black z-20">
-          <ul className="list-reset flex justify-end flex-1 items-center">
+          <ul className="list-reset flex justify-end flex-1 items-center py-2">
             {!user && !loading ? (
               <>
                 {/* <li className="mr-3">

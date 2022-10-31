@@ -6,9 +6,7 @@ const Home: NextPage = () => {
   const { user, loading } = useAuth()
   const router = useRouter()
 
-  if (loading) return <h1>Loading...</h1>
-
-  if (!user) {
+  if (!loading && !user) {
     router.push('/')
     return null
   }
@@ -18,8 +16,8 @@ const Home: NextPage = () => {
       {/* <h1>
         Welcome, <b>{user?.claims.name}</b> ({user?.claims.email}) !
       </h1> */}
-      <h1 className="text-3xl font-bold">BeeCara</h1>
-      <p>An application for Binusian to seek and join events to get SAT points and Comserv Hour!</p>
+      {/* <h1 className="text-3xl font-bold">BeeCara</h1>
+      <p>An application for Binusian to seek and join events to get SAT points and Comserv Hour!</p> */}
 
       <EventList />
     </div>

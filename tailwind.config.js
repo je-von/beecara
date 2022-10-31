@@ -1,8 +1,14 @@
+const { fontFamily } = require('tailwindcss/defaultTheme')
+
 module.exports = {
   purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+      fontFamily: {
+        primary: ['Ubuntu', ...fontFamily.sans],
+        secondary: ['Montserrat'],
+      },
       keyframes: {
         flicker: {
           '0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100%': {

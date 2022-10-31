@@ -1,5 +1,4 @@
 import Header from './header'
-import Footer from './footer'
 import Head from 'next/head'
 
 type Props = {
@@ -18,7 +17,7 @@ export default function Layout({ children }: Props) {
         {/* <div className="flex-grow"> */}
         {children}
         {/* </div> */}
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </>
   )

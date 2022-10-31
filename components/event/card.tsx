@@ -20,10 +20,10 @@ const Card = ({ event }: Props) => {
           </div>
           <div className="flex items-center ">
             <div className="mr-8">
-              <h3>
+              <h4>
                 {' '}
                 <b>{event.name}</b> - {event.organization}
-              </h3>
+              </h4>
               <div className="flex items-center">
                 <FaCalendar className="mr-1" />
                 {event.startDate?.toDate().toDateString()}
