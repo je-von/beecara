@@ -24,23 +24,17 @@ const Card = ({ event }: Props) => {
                 {' '}
                 <b>{event.name}</b> - {event.organization}
               </h3>
-              <p>
-                <div className="flex items-center">
-                  <FaCalendar className="mr-1" />
-                  {event.startDate?.toDate().toDateString()}
-                </div>
-              </p>
-              <p>
-                <div className="flex items-center">
-                  <BsPeopleFill className="mr-1" />0 / {event.capacity}
-                </div>
-              </p>
-              <p>
-                <div className="flex items-center">
-                  <GiAchievement className="mr-1" />
-                  {event.benefit?.map((b) => b.type + ' : ' + b.amount + ' ')}
-                </div>
-              </p>
+              <div className="flex items-center">
+                <FaCalendar className="mr-1" />
+                {event.startDate?.toDate().toDateString()}
+              </div>
+              <div className="flex items-center">
+                <BsPeopleFill className="mr-1" />0 / {event.capacity}
+              </div>
+              <div className="flex items-center">
+                <GiAchievement className="mr-1" />
+                {event.benefit?.map((b) => b.type + ' : ' + b.amount + ' ')}
+              </div>
             </div>
           </div>
         </div>

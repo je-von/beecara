@@ -1,6 +1,6 @@
 import { signOut, useAuth } from '../../lib/authContext'
 import Image from 'next/image'
-
+import Link from 'next/link'
 
 export default function Header(props: any) {
   const { user, loading } = useAuth()
@@ -9,11 +9,11 @@ export default function Header(props: any) {
     <div className="flex h-full flex-row px-40">
       <div className="w-full mx-auto flex flex-wrap items-center justify-between mt-0 py-2">
         <div className="pl-4 flex items-center">
-          <a className="hover:no-underline font-bold text-2xl lg:text-4xl" href="#">
+          <Link passHref href="/">
             <div className="h-100">
-              <Image src={'/assets/logo_binus.png'} alt="logo" width={81.25} height={50} layout={'fixed'} />
+              <Image src={'/assets/logo_binus.png'} className="cursor-pointer" alt="logo" width={81.25} height={50} layout={'fixed'} />
             </div>
-          </a>
+          </Link>
         </div>
 
         <div className="flex-grow flex items-center w-auto  bg-white bg-transparent text-black z-20">

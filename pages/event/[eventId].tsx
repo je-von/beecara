@@ -8,6 +8,7 @@ import { doc } from 'firebase/firestore'
 import { db } from '../../lib/firebaseConfig/init'
 import { Benefit, eventConverter } from '../../lib/types/Event'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
+import NotFoundPage from '../404'
 
 const EventDetail = () => {
   const router = useRouter()
@@ -17,6 +18,10 @@ const EventDetail = () => {
 
   if (loading) {
     return <>Loading</>
+  }
+
+  if (!loading && (error || !event)) {
+    return <NotFoundPage />
   }
 
   return (
