@@ -1,6 +1,6 @@
-import { useState, useEffect, useContext, createContext } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { getAuth, onAuthStateChanged, signOut as signout } from 'firebase/auth'
-import { setCookie, destroyCookie } from 'nookies'
+import { destroyCookie, setCookie } from 'nookies'
 
 export type TIdTokenResult = {
   token: string

@@ -1,4 +1,4 @@
-import { DocumentData, Firestore, QueryDocumentSnapshot, SnapshotOptions, Timestamp, WithFieldValue } from 'firebase/firestore'
+import { DocumentData, QueryDocumentSnapshot, SnapshotOptions, Timestamp, WithFieldValue } from 'firebase/firestore'
 
 class Benefit {
   constructor(readonly amount: number = 0, readonly type: string = '') {}

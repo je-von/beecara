@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider , signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, createUserWithEmailAndPassword, getAuth , signInWithPopup } from "firebase/auth";
 import {useState} from 'react'
 import { useAuth } from '../lib/authContext'
 

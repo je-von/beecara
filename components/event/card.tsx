@@ -1,12 +1,9 @@
-import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { ReactNode, useEffect, useState } from 'react'
-import { FaCalendar, FaMonument } from 'react-icons/fa'
+import React from 'react'
+import { FaCalendar } from 'react-icons/fa'
 import { BsPeopleFill } from 'react-icons/bs'
 import { GiAchievement } from 'react-icons/gi'
-import { collection, onSnapshot, query } from 'firebase/firestore'
-import { db } from '../../lib/firebaseConfig/init'
 import { Event } from '../../lib/types/Event'
 
 interface Props {

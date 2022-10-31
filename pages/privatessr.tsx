@@ -1,4 +1,4 @@
-import type { NextPage, GetServerSideProps } from 'next'
+import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import { authServer } from '../lib/session'
 import type { TIdTokenResult } from '../lib/authContext'

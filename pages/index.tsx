@@ -1,6 +1,5 @@
 import type { NextPage } from 'next'
-import Head from 'next/head'
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, OAuthProvider } from 'firebase/auth'
+import { OAuthProvider, getAuth, signInWithPopup } from 'firebase/auth'
 import { useState } from 'react'
 import { useAuth } from '../lib/authContext'
 import Image from 'next/image'
