@@ -43,7 +43,13 @@ const Card = ({ event }: Props) => {
               {/* <GiAchievement className="mr-1" /> */}
               {event.benefit?.map((b, index) => (
                 <div key={index} className="bg-gray-300 px-2 py-1 rounded-lg">
-                  <b>{b.amount}</b> {b.type}
+                  {b.type == 'Others' ? (
+                    b.amount
+                  ) : (
+                    <>
+                      <b>{b.amount}</b> {b.type}
+                    </>
+                  )}
                 </div>
               ))}
             </div>
