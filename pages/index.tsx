@@ -4,7 +4,8 @@ import { useState } from 'react'
 import { useAuth } from '../lib/authContext'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { doc, setDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { userConverter } from '../lib/types/User'
 import { db } from '../lib/firebaseConfig/init'
 
 const Home: NextPage = () => {
@@ -58,7 +59,13 @@ const Home: NextPage = () => {
         const idToken = credential?.idToken
 
         const user = result.user
-        setDoc(doc(db, 'user', user.uid), { name: user.displayName, email: user.email })
+        const userRef = doc(db, 'user', user.uid)
+        getDoc(userRef.withConverter(userConverter)).then((res) => {
+          if (!res.exists()) {
+            // Kalo gak di cek dulu (getDoc dulu), sebenernya aman2 aja di db, tapi pas difetch pertama kali abis login, adminOf suka undefined (mungkin karna caching)
+            setDoc(userRef, { name: user.displayName, email: user.email }, { merge: true }).then(() => router.push('/home'))
+          }
+        })
       })
       .catch((error) => {
         // Handle error.

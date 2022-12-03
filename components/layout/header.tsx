@@ -28,11 +28,12 @@ export default function Header(props: any) {
               <li className="text-gray-600 transition-colors duration-500 hover:text-primary-50 cursor-pointer">
                 <div className="relative" onMouseOver={() => setShowDropdown(true)} onMouseLeave={() => setShowDropdown(false)}>
                   <button type="button" className="flex items-center gap-1">
-                    Hi, <b>{user?.claims.name}</b> ! <RiArrowDropDownFill />
+                    Hi, <b>{user?.name}</b> ! <RiArrowDropDownFill />
                   </button>
 
                   <div className={`${!showDropdown && 'hidden'} absolute right-0 z-10 w-40 origin-top-right rounded-md border border-gray-100 bg-white shadow-lg`}>
                     <div className="p-2">
+                      {user.adminOf && <div className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700">Add Event</div>}
                       <div className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700">Profile</div>
                       <div
                         onClick={() => {

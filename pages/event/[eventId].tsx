@@ -31,7 +31,7 @@ const EventDetail = () => {
   }
 
   const registerEvent = () => {
-    updateDoc(doc(db, 'event', `${eventId}`), { users: arrayUnion(doc(db, 'user', user?.claims.user_id)) }).then(() => {
+    updateDoc(doc(db, 'event', `${eventId}`), { users: arrayUnion(doc(db, 'user', `${user?.userId}`)) }).then(() => {
       console.log('Register Success') // TODO: create alert / toast
     })
   }

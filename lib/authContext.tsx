@@ -1,25 +1,29 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { getAuth, onAuthStateChanged, signOut as signout } from 'firebase/auth'
 import { destroyCookie, setCookie } from 'nookies'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from './firebaseConfig/init'
+import { User, userConverter } from './types/User'
 
-export type TIdTokenResult = {
-  token: string
-  expirationTime: string
-  authTime: string
-  issuedAtTime: string
-  signInProvider: string | null
-  signInSecondFactor: string | null
-  claims: {
-    [key: string]: any
-  }
-}
+// export type TIdTokenResult = {
+//   token: string
+//   expirationTime: string
+//   authTime: string
+//   issuedAtTime: string
+//   signInProvider: string | null
+//   signInSecondFactor: string | null
+//   claims: {
+//     [key: string]: any
+//   }
+// }
 
 type Props = {
   children: React.ReactNode
 }
 
 type UserContext = {
-  user: TIdTokenResult | null
+  // user: TIdTokenResult | null
+  user: User | null
   loading: boolean
 }
 
@@ -29,7 +33,7 @@ const authContext = createContext<UserContext>({
 })
 
 export default function AuthContextProvider({ children }: Props) {
-  const [user, setUser] = useState<TIdTokenResult | null>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -46,7 +50,14 @@ export default function AuthContextProvider({ children }: Props) {
         )
 
         // Save decoded token on the state
-        user.getIdTokenResult().then((result) => setUser(result))
+        user.getIdTokenResult().then((result) => {
+          getDoc(doc(db, 'user', result.claims.user_id).withConverter(userConverter)).then((docResult) => {
+            if (docResult.exists()) {
+              const data = docResult.data()
+              setUser(data)
+            }
+          })
+        })
       }
       if (!user) setUser(null)
       setLoading(false)
