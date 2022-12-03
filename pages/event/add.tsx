@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { FormProvider, SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
 import { BsInfoCircle, BsPlusCircle } from 'react-icons/bs'
+import ReactTooltip from 'react-tooltip'
 import Input from '../../components/form/FormInput'
 import { useAuth } from '../../lib/authContext'
 import { db, storage } from '../../lib/firebaseConfig/init'
@@ -58,6 +59,7 @@ const AddEventPage = () => {
         })
       })
     })
+    //TODO: show toast / alert after add
   }
 
   function onImageChange(e: any) {
@@ -74,7 +76,7 @@ const AddEventPage = () => {
   //   }
 
   return (
-    <div className="lg:px-40 md:px-16 px-8 pt-10">
+    <div className="lg:px-40 md:px-16 px-4 pt-10">
       <Head>
         <title>Add Event | BeeCara</title>
       </Head>
@@ -114,13 +116,17 @@ const AddEventPage = () => {
                 name="organization"
                 title={
                   <>
-                    Organization <BsInfoCircle />
+                    Organization{' '}
+                    <BsInfoCircle
+                      data-tip={`You are the admin of <b>${organization?.name}</b>. After submitting, the event you added will be the responsibility of <b>${organization?.name}</b>.`}
+                    />
                   </>
                 }
                 width="1/2"
                 isDisabled
                 value={`${organization?.name}`}
               />
+              <ReactTooltip multiline html class="max-w-sm text-center leading-5" place="bottom" />
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
               <Input name="description" inputType="textarea" validation={{ required: true }} placeholder="A Very Fun Event" title="Event Description" width="full" />
@@ -140,17 +146,6 @@ const AddEventPage = () => {
                 placeholder="Capacity"
                 additionalAppend={<span className="inline-flex items-center px-3 text-gray-600 bg-gray-300 rounded-r">People</span>}
               />
-
-              {/* <div className="w-full md:w-1/2 px-3">
-                <label className="flex gap-2 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Capacity</label>
-                <div className="flex">
-                  <input
-                    className={`appearance-none block w-full bg-gray-200 text-gray-700 border rounded-l py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500`}
-                    type="number"
-                  />
-                  
-                </div>
-              </div> */}
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
               <div className="w-full px-3">
@@ -171,7 +166,7 @@ const AddEventPage = () => {
                       className={`appearance-none block w-full bg-gray-200 text-gray-700 border-gray-300 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white rounded-r-none`}
                       type={methods.watch(`benefits.${index}.type`) == 'Others' ? 'text' : 'number'}
                     />
-                    <select {...methods.register(`benefits.${index}.type`)} className="inline-flex items-center px-3 text-gray-600 bg-gray-300 rounded-r">
+                    <select {...methods.register(`benefits.${index}.type`)} className="w-40 inline-flex items-center px-2 text-gray-600 bg-gray-300 rounded-r">
                       <option value="" disabled hidden>
                         Type
                       </option>
