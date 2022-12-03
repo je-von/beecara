@@ -1,4 +1,4 @@
-import { collection } from 'firebase/firestore'
+import { collection, orderBy, query } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import { BsCheckSquareFill, BsFilter, BsSquare } from 'react-icons/bs'
@@ -9,9 +9,9 @@ import Card from './card'
 const EventList = () => {
   const [showFilterDropdown, setShowFilterDropdown] = useState(false)
   const [benefitFilters, setFilters] = useState<string[]>([])
+  const [keyword, setKeyword] = useState('')
   const ref = collection(db, 'event').withConverter(eventConverter)
-  // query(ref, where())
-  const [data, loading, error] = useCollectionData(ref)
+  const [data, loading, error] = useCollectionData(query(ref, orderBy('startDate', 'asc')))
 
   useEffect(() => {
     console.log(benefitFilters)
@@ -50,11 +50,12 @@ const EventList = () => {
             </div>
           </div>
         </div>
-        <input type="search" className="border border-gray-300 rounded-md px-2 py-1" placeholder="Search events..." />
+        <input type="search" className="border border-gray-300 rounded-md px-2 py-1" placeholder="Search events..." onChange={(e) => setKeyword(e.target.value.toLowerCase())} />
       </div>
       <div className="flex flex-col gap-4">
         {data
           ?.filter((d) => d.benefit && benefitFilters.filter((bf) => d.benefit?.find((b) => b.type == bf)).length == benefitFilters.length)
+          .filter((d) => d.name.toLowerCase().includes(keyword) || d.organization.id.toLowerCase().includes(keyword))
           .map((d) => (
             <Card key={d.eventId} event={d} />
           ))}

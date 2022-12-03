@@ -33,7 +33,7 @@ export const eventConverter = {
     }
   },
   fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): Event {
-    const data = snapshot.data(options)!
+    const data = snapshot.data(options)! as Event
     // const ref = data.organization.withConverter(eventConverter)
     // getDoc(ref)
     return {

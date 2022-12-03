@@ -20,6 +20,7 @@ const Home: NextPage = () => {
 
       <EventList />
 
+      {/* Organization Seeder */}
       {/* <button
         onClick={() => {
           const orgs = [
@@ -97,7 +98,7 @@ const Home: NextPage = () => {
           ]
 
           for (const o of orgs) {
-            addDoc(collection(db, 'organization'), {
+            setDoc(doc(db, 'organization', o), {
               name: o,
             })
           }
