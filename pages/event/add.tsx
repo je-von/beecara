@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { BsInfoCircle, BsPlusCircle } from 'react-icons/bs'
 import { useAuth } from '../../lib/authContext'
@@ -12,6 +13,12 @@ const AddEventPage = () => {
   const { user, loading } = useAuth()
   const ref = user?.adminOf?.withConverter(organizationConverter)
   const [organization, loadingOrg, error] = useDocumentData(ref)
+
+  const [imageURL, setImageURL] = useState<string>()
+
+  function onImageChange(e: any) {
+    if (e.target.files && e.target.files.length > 0) setImageURL(URL.createObjectURL(e.target.files[0]))
+  }
 
   //TODO: add spinner / skeleton
   if (loading) return <h1>Loading...</h1>
@@ -28,16 +35,32 @@ const AddEventPage = () => {
         <title>Add Event | BeeCara</title>
       </Head>
 
-      <div className="flex md:flex-row flex-col relative h-full px-10">
-        <div className="md:basis-1/3 w-full h-96 relative">
-          <Image className="relative" objectFit="contain" src={'/assets/add_vector.svg'} alt={'Add Event'} sizes="100%" layout="fill" />
+      <form className="flex md:flex-row flex-col relative h-full px-10 gap-5">
+        <div className="md:basis-1/3 w-full lg:h-[70vh] h-52 relative">
+          {/* <Image className="relative" objectFit="contain" src={'/assets/add_vector.svg'} alt={'Add Event'} sizes="100%" layout="fill" /> */}
+          <h1 className="text-2xl font-black font-secondary">Add Event</h1>
+
+          <div className="flex items-center justify-center w-full h-full my-5 ">
+            <label className="relative flex flex-col w-full border-4 border-dashed hover:bg-gray-100 hover:border-gray-300 h-full cursor-pointer">
+              {imageURL ? (
+                <Image src={imageURL} alt="Event Image" sizes="100%" layout="fill" className="relative" objectFit="contain" />
+              ) : (
+                <div className="flex flex-col items-center justify-center pt-7 h-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-12 h-12 text-gray-400 group-hover:text-gray-600 " viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                  </svg>
+                  <p className="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">Select a photo</p>
+                </div>
+              )}
+              <input type="file" className="opacity-0" onChange={onImageChange} />
+            </label>
+          </div>
+          <label className="inline-block mb-2 text-gray-500">Upload Image(jpg,png,svg,jpeg)</label>
         </div>
-        <form className="basis-2/3">
+        <div className="basis-2/3">
           <div className="flex flex-wrap -mx-3 mb-6">
             <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
-                Event Name
-              </label>
+              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Event Name</label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white place"
                 type="text"
@@ -46,22 +69,20 @@ const AddEventPage = () => {
               <p className="text-red-500 text-xs italic">Please fill out this field.</p>
             </div>
             <div className="w-full md:w-1/2 px-3">
-              <label className="flex gap-2 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-last-name">
+              <label className="flex gap-2 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                 Organization <BsInfoCircle />
               </label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 type="text"
                 disabled
-                value={organization?.name}
+                value={`${organization?.name}`}
               />
             </div>
           </div>
           <div className="flex flex-wrap -mx-3 mb-6">
             <div className="w-full px-3">
-              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-password">
-                Description
-              </label>
+              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Description</label>
               <textarea
                 placeholder="A very fun event"
                 className="resize-none h-32 appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 va"
@@ -71,18 +92,14 @@ const AddEventPage = () => {
           </div>
           <div className="flex flex-wrap -mx-3 mb-6">
             <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
-                Start
-              </label>
+              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Start</label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white place"
                 type="datetime-local"
               />
             </div>
             <div className="w-full md:w-1/2 px-3">
-              <label className="flex gap-2 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-last-name">
-                End
-              </label>
+              <label className="flex gap-2 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">End</label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 type="datetime-local"
@@ -91,9 +108,7 @@ const AddEventPage = () => {
           </div>
           <div className="flex flex-wrap -mx-3 mb-6">
             <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
-                Location
-              </label>
+              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Location</label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white place"
                 type="text"
@@ -101,9 +116,7 @@ const AddEventPage = () => {
               />
             </div>
             <div className="w-full md:w-1/2 px-3">
-              <label className="flex gap-2 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-last-name">
-                Capacity
-              </label>
+              <label className="flex gap-2 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Capacity</label>
               <div className="flex">
                 <input
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-l py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -115,8 +128,8 @@ const AddEventPage = () => {
           </div>
           <div className="flex flex-wrap -mx-3 mb-6">
             <div className="w-full px-3">
-              <label className="flex gap-2 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-password">
-                Benefits <BsPlusCircle />
+              <label className="flex gap-2 items-center uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                Benefits <BsPlusCircle className="text-lg cursor-pointer hover:text-black" />
               </label>
               <div className="flex">
                 <input
@@ -130,8 +143,8 @@ const AddEventPage = () => {
               </div>
             </div>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   )
 }
