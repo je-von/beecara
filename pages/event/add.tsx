@@ -2,7 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
-import { BsInfoCircle } from 'react-icons/bs'
+import { BsInfoCircle, BsPlusCircle } from 'react-icons/bs'
 import { useAuth } from '../../lib/authContext'
 import { organizationConverter } from '../../lib/types/Organization'
 
@@ -16,10 +16,11 @@ const AddEventPage = () => {
   //TODO: add spinner / skeleton
   if (loading) return <h1>Loading...</h1>
 
-  if (!loading && (!user || !user.adminOf)) {
-    router.push('/')
-    return
-  }
+  //TODO: middleware
+  //   if (!loading && (!user || !user.adminOf)) {
+  //     router.push('/')
+  //     return
+  //   }
 
   return (
     <div className="lg:px-40 md:px-16 px-8 pt-10">
@@ -109,6 +110,23 @@ const AddEventPage = () => {
                   type="number"
                 />
                 <span className="inline-flex items-center px-3 text-gray-500 bg-gray-200 border border-y-0 border-r-0 border-gray-300 rounded-r ">People</span>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-wrap -mx-3 mb-6">
+            <div className="w-full px-3">
+              <label className="flex gap-2 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-password">
+                Benefits <BsPlusCircle />
+              </label>
+              <div className="flex">
+                <input
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-l py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  type="number"
+                />
+                <select className="w-40 inline-flex items-center px-3 text-gray-500 bg-gray-200 border border-y-0 border-r-0 border-gray-300 rounded-r ">
+                  <option value="SAT">SAT</option>
+                  <option value="SAT">Comserv</option>
+                </select>
               </div>
             </div>
           </div>
