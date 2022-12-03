@@ -35,12 +35,12 @@ const AddEventPage = () => {
         <title>Add Event | BeeCara</title>
       </Head>
 
-      <form className="flex md:flex-row flex-col relative h-full px-10 gap-5">
-        <div className="md:basis-1/3 w-full lg:h-[70vh] h-52 relative">
+      <form className="flex lg:flex-row flex-col h-full px-10 gap-5 mb-10">
+        <div className="lg:basis-1/3 w-full lg:h-[70vh] md:h-[50vh] h-48 flex flex-col lg:mb-0 mb-5">
           {/* <Image className="relative" objectFit="contain" src={'/assets/add_vector.svg'} alt={'Add Event'} sizes="100%" layout="fill" /> */}
           <h1 className="text-2xl font-black font-secondary">Add Event</h1>
 
-          <div className="flex items-center justify-center w-full h-full my-5 ">
+          <div className=" flex items-center justify-center w-full h-full mt-5 mb-2">
             <label className="relative flex flex-col w-full border-4 border-dashed hover:bg-gray-100 hover:border-gray-300 h-full cursor-pointer">
               {imageURL ? (
                 <Image src={imageURL} alt="Event Image" sizes="100%" layout="fill" className="relative" objectFit="contain" />
@@ -52,12 +52,12 @@ const AddEventPage = () => {
                   <p className="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">Select a photo</p>
                 </div>
               )}
-              <input type="file" className="opacity-0" onChange={onImageChange} />
+              <input type="file" accept="image/*" className="opacity-0" onChange={onImageChange} />
             </label>
           </div>
-          <label className="inline-block mb-2 text-gray-500">Upload Image(jpg,png,svg,jpeg)</label>
+          <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Upload Image (jpg,png,svg,jpeg)</label>
         </div>
-        <div className="basis-2/3">
+        <div className="lg:basis-2/3">
           <div className="flex flex-wrap -mx-3 mb-6">
             <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Event Name</label>
@@ -142,6 +142,11 @@ const AddEventPage = () => {
                 </select>
               </div>
             </div>
+          </div>
+          <div className="w-full flex justify-end">
+            <button className="flex items-center justify-center bg-sky-400 text-white font-bold rounded py-3 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
+              SUBMIT
+            </button>
           </div>
         </div>
       </form>
