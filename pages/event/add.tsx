@@ -1,3 +1,5 @@
+import { DocumentReference, Timestamp, addDoc, collection } from 'firebase/firestore'
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -7,7 +9,8 @@ import { FormProvider, SubmitHandler, useFieldArray, useForm } from 'react-hook-
 import { BsInfoCircle, BsPlusCircle } from 'react-icons/bs'
 import Input from '../../components/form/FormInput'
 import { useAuth } from '../../lib/authContext'
-import { Benefit } from '../../lib/types/Event'
+import { db, storage } from '../../lib/firebaseConfig/init'
+import { Benefit, eventConverter } from '../../lib/types/Event'
 import { organizationConverter } from '../../lib/types/Organization'
 interface FormValues {
   name: string
@@ -33,29 +36,28 @@ const AddEventPage = () => {
   })
   const benefitTypes = ['SAT Points', 'ComServ Hours', 'Others']
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    console.log(data)
     const imageFile = data.image[0]
 
     // Upload Image to Storage
-    // uploadBytesResumable(ref(storage, `image/event/${imageFile.name}`), imageFile).then((snapshot) => {
-    //   // Get URL
-    //   getDownloadURL(snapshot.ref).then((value) => {
-    //     // Add to firestore
-    //     addDoc(collection(db, 'event').withConverter(eventConverter), {
-    //       name: data.name,
-    //       description: data.description,
-    //       capacity: data.capacity,
-    //       organization: organizationRef as DocumentReference,
-    //       image: value,
-    //       benefit: [{ amount: 1, type: 'asd' }],
-    //       startDate: Timestamp.fromDate(new Date(data.startDate)),
-    //       endDate: Timestamp.fromDate(new Date(data.endDate)),
-    //       users: [],
-    //     }).then(() => {
-    //       router.push('/home')
-    //     })
-    //   })
-    // })
+    uploadBytesResumable(ref(storage, `image/event/${imageFile.name}`), imageFile).then((snapshot) => {
+      // Get URL
+      getDownloadURL(snapshot.ref).then((value) => {
+        // Add to firestore
+        addDoc(collection(db, 'event').withConverter(eventConverter), {
+          name: data.name,
+          description: data.description,
+          capacity: data.capacity,
+          organization: organizationRef as DocumentReference,
+          image: value,
+          benefit: data.benefits.filter((b) => b.amount),
+          startDate: Timestamp.fromDate(new Date(data.startDate)),
+          endDate: Timestamp.fromDate(new Date(data.endDate)),
+          users: [],
+        }).then(() => {
+          router.push('/home')
+        })
+      })
+    })
   }
 
   function onImageChange(e: any) {
