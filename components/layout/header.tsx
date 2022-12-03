@@ -35,16 +35,16 @@ export default function Header(props: any) {
                     <div className="p-2">
                       {user.adminOf && (
                         <Link href={'/event/add'} passHref>
-                          <div className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700">Add Event</div>
+                          <div className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700">Add Event</div>
                         </Link>
                       )}
-                      <div className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700">Profile</div>
+                      <div className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700">Profile</div>
                       <div
                         onClick={() => {
                           setShowDropdown(false)
                           signOut()
                         }}
-                        className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                        className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                       >
                         Sign Out
                       </div>
