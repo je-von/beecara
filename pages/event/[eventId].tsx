@@ -10,19 +10,23 @@ import { Benefit, eventConverter } from '../../lib/types/Event'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import NotFoundPage from '../404'
 import { useAuth } from '../../lib/authContext'
+import { organizationConverter } from '../../lib/types/Organization'
 
 const EventDetail = () => {
   const router = useRouter()
   const { user, loading: loadAuth } = useAuth()
   const { eventId } = router.query
-  const docRef = doc(db, 'event', `${eventId}`).withConverter(eventConverter)
-  const [event, loading, error, snapshot] = useDocumentData(docRef)
+  const eventRef = doc(db, 'event', `${eventId}`).withConverter(eventConverter)
+  const [event, loadingEvent, errorEvent, snapshot] = useDocumentData(eventRef)
 
-  if (loading) {
+  const orgRef = event?.organization.withConverter(organizationConverter)
+  const [organization, loadingOrg, errorOrg] = useDocumentData(orgRef)
+
+  if (loadingEvent || loadingOrg) {
     return <>Loading</>
   }
 
-  if (!loading && (error || !event)) {
+  if (!loadingEvent && (errorEvent || !event)) {
     return <NotFoundPage />
   }
 
@@ -36,9 +40,9 @@ const EventDetail = () => {
     <div className="px-40">
       <div className="flex items-center">
         <IoMdArrowBack className="mr-2 text-xl cursor-pointer" />
-        <h1 className="font-bold text-xl">
-          {event?.name} - {event?.organization}
-        </h1>
+        <h4 className="font-secondary text-2xl mb-1 gap-2 flex md:flex-row flex-col ">
+          <b>{event?.name}</b> <span className="text-gray-400">({organization?.name})</span>
+        </h4>
       </div>
       <div className="overflow-hidden">
         <Image className="rounded-xl" objectFit="contain" src={`${event?.image}`} alt="event-poster" width={150} height={150} />
