@@ -1,7 +1,7 @@
 import { DocumentData, DocumentReference, QueryDocumentSnapshot, SnapshotOptions, Timestamp, WithFieldValue } from 'firebase/firestore'
 
 export interface Benefit {
-  amount: number
+  amount: number | string
   type: string
 }
 

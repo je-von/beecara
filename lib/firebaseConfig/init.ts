@@ -10,6 +10,7 @@ const firebaseConfig: FirebaseOptions = {
   authDomain: process.env.NEXT_PUBLIC_authDomain,
   projectId: process.env.NEXT_PUBLIC_projectId,
   storageBucket: 'beecara-rig-2cbb9.appspot.com',
+  messagingSenderId: '19808445734',
   appId: process.env.NEXT_PUBLIC_appId,
 }
 

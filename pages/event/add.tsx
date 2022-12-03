@@ -3,66 +3,59 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
-import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
+import { FormProvider, SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
 import { BsInfoCircle, BsPlusCircle } from 'react-icons/bs'
-import Input from '../../components/form/input'
+import Input from '../../components/form/FormInput'
 import { useAuth } from '../../lib/authContext'
+import { Benefit } from '../../lib/types/Event'
 import { organizationConverter } from '../../lib/types/Organization'
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
-import { db, storage } from '../../lib/firebaseConfig/init'
-import { DocumentReference, Timestamp, addDoc, collection } from 'firebase/firestore'
-import { eventConverter } from '../../lib/types/Event'
-interface Inputs {
+interface FormValues {
   name: string
   description: string
   startDate: string
   endDate: string
   location: string
   capacity: number
-  // benefits
+  benefits: Benefit[]
   image: FileList
 }
 
 const AddEventPage = () => {
   const router = useRouter()
-
   const { user, loading } = useAuth()
   const organizationRef = user?.adminOf?.withConverter(organizationConverter)
   const [organization, loadingOrg, error] = useDocumentData(organizationRef)
-
   const [imageURL, setImageURL] = useState<string>()
-
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   watch,
-  //   formState: { errors },
-  // } = useForm<Inputs>()
-  const methods = useForm<Inputs>()
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
+  const methods = useForm<FormValues>({ defaultValues: { benefits: [{ amount: '', type: '' }] } })
+  const { fields, append } = useFieldArray({
+    name: 'benefits',
+    control: methods.control,
+  })
+  const benefitTypes = ['SAT Points', 'ComServ Hours', 'Others']
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
     console.log(data)
     const imageFile = data.image[0]
 
     // Upload Image to Storage
-    uploadBytesResumable(ref(storage, `image/event/${imageFile.name}`), imageFile).then((snapshot) => {
-      // Get URL
-      getDownloadURL(snapshot.ref).then((value) => {
-        // Add to firestore
-        addDoc(collection(db, 'event').withConverter(eventConverter), {
-          name: data.name,
-          description: data.description,
-          capacity: data.capacity,
-          organization: organizationRef as DocumentReference,
-          image: value,
-          benefit: [{ amount: 1, type: 'asd' }],
-          startDate: Timestamp.fromDate(new Date(data.startDate)),
-          endDate: Timestamp.fromDate(new Date(data.endDate)),
-          users: [],
-        }).then(() => {
-          router.push('/home')
-        })
-      })
-    })
+    // uploadBytesResumable(ref(storage, `image/event/${imageFile.name}`), imageFile).then((snapshot) => {
+    //   // Get URL
+    //   getDownloadURL(snapshot.ref).then((value) => {
+    //     // Add to firestore
+    //     addDoc(collection(db, 'event').withConverter(eventConverter), {
+    //       name: data.name,
+    //       description: data.description,
+    //       capacity: data.capacity,
+    //       organization: organizationRef as DocumentReference,
+    //       image: value,
+    //       benefit: [{ amount: 1, type: 'asd' }],
+    //       startDate: Timestamp.fromDate(new Date(data.startDate)),
+    //       endDate: Timestamp.fromDate(new Date(data.endDate)),
+    //       users: [],
+    //     }).then(() => {
+    //       router.push('/home')
+    //     })
+    //   })
+    // })
   }
 
   function onImageChange(e: any) {
@@ -136,7 +129,15 @@ const AddEventPage = () => {
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
               <Input name="location" inputType="text" validation={{ required: true, maxLength: 255 }} title="Location" width="1/2" placeholder="Location" />
-              <Input name="capacity" inputType="number" validation={{ required: true, min: 1 }} title="Capacity" width="1/2" placeholder="Capacity" />
+              <Input
+                name="capacity"
+                inputType="number"
+                validation={{ required: true, min: 1 }}
+                title="Capacity"
+                width="1/2"
+                placeholder="Capacity"
+                additionalAppend={<span className="inline-flex items-center px-3 text-gray-600 bg-gray-300 rounded-r">People</span>}
+              />
 
               {/* <div className="w-full md:w-1/2 px-3">
                 <label className="flex gap-2 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Capacity</label>
@@ -145,25 +146,45 @@ const AddEventPage = () => {
                     className={`appearance-none block w-full bg-gray-200 text-gray-700 border rounded-l py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500`}
                     type="number"
                   />
-                  <span className="inline-flex items-center px-3 text-gray-500 bg-gray-200 border border-y-0 border-r-0 border-gray-300 rounded-r ">People</span>
+                  
                 </div>
               </div> */}
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
               <div className="w-full px-3">
                 <label className="flex gap-2 items-center uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                  Benefits <BsPlusCircle className="text-lg cursor-pointer hover:text-black" />
-                </label>
-                <div className="flex">
-                  <input
-                    className={`appearance-none block w-full bg-gray-200 text-gray-700 border rounded-l py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500`}
-                    type="number"
+                  Benefits{' '}
+                  <BsPlusCircle
+                    strokeWidth={0.5}
+                    className="text-lg cursor-pointer hover:text-sky-400 transition hover:scale-105 duration-300 ease-in-out "
+                    onClick={() => {
+                      if (fields.length < 3) append({ amount: '', type: '' })
+                    }}
                   />
-                  <select className="w-40 inline-flex items-center px-3 text-gray-500 bg-gray-200 border border-y-0 border-r-0 border-gray-300 rounded-r ">
-                    <option value="SAT">SAT</option>
-                    <option value="SAT">Comserv</option>
-                  </select>
-                </div>
+                </label>
+                {fields.map((f, index) => (
+                  <div className="flex mb-3" key={index}>
+                    <input
+                      {...methods.register(`benefits.${index}.amount`)}
+                      className={`appearance-none block w-full bg-gray-200 text-gray-700 border-gray-300 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white rounded-r-none`}
+                      type={methods.watch(`benefits.${index}.type`) == 'Others' ? 'text' : 'number'}
+                    />
+                    <select {...methods.register(`benefits.${index}.type`)} className="inline-flex items-center px-3 text-gray-600 bg-gray-300 rounded-r">
+                      <option value="" disabled hidden>
+                        Type
+                      </option>
+                      {benefitTypes
+                        .filter((b) => methods.watch(`benefits`).find((m, innerIndex) => innerIndex != index && m.type == b) == null)
+                        .map((b, index) => {
+                          return (
+                            <option value={b} key={index}>
+                              {b}
+                            </option>
+                          )
+                        })}
+                    </select>
+                  </div>
+                ))}
               </div>
             </div>
             <div className="w-full flex justify-end">
