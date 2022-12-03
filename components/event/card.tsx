@@ -20,9 +20,9 @@ const Card = ({ event }: Props) => {
 
   return (
     <Link href={`event/${event.eventId}`} key={event.eventId} passHref>
-      <div className="cursor-pointer transition-colors duration-500 rounded-lg border border-blue-100 hover:bg-blue-50 flex justify-between gap-2 items-start relative md:h-48 p-5 md:flex-row flex-col">
-        <div className="md:basis-1/6 lg:w-auto w-full h-40 md:w-20 md:h-full relative">
-          <Image className="relative" objectFit="cover" src={event.image} alt={event.name} sizes="100%" layout="fill"></Image>
+      <div className="cursor-pointer transition-colors duration-500 rounded-lg border border-blue-100 hover:bg-blue-50 flex justify-between gap-5 items-start relative md:h-56 p-5 md:flex-row flex-col">
+        <div className="md:basis-1/6 lg:w-auto w-full h-40 md:w-20 md:h-full relative rounded">
+          <Image className="relative rounded" objectFit="cover" src={event.image} alt={event.name} sizes="100%" layout="fill"></Image>
         </div>
         <div className="flex items-center md:basis-5/6">
           <div className="mr-8 flex flex-col gap-1">
