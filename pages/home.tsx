@@ -19,6 +19,92 @@ const Home: NextPage = () => {
       </Head>
 
       <EventList />
+
+      {/* <button
+        onClick={() => {
+          const orgs = [
+            'HIMMAT',
+            'HIMKA',
+            'HIMDI',
+            'HIMME',
+            'HIMA',
+            'HIMARS',
+            'HIMANDA',
+            'AIESEC',
+            'B-Preneur',
+            'B-VOICE Radio',
+            'AIKIDO',
+            'HIMSTAT',
+            'HIMSISFO',
+            'HIMDKV',
+            'HIMCOMM',
+            'HIMPAR',
+            'HIMFOODTECH',
+            'HIMTEK',
+            'HIMTES',
+            'HIMHI',
+            'HIMJA',
+            'HIMPGSD',
+            'HIMPSIKO',
+            'HIMSI',
+            'BSSC',
+            'FOPASBIN',
+            'KBMK',
+            'KMBD',
+            'KMH',
+            'KMK',
+            'MT Al Khawarizmi',
+            'PO',
+            'BGDC',
+            'BIC',
+            'BNCC',
+            'BNEC',
+            'BNFC',
+            'BNMC',
+            'BSLC',
+            'CSC',
+            'IMCB',
+            'ISACA',
+            'BAND',
+            'BDM',
+            'BINUS TV Club',
+            'KLIFONARA',
+            'PARAMABIRA',
+            'STAMANARA',
+            'BADMINTON',
+            'BASIC',
+            'BASKET',
+            'BNAC',
+            'BNSC',
+            'BNTC',
+            'CAPOEIRA',
+            'KARATE',
+            'MERPATI PUTIH',
+            'SEPAK BOLA',
+            'SWANARAPALA',
+            'TAEKWONDO',
+            'TENIS MEJA',
+            'VOLLEY',
+            'WUSHU',
+            'HIMTI',
+            'HOME',
+            'HIMTRI',
+            'HIMSLAW',
+            'TFI Student Community',
+            'NIPPON CLUB',
+            'STMANIS',
+            'HAPKIDO',
+          ]
+
+          for (const o of orgs) {
+            addDoc(collection(db, 'organization'), {
+              name: o,
+            })
+          }
+        }}
+      >
+        Tes
+      </button> */}
     </div>
   )
 }

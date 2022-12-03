@@ -9,6 +9,7 @@ const EventList = () => {
   const ref = collection(db, 'event').withConverter(eventConverter)
   const [data, loading, error] = useCollectionData(ref)
 
+  //TODO: add spinner / skeleton
   if (loading) return <h1>Loading...</h1>
 
   return (

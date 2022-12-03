@@ -9,7 +9,7 @@ export interface Event {
   eventId: string
   image: string
   name: string
-  organization: string
+  organization: DocumentReference
   capacity: number
   benefit?: Benefit[]
   startDate?: Timestamp
@@ -34,6 +34,8 @@ export const eventConverter = {
   },
   fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): Event {
     const data = snapshot.data(options)!
+    // const ref = data.organization.withConverter(eventConverter)
+    // getDoc(ref)
     return {
       eventId: snapshot.id,
       image: data.image,

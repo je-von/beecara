@@ -4,12 +4,20 @@ import React from 'react'
 import { FaCalendar } from 'react-icons/fa'
 import { BsPeopleFill } from 'react-icons/bs'
 import { Event } from '../../lib/types/Event'
+import { organizationConverter } from '../../lib/types/Organization'
+import { useDocumentData } from 'react-firebase-hooks/firestore'
 
 interface Props {
   event: Event
 }
 
 const Card = ({ event }: Props) => {
+  const ref = event.organization.withConverter(organizationConverter)
+  const [organization, loading, error] = useDocumentData(ref)
+
+  //TODO: add spinner / skeleton
+  if (loading) return <h1>Loading...</h1>
+
   return (
     <Link href={`event/${event.eventId}`} key={event.eventId} passHref>
       <div className="cursor-pointer transition-colors duration-500 rounded-lg border border-blue-100 hover:bg-blue-50 flex justify-between gap-2 items-start relative md:h-48 p-5 md:flex-row flex-col">
@@ -19,7 +27,7 @@ const Card = ({ event }: Props) => {
         <div className="flex items-center md:basis-5/6">
           <div className="mr-8 flex flex-col gap-1">
             <h4 className="font-secondary text-xl mb-1 gap-2 flex md:flex-row flex-col ">
-              <b>{event.name}</b> <span className="text-gray-400">({event.organization})</span>
+              <b>{event.name}</b> <span className="text-gray-400">({organization?.name})</span>
             </h4>
             <div className="flex lg:flex-col flex-row gap-6 lg:gap-1">
               <div className="flex items-center">
