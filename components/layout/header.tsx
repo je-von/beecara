@@ -10,14 +10,14 @@ export default function Header(props: any) {
   const { user, loading } = useAuth()
 
   return (
-    <div className="flex h-full flex-row lg:px-40 px-8 md:px-16">
+    <div className="flex h-full flex-row lg:px-40 px-4 md:px-16">
       <div className="w-full mx-auto flex flex-wrap items-end justify-between mt-0 pb-5">
-        <div className="pl-4 flex items-center">
+        <div className="flex items-center">
           <Link passHref href="/">
             <div className="h-100 flex items-end gap-3 cursor-pointer">
               <Image src={'/assets/ribbon.png'} className="" alt="logo" width={25} height={68} layout={'fixed'} />{' '}
               <Image src={'/assets/logo_binus.png'} className="" alt="logo" width={81.25} height={50} layout={'fixed'} />{' '}
-              <span className="text-2xl text-neutral-300 font-light">|</span> <b className="font-extrabold text-xl font-secondary">BeeCara</b>
+              <span className="text-2xl text-neutral-300 font-light md:block hidden">|</span> <b className="font-extrabold text-xl font-secondary md:block hidden">BeeCara</b>
             </div>
           </Link>
         </div>
@@ -27,7 +27,7 @@ export default function Header(props: any) {
             {user ? (
               <li className="text-gray-600 transition-colors duration-500 hover:text-primary-50 cursor-pointer">
                 <div className="relative" onMouseOver={() => setShowDropdown(true)} onMouseLeave={() => setShowDropdown(false)}>
-                  <button type="button" className="flex items-center gap-1">
+                  <button type="button" className="flex items-center gap-1 md:text-sm text-xs">
                     Hi, <b>{user?.name}</b> ! <RiArrowDropDownFill />
                   </button>
 
