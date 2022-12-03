@@ -1,4 +1,3 @@
-import { DocumentReference, Timestamp, addDoc, collection } from 'firebase/firestore'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -8,10 +7,11 @@ import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { BsInfoCircle, BsPlusCircle } from 'react-icons/bs'
 import Input from '../../components/form/input'
 import { useAuth } from '../../lib/authContext'
-import { db } from '../../lib/firebaseConfig/init'
-import { eventConverter } from '../../lib/types/Event'
 import { organizationConverter } from '../../lib/types/Organization'
-
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
+import { db, storage } from '../../lib/firebaseConfig/init'
+import { DocumentReference, Timestamp, addDoc, collection } from 'firebase/firestore'
+import { eventConverter } from '../../lib/types/Event'
 interface Inputs {
   name: string
   description: string
@@ -40,18 +40,28 @@ const AddEventPage = () => {
   // } = useForm<Inputs>()
   const methods = useForm<Inputs>()
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    addDoc(collection(db, 'event').withConverter(eventConverter), {
-      name: data.name,
-      description: data.description,
-      capacity: data.capacity,
-      organization: organizationRef as DocumentReference,
-      image: '',
-      benefit: [{ amount: 1, type: 'asd' }],
-      startDate: Timestamp.fromDate(new Date(data.startDate)),
-      endDate: Timestamp.fromDate(new Date(data.endDate)),
-      users: [],
-    }).then(() => {
-      router.push('/home')
+    console.log(data)
+    const imageFile = data.image[0]
+
+    // Upload Image to Storage
+    uploadBytesResumable(ref(storage, `image/event/${imageFile.name}`), imageFile).then((snapshot) => {
+      // Get URL
+      getDownloadURL(snapshot.ref).then((value) => {
+        // Add to firestore
+        addDoc(collection(db, 'event').withConverter(eventConverter), {
+          name: data.name,
+          description: data.description,
+          capacity: data.capacity,
+          organization: organizationRef as DocumentReference,
+          image: value,
+          benefit: [{ amount: 1, type: 'asd' }],
+          startDate: Timestamp.fromDate(new Date(data.startDate)),
+          endDate: Timestamp.fromDate(new Date(data.endDate)),
+          users: [],
+        }).then(() => {
+          router.push('/home')
+        })
+      })
     })
   }
 
@@ -81,7 +91,11 @@ const AddEventPage = () => {
             <h1 className="text-2xl font-black font-secondary">Add Event</h1>
 
             <div className=" flex items-center justify-center w-full h-full mt-5 mb-2">
-              <label className="relative flex flex-col w-full border-4 border-dashed hover:bg-gray-100 hover:border-gray-300 h-full cursor-pointer">
+              <label
+                className={`relative flex flex-col w-full border-4 border-dashed ${
+                  methods.formState.errors.image ? 'border-red-500' : ''
+                } hover:bg-gray-100 hover:border-gray-300 h-full cursor-pointer`}
+              >
                 {imageURL ? (
                   <Image src={imageURL} alt="Event Image" sizes="100%" layout="fill" className="relative" objectFit="contain" />
                 ) : (
@@ -92,7 +106,7 @@ const AddEventPage = () => {
                     <p className="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">Select a photo</p>
                   </div>
                 )}
-                <input type="file" accept="image/*" className="opacity-0" onChange={onImageChange} />
+                <input type="file" {...methods.register('image', { required: true })} accept="image/*" className="opacity-0" onChange={onImageChange} />
               </label>
             </div>
             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Upload Image (jpg,png,svg,jpeg)</label>
