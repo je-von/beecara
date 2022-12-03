@@ -6,7 +6,7 @@ export interface Benefit {
 }
 
 export interface Event {
-  eventId: string
+  eventId?: string
   image: string
   name: string
   organization: DocumentReference

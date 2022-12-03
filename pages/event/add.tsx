@@ -1,3 +1,4 @@
+import { DocumentReference, Timestamp, addDoc, collection } from 'firebase/firestore'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -7,6 +8,8 @@ import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { BsInfoCircle, BsPlusCircle } from 'react-icons/bs'
 import Input from '../../components/form/input'
 import { useAuth } from '../../lib/authContext'
+import { db } from '../../lib/firebaseConfig/init'
+import { eventConverter } from '../../lib/types/Event'
 import { organizationConverter } from '../../lib/types/Organization'
 
 interface Inputs {
@@ -24,8 +27,8 @@ const AddEventPage = () => {
   const router = useRouter()
 
   const { user, loading } = useAuth()
-  const ref = user?.adminOf?.withConverter(organizationConverter)
-  const [organization, loadingOrg, error] = useDocumentData(ref)
+  const organizationRef = user?.adminOf?.withConverter(organizationConverter)
+  const [organization, loadingOrg, error] = useDocumentData(organizationRef)
 
   const [imageURL, setImageURL] = useState<string>()
 
@@ -36,7 +39,21 @@ const AddEventPage = () => {
   //   formState: { errors },
   // } = useForm<Inputs>()
   const methods = useForm<Inputs>()
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    addDoc(collection(db, 'event').withConverter(eventConverter), {
+      name: data.name,
+      description: data.description,
+      capacity: data.capacity,
+      organization: organizationRef as DocumentReference,
+      image: '',
+      benefit: [{ amount: 1, type: 'asd' }],
+      startDate: Timestamp.fromDate(new Date(data.startDate)),
+      endDate: Timestamp.fromDate(new Date(data.endDate)),
+      users: [],
+    }).then(() => {
+      router.push('/home')
+    })
+  }
 
   function onImageChange(e: any) {
     if (e.target.files && e.target.files.length > 0) setImageURL(URL.createObjectURL(e.target.files[0]))
@@ -100,8 +117,8 @@ const AddEventPage = () => {
               <Input name="description" inputType="textarea" validation={{ required: true }} placeholder="A Very Fun Event" title="Event Description" width="full" />
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
-              <Input name="startTime" inputType="datetime-local" validation={{ required: true }} title="Start Time" width="1/2" />
-              <Input name="endTime" inputType="datetime-local" validation={{ required: true }} title="End Time" width="1/2" />
+              <Input name="startDate" inputType="datetime-local" validation={{ required: true }} title="Start Time" width="1/2" />
+              <Input name="endDate" inputType="datetime-local" validation={{ required: true }} title="End Time" width="1/2" />
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
               <Input name="location" inputType="text" validation={{ required: true, maxLength: 255 }} title="Location" width="1/2" placeholder="Location" />
