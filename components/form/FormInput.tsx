@@ -33,7 +33,7 @@ const Input = ({ name, validation, inputType, placeholder, title, width, isDisab
         <RawInput
           className={`resize-none appearance-none block w-full bg-gray-200 text-gray-700 border ${
             errors[name] ? 'border-red-500' : 'border-gray-300'
-          } rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white ${additionalAppend ? 'rounded-r-none' : ''}`}
+          } rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white ${additionalAppend ? 'rounded-r-none' : ''} ${isDisabled ? 'cursor-not-allowed' : ''}`}
           type={inputType}
           placeholder={placeholder}
           disabled={isDisabled}
