@@ -11,6 +11,7 @@ import { useDocumentData } from 'react-firebase-hooks/firestore'
 import NotFoundPage from '../404'
 import { useAuth } from '../../lib/authContext'
 import { organizationConverter } from '../../lib/types/Organization'
+import Link from 'next/link'
 
 const EventDetail = () => {
   const router = useRouter()
@@ -39,7 +40,9 @@ const EventDetail = () => {
   return (
     <div className="px-40">
       <div className="flex items-center">
-        <IoMdArrowBack className="mr-2 text-xl cursor-pointer" />
+        <Link href={`/`} passHref>
+          <IoMdArrowBack className="mr-2 text-xl cursor-pointer" />
+        </Link>
         <h4 className="font-secondary text-2xl mb-1 gap-2 flex md:flex-row flex-col ">
           <b>{event?.name}</b> <span className="text-gray-400">({organization?.name})</span>
         </h4>
