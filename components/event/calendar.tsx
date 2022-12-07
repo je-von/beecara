@@ -93,7 +93,7 @@ const CalendarEventView = ({ initialDate, events }: Props) => {
   return (
     <div className="flex sm:min-h-[100vh] items-stretch justify-center py-8 px-4">
       <div className="flex flex-col-reverse md:flex-row w-full shadow-lg">
-        <div className="flex-1 w-full md:w-2/3 h-full md:py-8 py-5 md:px-16 px-5 bg-blue-200/10 rounded-none rounded-b md:rounded-l">
+        <div className="flex-1 w-full md:w-2/3 h-full md:py-8 py-5 md:px-16 px-5 bg-[#0290d1]/10 rounded-none rounded-b md:rounded-l">
           <div className="flex flex-col gap-4">
             {events
               ?.filter(
@@ -106,7 +106,7 @@ const CalendarEventView = ({ initialDate, events }: Props) => {
               })}
           </div>
         </div>
-        <div className="p-5 bg-blue-50/10 rounded-none rounded-t md:rounded-r">
+        <div className="p-5 bg-[#daeffb]/10 rounded-none rounded-t md:rounded-r">
           <div className="px-4 flex items-center justify-between">
             <h1 className="text-sm md:text-xl font-bold text-gray-800">
               {`${activeDate.toLocaleString("default", {
