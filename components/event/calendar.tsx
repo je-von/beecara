@@ -93,7 +93,7 @@ const CalendarEventView = ({ initialDate, events }: Props) => {
   return (
     <div className="flex sm:min-h-[100vh] items-stretch justify-center py-8 px-4">
       <div className="flex flex-col-reverse md:flex-row w-full shadow-lg">
-        <div className="flex-1 w-full md:w-2/3 h-full md:py-8 py-5 md:px-16 px-5 dark:bg-gray-700 bg-gray-50 rounded-none rounded-b md:rounded-l">
+        <div className="flex-1 w-full md:w-2/3 h-full md:py-8 py-5 md:px-16 px-5 bg-[#0290d1]/10 rounded-none rounded-b md:rounded-l">
           <div className="flex flex-col gap-4">
             {events
               ?.filter(
@@ -106,14 +106,14 @@ const CalendarEventView = ({ initialDate, events }: Props) => {
               })}
           </div>
         </div>
-        <div className="p-5 dark:bg-gray-800 bg-white rounded-none rounded-t md:rounded-r">
+        <div className="p-5 bg-[#daeffb]/10 rounded-none rounded-t md:rounded-r">
           <div className="px-4 flex items-center justify-between">
-            <h1 className="text-sm md:text-xl font-bold dark:text-gray-100 text-gray-800">
+            <h1 className="text-sm md:text-xl font-bold text-gray-800">
               {`${activeDate.toLocaleString("default", {
                 month: "long",
               })} ${activeDate.getFullYear()}`}
             </h1>
-            <div className="flex items-center text-gray-800 dark:text-gray-100">
+            <div className="flex items-center text-gray-800">
               {activeDate.getFullYear() > today.getFullYear() && (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -165,7 +165,7 @@ const CalendarEventView = ({ initialDate, events }: Props) => {
                     return (
                       <th key={index}>
                         <div className="w-full flex justify-center">
-                          <p className="text-sm font-medium text-center text-gray-800 dark:text-gray-100">
+                          <p className="text-sm font-medium text-center text-gray-800">
                             {header}
                           </p>
                         </div>
@@ -191,9 +191,9 @@ const CalendarEventView = ({ initialDate, events }: Props) => {
                                 className={`h-full rounded-full aspect-square text-center p-[0.5vh] ${
                                   day.date &&
                                   (isEqualDate(activeDate, day.date)
-                                    ? "bg-blue-400"
+                                    ? "bg-blue-400 text-white"
                                     : isEqualDate(today, day.date)
-                                    ? "bg-blue-600"
+                                    ? "bg-blue-600 text-white"
                                     : events?.some(
                                         (e) =>
                                           e.startDate &&
@@ -203,17 +203,16 @@ const CalendarEventView = ({ initialDate, events }: Props) => {
                                             day.date
                                           )
                                       )
-                                    ? "bg-violet-700"
-                                    : "")
+                                    ? "bg-violet-700 text-white"
+                                    : activeDate.getMonth() ===
+                                      day.date?.getMonth()
+                                        ? "text-gray-500"
+                                        : "text-gray-300"
+                                    )
                                 }`}
                               >
                                 <p
-                                  className={`text-sm ${
-                                    activeDate.getMonth() ===
-                                    day.date?.getMonth()
-                                      ? "text-gray-500 dark:text-gray-100"
-                                      : "text-gray-300 dark:text-gray-500"
-                                  }  font-medium`}
+                                  className={`text-sm font-medium`}
                                 >
                                   {day.day}
                                 </p>
