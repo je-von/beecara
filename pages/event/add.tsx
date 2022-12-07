@@ -13,6 +13,7 @@ import { useAuth } from '../../lib/authContext'
 import { db, storage } from '../../lib/firebaseConfig/init'
 import { Benefit, Fee, eventConverter } from '../../lib/types/Event'
 import { organizationConverter } from '../../lib/types/Organization'
+import { Fade } from 'react-awesome-reveal'
 interface FormValues {
   name: string
   description: string
@@ -170,14 +171,16 @@ const AddEventPage = () => {
               />
               <ReactTooltip html multiline className="text-center leading-5" place="right" id="fee-info" />
               {hasFee && (
-                <Input
-                  name="fee.description"
-                  inputType="textarea"
-                  validation={{ required: hasFee }}
-                  placeholder="Put the available payment methods here, e.g: the bank account number and the account holder name. Make sure to describe it clearly and as detail as possible to avoid payment errors at the user's end."
-                  title="Fee Description"
-                  width="full"
-                />
+                <Fade triggerOnce className="w-full">
+                  <Input
+                    name="fee.description"
+                    inputType="textarea"
+                    validation={{ required: hasFee }}
+                    placeholder="Put the available payment methods here, e.g: the bank account number and the account holder name. Make sure to describe it clearly and as detail as possible to avoid payment errors at the user's end."
+                    title="Fee Description"
+                    width="full"
+                  />
+                </Fade>
               )}
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
@@ -193,27 +196,29 @@ const AddEventPage = () => {
                   />
                 </label>
                 {fields.map((f, index) => (
-                  <div className="flex mb-3" key={index}>
-                    <input
-                      {...methods.register(`benefits.${index}.amount`)}
-                      className={`appearance-none block w-full bg-white text-gray-700 border-gray-300 focus:ring-sky-400 border rounded py-3 px-4 leading-tight focus:outline-none rounded-r-none`}
-                      type={methods.watch(`benefits.${index}.type`) == 'Others' ? 'text' : 'number'}
-                    />
-                    <select {...methods.register(`benefits.${index}.type`)} className="w-40 inline-flex items-center px-2 text-gray-600 bg-gray-300 rounded-r border-0">
-                      <option value="" disabled hidden>
-                        Type
-                      </option>
-                      {benefitTypes
-                        .filter((b) => methods.watch(`benefits`).find((m, innerIndex) => innerIndex != index && m.type == b) == null)
-                        .map((b, index) => {
-                          return (
-                            <option value={b} key={index}>
-                              {b}
-                            </option>
-                          )
-                        })}
-                    </select>
-                  </div>
+                  <Fade triggerOnce className="w-full" key={index}>
+                    <div className="flex mb-3">
+                      <input
+                        {...methods.register(`benefits.${index}.amount`)}
+                        className={`appearance-none block w-full bg-white text-gray-700 border-gray-300 focus:ring-sky-400 border rounded py-3 px-4 leading-tight focus:outline-none rounded-r-none`}
+                        type={methods.watch(`benefits.${index}.type`) == 'Others' ? 'text' : 'number'}
+                      />
+                      <select {...methods.register(`benefits.${index}.type`)} className="w-40 inline-flex items-center px-2 text-gray-600 bg-gray-300 rounded-r border-0">
+                        <option value="" disabled hidden>
+                          Type
+                        </option>
+                        {benefitTypes
+                          .filter((b) => methods.watch(`benefits`).find((m, innerIndex) => innerIndex != index && m.type == b) == null)
+                          .map((b, index) => {
+                            return (
+                              <option value={b} key={index}>
+                                {b}
+                              </option>
+                            )
+                          })}
+                      </select>
+                    </div>
+                  </Fade>
                 ))}
               </div>
             </div>
