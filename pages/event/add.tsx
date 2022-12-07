@@ -88,7 +88,7 @@ const AddEventPage = () => {
       </Head>
 
       <FormProvider {...methods}>
-        <form className="flex lg:flex-row flex-col h-full px-10 gap-5 mb-10" onSubmit={methods.handleSubmit(onSubmit)}>
+        <form className="flex lg:flex-row flex-col h-full px-10 gap-7 mb-10" onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="lg:basis-1/3 w-full lg:h-[70vh] md:h-[50vh] h-48 flex flex-col lg:mb-0 mb-5">
             {/* <Image className="relative" objectFit="contain" src={'/assets/add_vector.svg'} alt={'Add Event'} sizes="100%" layout="fill" /> */}
             <h1 className="text-2xl font-black font-secondary">Add Event</h1>
@@ -149,8 +149,12 @@ const AddEventPage = () => {
                 title={
                   <>
                     <input type="checkbox" className="bg-gray-100 border-gray-300 text-sky-400 focus:ring-sky-200 rounded" onChange={(e) => setHasMaxRegDate(e.target.checked)} />
-                    Max Registration Date{' '}
-                    <BsInfoCircle data-for="max-reg-date-info" data-tip={`Leave this field unchecked and empty if this event has no maximum registration date.`} />
+                    <span className="truncate">Max Registration Date </span>
+                    <BsInfoCircle
+                      data-for="max-reg-date-info"
+                      data-tip={`Leave this field unchecked and empty if user may register until the very last minute before the event start (no maximum registration date).`}
+                      className="min-w-fit"
+                    />
                   </>
                 }
                 width="1/3"
@@ -201,7 +205,7 @@ const AddEventPage = () => {
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
               <div className="w-full px-3">
-                <label className="flex gap-2 items-center uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                <label className="flex gap-2 items-center justify-between uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                   Benefits{' '}
                   <BsPlusCircle
                     strokeWidth={0.5}
@@ -211,8 +215,8 @@ const AddEventPage = () => {
                     }}
                   />
                 </label>
-                {fields.map((f, index) => (
-                  <Fade triggerOnce className="w-full" key={index}>
+                {fields.map((f, index) => {
+                  const el = (
                     <div className="flex mb-3">
                       <input
                         {...methods.register(`benefits.${index}.amount`)}
@@ -234,9 +238,24 @@ const AddEventPage = () => {
                           })}
                       </select>
                     </div>
-                  </Fade>
-                ))}
+                  )
+                  if (index === 0) return el
+                  return (
+                    <Fade triggerOnce className="w-full" key={index}>
+                      {el}
+                    </Fade>
+                  )
+                })}
               </div>
+            </div>
+            <div className="flex flex-wrap -mx-3 mb-6">
+              <Input
+                name="postRegistrationDescription"
+                inputType="textarea"
+                placeholder="Show a text to the user after they have succesfully registered to this event and their registration has been approved. E.g: zoom meeting link, meeting id, and/or meeting passcode."
+                title="Post-Registration Description"
+                width="full"
+              />
             </div>
             <div className="w-full flex justify-end">
               <button
