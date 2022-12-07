@@ -11,7 +11,6 @@ import { useDocumentData } from 'react-firebase-hooks/firestore'
 import NotFoundPage from '../404'
 import { useAuth } from '../../lib/authContext'
 import { organizationConverter } from '../../lib/types/Organization'
-import Link from 'next/link'
 
 const EventDetail = () => {
   const router = useRouter()
@@ -19,10 +18,18 @@ const EventDetail = () => {
   const { eventId } = router.query
   const eventRef = doc(db, 'event', `${eventId}`).withConverter(eventConverter)
   const [event, loadingEvent, errorEvent, snapshot] = useDocumentData(eventRef)
+  // const registeredUsersRef = collection(db, 'event', `${eventId}`, 'registeredUsers') //.withConverter(eventConverter);
+  // const [registeredUsers, loadingRegisteredUsers, errorRegisteredUsers] = useCollectionData(registeredUsersRef)
 
   const orgRef = event?.organization.withConverter(organizationConverter)
   const [organization, loadingOrg, errorOrg] = useDocumentData(orgRef)
 
+  // useEffect(() => {
+  //   console.log(event)
+  //   getDocs(collection(db, `event/${eventId}/registeredUsers`)).then((value) => {
+  //     value.forEach((v) => console.log(v.data()))
+  //   })
+  // }, [event])
   if (loadingEvent || loadingOrg) {
     return <>Loading</>
   }
@@ -40,9 +47,9 @@ const EventDetail = () => {
   return (
     <div className="px-40">
       <div className="flex items-center">
-        <Link href={`/`} passHref>
+        <div onClick={() => router.back()}>
           <IoMdArrowBack className="mr-2 text-xl cursor-pointer" />
-        </Link>
+        </div>
         <h4 className="font-secondary text-2xl mb-1 gap-2 flex md:flex-row flex-col ">
           <b>{event?.name}</b> <span className="text-gray-400">({organization?.name})</span>
         </h4>

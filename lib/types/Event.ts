@@ -5,6 +5,19 @@ export interface Benefit {
   type: string
 }
 
+export interface Fee {
+  amount: number
+  description: string
+}
+
+export interface RegisteredUsers {
+  status: 'Pending' | 'Approved' | 'Rejected'
+  proof: string
+  isPresent: boolean
+  paymentDeadline: Timestamp
+  user: DocumentReference
+}
+
 export interface Event {
   eventId?: string
   image: string
@@ -16,6 +29,9 @@ export interface Event {
   endDate?: Timestamp
   description: string
   users?: DocumentReference[]
+  postRegistrationDescription?: string
+  maxRegistrationDate?: Timestamp
+  fee?: Fee // kalo null, berarti eventnya free
 }
 
 export const eventConverter = {
@@ -30,6 +46,9 @@ export const eventConverter = {
       endDate: event.endDate,
       description: event.description,
       users: event.users,
+      postRegistrationDescription: event.postRegistrationDescription,
+      maxRegistrationDate: event.maxRegistrationDate,
+      fee: event.fee,
     }
   },
   fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): Event {
@@ -47,6 +66,9 @@ export const eventConverter = {
       endDate: data.endDate,
       description: data.description,
       users: data.users,
+      postRegistrationDescription: data.postRegistrationDescription,
+      maxRegistrationDate: data.maxRegistrationDate,
+      fee: data.fee,
     }
   },
 }
