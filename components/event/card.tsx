@@ -26,7 +26,7 @@ const Card = ({ event }: Props) => {
   const isRegistered = user && user.length > 0 && event && event.users && event.users.length > 0 && event.users.some(u => u.id === user[0].userId)
   return (
     <Link href={`event/${event.eventId}`} key={event.eventId} passHref>
-      <div className={`cursor-pointer transition-colors duration-500 rounded-lg border border-blue-100 hover:bg-blue-50 flex justify-between gap-5 items-start relative md:h-56 p-5 md:flex-row flex-col`}>
+      <div className={`cursor-pointer transition-colors duration-500 rounded-lg border border-blue-100 bg-white hover:bg-blue-50 flex justify-between gap-5 items-start relative md:h-56 p-5 md:flex-row flex-col`}>
         { isRegistered && <div className="absolute bottom-6 right-6 text-sm font-bold text-white bg-blue-400 px-4 py-2 rounded-lg">Registered</div> }
         <div className="md:basis-1/6 lg:w-auto w-full h-40 md:w-20 md:h-full relative rounded">
           <Image className="relative rounded" objectFit="cover" src={event.image} alt={event.name} sizes="100%" layout="fill"></Image>
