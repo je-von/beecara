@@ -40,6 +40,7 @@ const AddEventPage = () => {
     control: methods.control,
   })
   const [hasFee, setHasFee] = useState(false)
+  const [hasMaxRegDate, setHasMaxRegDate] = useState(false)
   const benefitTypes = ['SAT Points', 'ComServ Hours', 'Others']
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     const imageFile = data.image[0]
@@ -138,8 +139,23 @@ const AddEventPage = () => {
               <Input name="description" inputType="textarea" validation={{ required: true }} placeholder="A Very Fun Event" title="Event Description" width="full" />
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
-              <Input name="startDate" inputType="datetime-local" validation={{ required: true }} title="Start Time" width="1/2" />
-              <Input name="endDate" inputType="datetime-local" validation={{ required: true }} title="End Time" width="1/2" />
+              <Input name="startDate" inputType="datetime-local" validation={{ required: true }} title="Start Time" width="1/3" />
+              <Input name="endDate" inputType="datetime-local" validation={{ required: true }} title="End Time" width="1/3" />
+              {/* TODO: validate date must before start date */}
+              <Input
+                name="maxRegistrationDate"
+                inputType="datetime-local"
+                isDisabled={!hasMaxRegDate}
+                title={
+                  <>
+                    <input type="checkbox" className="bg-gray-100 border-gray-300 text-sky-400 focus:ring-sky-200 rounded" onChange={(e) => setHasMaxRegDate(e.target.checked)} />
+                    Max Registration Date{' '}
+                    <BsInfoCircle data-for="max-reg-date-info" data-tip={`Leave this field unchecked and empty if this event has no maximum registration date.`} />
+                  </>
+                }
+                width="1/3"
+              />
+              <ReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="max-reg-date-info" />
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
               <Input name="location" inputType="text" validation={{ required: true, maxLength: 255 }} title="Location" width="1/2" placeholder="Location" />
