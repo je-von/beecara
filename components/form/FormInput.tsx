@@ -11,9 +11,10 @@ interface Props {
   value?: string
   width: 'full' | '1/2' | '1/3'
   additionalAppend?: ReactNode
+  additionalPrepend?: ReactNode
 }
 
-const Input = ({ name, validation, inputType, placeholder, title, width, isDisabled, value, additionalAppend }: Props) => {
+const Input = ({ name, validation, inputType, placeholder, title, width, isDisabled, value, additionalAppend, additionalPrepend }: Props) => {
   const {
     register,
     formState: { errors },
@@ -28,12 +29,17 @@ const Input = ({ name, validation, inputType, placeholder, title, width, isDisab
   }
   return (
     <div className={`${width === 'full' ? 'md:w-full' : width === '1/2' ? 'md:w-1/2' : 'md:w-1/3'} w-full px-3`}>
-      <label className="flex gap-2 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">{title}</label>
+      <label className="flex gap-2 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 w-full">
+        {title} {validation?.required && '*'}
+      </label>
       <div className="flex mb-3">
+        {additionalPrepend}
         <RawInput
-          className={`resize-none appearance-none block w-full bg-gray-200 text-gray-700 border ${
+          className={`resize-none appearance-none block w-full ${isDisabled ? 'bg-gray-200' : 'bg-white'} text-gray-700 border ${
             errors[name] ? 'border-red-500' : 'border-gray-300'
-          } rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white ${additionalAppend ? 'rounded-r-none' : ''} ${isDisabled ? 'cursor-not-allowed' : ''}`}
+          } rounded py-3 px-4 leading-tight focus:outline-none  focus:ring-sky-400 focus:bg-white ${additionalAppend ? 'rounded-r-none' : ''} ${
+            additionalPrepend ? 'rounded-l-none' : ''
+          } ${isDisabled ? 'cursor-not-allowed' : ''}`}
           type={inputType}
           placeholder={placeholder}
           disabled={isDisabled}

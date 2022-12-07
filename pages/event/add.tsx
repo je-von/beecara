@@ -11,7 +11,7 @@ import ReactTooltip from 'react-tooltip'
 import Input from '../../components/form/FormInput'
 import { useAuth } from '../../lib/authContext'
 import { db, storage } from '../../lib/firebaseConfig/init'
-import { Benefit, eventConverter } from '../../lib/types/Event'
+import { Benefit, Fee, eventConverter } from '../../lib/types/Event'
 import { organizationConverter } from '../../lib/types/Organization'
 interface FormValues {
   name: string
@@ -22,6 +22,9 @@ interface FormValues {
   capacity: number
   benefits: Benefit[]
   image: FileList
+  fee: Fee
+  postRegistrationDescription: string
+  maxRegistrationDate: string
 }
 
 const AddEventPage = () => {
@@ -35,6 +38,7 @@ const AddEventPage = () => {
     name: 'benefits',
     control: methods.control,
   })
+  const [hasFee, setHasFee] = useState(false)
   const benefitTypes = ['SAT Points', 'ComServ Hours', 'Others']
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     const imageFile = data.image[0]
@@ -106,7 +110,7 @@ const AddEventPage = () => {
                 <input type="file" {...methods.register('image', { required: true })} accept="image/*" className="opacity-0" onChange={onImageChange} />
               </label>
             </div>
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Upload Image (jpg,png,svg,jpeg)</label>
+            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Upload Image (jpg,png,svg,jpeg) *</label>
           </div>
           <div className="lg:basis-2/3">
             <div className="flex flex-wrap -mx-3 mb-6">
@@ -118,6 +122,7 @@ const AddEventPage = () => {
                   <>
                     Organization{' '}
                     <BsInfoCircle
+                      data-for="org-info"
                       data-tip={`You are the admin of <b>${organization?.name}</b>. After submitting, the event you added will be the responsibility of <b>${organization?.name}</b>.`}
                     />
                   </>
@@ -126,7 +131,7 @@ const AddEventPage = () => {
                 isDisabled
                 value={`${organization?.name}`}
               />
-              <ReactTooltip multiline html class="max-w-sm text-center leading-5" place="bottom" />
+              <ReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="org-info" />
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
               <Input name="description" inputType="textarea" validation={{ required: true }} placeholder="A Very Fun Event" title="Event Description" width="full" />
@@ -148,6 +153,34 @@ const AddEventPage = () => {
               />
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
+              <Input
+                name="fee.amount"
+                inputType="number"
+                validation={{ min: 1000 }}
+                isDisabled={!hasFee}
+                title={
+                  <>
+                    <input type="checkbox" className="bg-gray-100 border-gray-300 text-sky-400 focus:ring-sky-200 rounded" onChange={(e) => setHasFee(e.target.checked)} />
+                    Fee <BsInfoCircle data-for="fee-info" data-tip={`Leave this field unchecked and empty if this event is <b>FREE</b>.`} />
+                  </>
+                }
+                width="full"
+                placeholder="0"
+                additionalPrepend={<span className="inline-flex items-center px-3 text-gray-600 bg-gray-300 rounded-l">Rp</span>}
+              />
+              <ReactTooltip html multiline className="text-center leading-5" place="right" id="fee-info" />
+              {hasFee && (
+                <Input
+                  name="fee.description"
+                  inputType="textarea"
+                  validation={{ required: hasFee }}
+                  placeholder="Put the available payment methods here, e.g: the bank account number and the account holder name. Make sure to describe it clearly and as detail as possible to avoid payment errors at the user's end."
+                  title="Fee Description"
+                  width="full"
+                />
+              )}
+            </div>
+            <div className="flex flex-wrap -mx-3 mb-6">
               <div className="w-full px-3">
                 <label className="flex gap-2 items-center uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                   Benefits{' '}
@@ -163,10 +196,10 @@ const AddEventPage = () => {
                   <div className="flex mb-3" key={index}>
                     <input
                       {...methods.register(`benefits.${index}.amount`)}
-                      className={`appearance-none block w-full bg-gray-200 text-gray-700 border-gray-300 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white rounded-r-none`}
+                      className={`appearance-none block w-full bg-white text-gray-700 border-gray-300 focus:ring-sky-400 border rounded py-3 px-4 leading-tight focus:outline-none rounded-r-none`}
                       type={methods.watch(`benefits.${index}.type`) == 'Others' ? 'text' : 'number'}
                     />
-                    <select {...methods.register(`benefits.${index}.type`)} className="w-40 inline-flex items-center px-2 text-gray-600 bg-gray-300 rounded-r">
+                    <select {...methods.register(`benefits.${index}.type`)} className="w-40 inline-flex items-center px-2 text-gray-600 bg-gray-300 rounded-r border-0">
                       <option value="" disabled hidden>
                         Type
                       </option>
