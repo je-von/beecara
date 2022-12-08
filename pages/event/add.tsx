@@ -6,13 +6,15 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { FormProvider, SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
-import { BsInfoCircle, BsPlusCircle } from 'react-icons/bs'
+import { BsInfoCircle } from 'react-icons/bs'
+import { BiMinusCircle, BiPlusCircle } from 'react-icons/bi'
 import ReactTooltip from 'react-tooltip'
 import Input from '../../components/form/FormInput'
 import { useAuth } from '../../lib/authContext'
 import { db, storage } from '../../lib/firebaseConfig/init'
 import { Benefit, Fee, eventConverter } from '../../lib/types/Event'
 import { organizationConverter } from '../../lib/types/Organization'
+import { Fade } from 'react-awesome-reveal'
 interface FormValues {
   name: string
   description: string
@@ -34,11 +36,12 @@ const AddEventPage = () => {
   const [organization, loadingOrg, error] = useDocumentData(organizationRef)
   const [imageURL, setImageURL] = useState<string>()
   const methods = useForm<FormValues>({ defaultValues: { benefits: [{ amount: '', type: '' }] } })
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     name: 'benefits',
     control: methods.control,
   })
   const [hasFee, setHasFee] = useState(false)
+  const [hasMaxRegDate, setHasMaxRegDate] = useState(false)
   const benefitTypes = ['SAT Points', 'ComServ Hours', 'Others']
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     const imageFile = data.image[0]
@@ -86,7 +89,7 @@ const AddEventPage = () => {
       </Head>
 
       <FormProvider {...methods}>
-        <form className="flex lg:flex-row flex-col h-full px-10 gap-5 mb-10" onSubmit={methods.handleSubmit(onSubmit)}>
+        <form className="flex lg:flex-row flex-col h-full px-10 gap-7 mb-10" onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="lg:basis-1/3 w-full lg:h-[70vh] md:h-[50vh] h-48 flex flex-col lg:mb-0 mb-5">
             {/* <Image className="relative" objectFit="contain" src={'/assets/add_vector.svg'} alt={'Add Event'} sizes="100%" layout="fill" /> */}
             <h1 className="text-2xl font-black font-secondary">Add Event</h1>
@@ -137,8 +140,27 @@ const AddEventPage = () => {
               <Input name="description" inputType="textarea" validation={{ required: true }} placeholder="A Very Fun Event" title="Event Description" width="full" />
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
-              <Input name="startDate" inputType="datetime-local" validation={{ required: true }} title="Start Time" width="1/2" />
-              <Input name="endDate" inputType="datetime-local" validation={{ required: true }} title="End Time" width="1/2" />
+              <Input name="startDate" inputType="datetime-local" validation={{ required: true }} title="Start Time" width="1/3" />
+              <Input name="endDate" inputType="datetime-local" validation={{ required: true }} title="End Time" width="1/3" />
+              {/* TODO: validate date must before start date */}
+              <Input
+                name="maxRegistrationDate"
+                inputType="datetime-local"
+                isDisabled={!hasMaxRegDate}
+                title={
+                  <>
+                    <input type="checkbox" className="bg-gray-100 border-gray-300 text-sky-400 focus:ring-sky-200 rounded" onChange={(e) => setHasMaxRegDate(e.target.checked)} />
+                    <span className="truncate">Max Registration Date </span>
+                    <BsInfoCircle
+                      data-for="max-reg-date-info"
+                      data-tip={`Leave this field unchecked and empty if user may register until the very last minute before the event start (no maximum registration date).`}
+                      className="min-w-fit"
+                    />
+                  </>
+                }
+                width="1/3"
+              />
+              <ReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="max-reg-date-info" />
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
               <Input name="location" inputType="text" validation={{ required: true, maxLength: 255 }} title="Location" width="1/2" placeholder="Location" />
@@ -170,52 +192,82 @@ const AddEventPage = () => {
               />
               <ReactTooltip html multiline className="text-center leading-5" place="right" id="fee-info" />
               {hasFee && (
-                <Input
-                  name="fee.description"
-                  inputType="textarea"
-                  validation={{ required: hasFee }}
-                  placeholder="Put the available payment methods here, e.g: the bank account number and the account holder name. Make sure to describe it clearly and as detail as possible to avoid payment errors at the user's end."
-                  title="Fee Description"
-                  width="full"
-                />
+                <Fade triggerOnce className="w-full">
+                  <Input
+                    name="fee.description"
+                    inputType="textarea"
+                    validation={{ required: hasFee }}
+                    placeholder="Put the available payment methods here, e.g: the bank account number and the account holder name. Make sure to describe it clearly and as detail as possible to avoid payment errors at the user's end."
+                    title="Fee Description"
+                    width="full"
+                  />
+                </Fade>
               )}
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
               <div className="w-full px-3">
-                <label className="flex gap-2 items-center uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                <label className="flex gap-2 items-center justify-between uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                   Benefits{' '}
-                  <BsPlusCircle
+                  <BiPlusCircle
                     strokeWidth={0.5}
-                    className="text-lg cursor-pointer hover:text-sky-400 transition hover:scale-105 duration-300 ease-in-out "
+                    className="text-xl cursor-pointer hover:text-sky-400 transition hover:scale-105 duration-300 ease-in-out "
                     onClick={() => {
                       if (fields.length < 3) append({ amount: '', type: '' })
                     }}
                   />
                 </label>
-                {fields.map((f, index) => (
-                  <div className="flex mb-3" key={index}>
-                    <input
-                      {...methods.register(`benefits.${index}.amount`)}
-                      className={`appearance-none block w-full bg-white text-gray-700 border-gray-300 focus:ring-sky-400 border rounded py-3 px-4 leading-tight focus:outline-none rounded-r-none`}
-                      type={methods.watch(`benefits.${index}.type`) == 'Others' ? 'text' : 'number'}
-                    />
-                    <select {...methods.register(`benefits.${index}.type`)} className="w-40 inline-flex items-center px-2 text-gray-600 bg-gray-300 rounded-r border-0">
-                      <option value="" disabled hidden>
-                        Type
-                      </option>
-                      {benefitTypes
-                        .filter((b) => methods.watch(`benefits`).find((m, innerIndex) => innerIndex != index && m.type == b) == null)
-                        .map((b, index) => {
-                          return (
-                            <option value={b} key={index}>
-                              {b}
-                            </option>
-                          )
-                        })}
-                    </select>
-                  </div>
-                ))}
+                {fields.map((f, index) => {
+                  const el = (
+                    <>
+                      <div className="flex w-full">
+                        <input
+                          {...methods.register(`benefits.${index}.amount`)}
+                          className={`appearance-none block w-full bg-white text-gray-700 border-gray-300 focus:ring-sky-400 border rounded py-3 px-4 leading-tight focus:outline-none rounded-r-none`}
+                          type={methods.watch(`benefits.${index}.type`) == 'Others' ? 'text' : 'number'}
+                        />
+                        <select {...methods.register(`benefits.${index}.type`)} className="w-52 inline-flex items-center px-2 text-gray-600 bg-gray-300 rounded-r border-0">
+                          <option value="" hidden>
+                            Type
+                          </option>
+                          {benefitTypes
+                            .filter((b) => methods.watch(`benefits`).find((m, innerIndex) => innerIndex != index && m.type == b) == null)
+                            .map((b, innerInnerIndex) => {
+                              return (
+                                <option value={b} key={innerInnerIndex}>
+                                  {b}
+                                </option>
+                              )
+                            })}
+                        </select>
+                      </div>
+                      <BiMinusCircle
+                        onClick={() => remove(index)}
+                        className="ml-3 text-xl min-w-fit cursor-pointer text-red-300 hover:text-red-500 transition hover:scale-105 duration-300 ease-in-out "
+                      />
+                    </>
+                  )
+                  if (index === 0)
+                    return (
+                      <div className="flex mb-3 items-center" key={index}>
+                        {el}
+                      </div>
+                    )
+                  return (
+                    <Fade triggerOnce className="w-full flex mb-3 items-center" key={index}>
+                      {el}
+                    </Fade>
+                  )
+                })}
               </div>
+            </div>
+            <div className="flex flex-wrap -mx-3 mb-6">
+              <Input
+                name="postRegistrationDescription"
+                inputType="textarea"
+                placeholder="Show a text to the user after they have succesfully registered to this event and their registration has been approved. E.g: zoom meeting link, meeting id, and/or meeting passcode."
+                title="Post-Registration Description"
+                width="full"
+              />
             </div>
             <div className="w-full flex justify-end">
               <button
