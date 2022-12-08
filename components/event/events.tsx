@@ -93,7 +93,7 @@ const EventList = () => {
             ?.filter((d) => d.benefit && benefitFilters.filter((bf) => d.benefit?.find((b) => b.type == bf)).length == benefitFilters.length)
             .filter((d) => d.name.toLowerCase().includes(keyword) || d.organization.id.toLowerCase().includes(keyword))
             .map((d) => (
-              <Card key={d.eventId} event={d} />
+              <Card key={d.eventId} event={d} showTitle showDate showImage showBenefits showSlot showRegisterStatus showOrganizer />
             ))}
         </div>
       )}
