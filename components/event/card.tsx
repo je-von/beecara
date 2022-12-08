@@ -32,7 +32,6 @@ const Card = ({ event }: Props) => {
   const userRef = collection(db, 'user').withConverter(userConverter)
   const [user, loadingUser, errorUser] = useCollectionData(query(userRef, where('email', '==', `${userAuth?.email}`), limit(1)))
   const [organization, loadingOrganization, errorOrganization] = useDocumentData(organizationRef)
-  //TODO: add spinner / skeleton
   if (loadingAuth || loadingUser || loadingOrganization) return <SkeletonCard />
   const isRegistered = user && user.length > 0 && event && event.users && event.users.length > 0 && event.users.some((u) => u.id === user[0].userId)
   return (

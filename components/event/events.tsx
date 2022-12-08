@@ -6,7 +6,7 @@ import { db } from '../../lib/firebaseConfig/init'
 import { eventConverter } from '../../lib/types/Event'
 import UnderlineButton from '../button/UnderlineButton'
 import CalendarEventView from './calendar'
-import Card from './card'
+import Card, { SkeletonCard } from './card'
 
 const EventList = () => {
   const [showFilterDropdown, setShowFilterDropdown] = useState<Boolean>(false)
@@ -22,7 +22,7 @@ const EventList = () => {
   const toggleDropdown = () => setShowFilterDropdown((s) => !s)
 
   //TODO: add spinner / skeleton
-  if (loading) return <h1>Loading...</h1>
+  // if (loading) return <h1>Loading...</h1>
 
   return (
     <div className="py-5 flex flex-col gap-4">
@@ -93,12 +93,14 @@ const EventList = () => {
         <CalendarEventView events={data} />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 justify-center items-stretch gap-8">
-          {data
-            ?.filter((d) => d.benefit && benefitFilters.filter((bf) => d.benefit?.find((b) => b.type == bf)).length == benefitFilters.length)
-            .filter((d) => d.name.toLowerCase().includes(keyword) || d.organization.id.toLowerCase().includes(keyword))
-            .map((d) => (
-              <Card key={d.eventId} event={d} />
-            ))}
+          {loading ? (
+            <SkeletonCard />
+          ) : (
+            data
+              ?.filter((d) => d.benefit && benefitFilters.filter((bf) => d.benefit?.find((b) => b.type == bf)).length == benefitFilters.length)
+              .filter((d) => d.name.toLowerCase().includes(keyword) || d.organization.id.toLowerCase().includes(keyword))
+              .map((d) => <Card key={d.eventId} event={d} />)
+          )}
         </div>
       )}
     </div>
