@@ -3,12 +3,7 @@ import Link from 'next/link'
 import { FaCalendar } from 'react-icons/fa'
 import { BsPeopleFill } from 'react-icons/bs'
 import { Event } from '../../lib/types/Event'
-import { organizationConverter } from '../../lib/types/Organization'
-import { useCollectionData, useDocumentData } from 'react-firebase-hooks/firestore'
 import { useAuth } from '../../lib/authContext'
-import { collection, limit, query, where } from 'firebase/firestore'
-import { db } from '../../lib/firebaseConfig/init'
-import { userConverter } from '../../lib/types/User'
 import Skeleton from 'react-loading-skeleton'
 
 interface Props {
@@ -26,13 +21,9 @@ export const SkeletonCard = () => (
 )
 
 const Card = ({ event }: Props) => {
-  const { user: userAuth, loading: loadingAuth } = useAuth()
-  const organizationRef = event.organization.withConverter(organizationConverter)
-  const userRef = collection(db, 'user').withConverter(userConverter)
-  const [user, loadingUser, errorUser] = useCollectionData(query(userRef, where('email', '==', `${userAuth?.email}`), limit(1)))
-  const [organization, loadingOrganization, errorOrganization] = useDocumentData(organizationRef)
-  if (loadingAuth || loadingUser || loadingOrganization) return <SkeletonCard />
-  const isRegistered = user && user.length > 0 && event && event.users && event.users.length > 0 && event.users.some((u) => u.id === user[0].userId)
+  const { user, loading: loadingAuth } = useAuth()
+  if (loadingAuth) return <SkeletonCard />
+  const isRegistered = event?.users?.some((u) => u.id === user?.userId)
   return (
     <Link href={`event/${event.eventId}`} key={event.eventId} passHref>
       <div
