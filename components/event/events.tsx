@@ -21,9 +21,6 @@ const EventList = () => {
 
   const toggleDropdown = () => setShowFilterDropdown((s) => !s)
 
-  //TODO: add spinner / skeleton
-  // if (loading) return <h1>Loading...</h1>
-
   return (
     <div className="py-5 flex flex-col gap-4">
       <div>

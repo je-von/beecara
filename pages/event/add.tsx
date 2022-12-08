@@ -15,6 +15,7 @@ import { Fade } from 'react-awesome-reveal'
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { db, storage } from '../../lib/firebaseConfig/init'
 import { DocumentReference, Timestamp, addDoc, collection } from 'firebase/firestore'
+import ClipLoader from 'react-spinners/ClipLoader'
 interface FormValues {
   name: string
   description: string
@@ -42,14 +43,15 @@ const AddEventPage = () => {
   })
   const [hasFee, setHasFee] = useState(false)
   const [hasMaxRegDate, setHasMaxRegDate] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   useEffect(() => {
     console.log(methods.formState)
   }, [methods.formState])
   const benefitTypes = ['SAT Points', 'ComServ Hours', 'Others']
   const onSubmit: SubmitHandler<FormValues> = (data) => {
+    setIsSubmitting(true)
     const imageFile = data.image[0]
 
-    console.log(data)
     // Upload Image to Storage
     uploadBytesResumable(ref(storage, `image/event/${imageFile.name}`), imageFile).then((snapshot) => {
       // Get URL
@@ -69,6 +71,7 @@ const AddEventPage = () => {
           maxRegistrationDate: hasMaxRegDate ? Timestamp.fromDate(new Date(data.maxRegistrationDate)) : Timestamp.fromDate(new Date(data.startDate)),
           postRegistrationDescription: data.postRegistrationDescription,
         }).then(() => {
+          setIsSubmitting(false)
           router.push('/home')
         })
       })
@@ -79,9 +82,6 @@ const AddEventPage = () => {
   function onImageChange(e: any) {
     if (e.target.files && e.target.files.length > 0) setImageURL(URL.createObjectURL(e.target.files[0]))
   }
-
-  //TODO: add spinner / skeleton
-  if (loading) return <h1>Loading...</h1>
 
   //TODO: middleware
   //   if (!loading && (!user || !user.adminOf)) {
@@ -139,7 +139,7 @@ const AddEventPage = () => {
                 }
                 width="1/2"
                 isDisabled
-                value={`${organization?.name}`}
+                value={`${loading || loadingOrg ? '-' : organization?.name}`}
               />
               <ReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="org-info" />
             </div>
@@ -300,9 +300,11 @@ const AddEventPage = () => {
             <div className="w-full flex justify-end">
               <button
                 type="submit"
-                className="flex items-center justify-center bg-sky-400 text-white font-bold rounded py-3 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
+                className={`flex w-32 items-center justify-center bg-sky-400 text-white font-bold rounded py-3 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition ${
+                  isSubmitting ? 'cursor-not-allowed' : 'hover:scale-105'
+                } duration-300 ease-in-out`}
               >
-                SUBMIT
+                {isSubmitting ? <ClipLoader size={24} color={'#ffffff'} /> : 'SUBMIT'}
               </button>
             </div>
           </div>

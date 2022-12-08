@@ -32,6 +32,7 @@
     "react-hook-form": "^7.40.0",
     "react-icons": "^4.6.0",
     "react-loading-skeleton": "^3.1.0",
+    "react-spinners": "^0.13.7",
     "react-tooltip": "^4.5.1"
   },
   "devDependencies": {
