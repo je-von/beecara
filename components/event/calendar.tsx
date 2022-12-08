@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Event } from '../../lib/types/Event'
 import Card from './card'
 
@@ -16,8 +16,8 @@ const CalendarEventView = ({ initialDate, events }: Props) => {
   const calendarHeader = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
   const [activeDate, setActiveDate] = useState<Date>(initialDate ? initialDate : new Date())
   const [activeDays, setActiveDays] = useState<CalendarDay[][]>([])
-  const today = new Date()
 
+  const today = useMemo(() => new Date(), [])
   useEffect(() => {
     let _active = new Date(activeDate.getFullYear(), activeDate.getMonth(), 1)
     let _prev = new Date(activeDate.getFullYear(), activeDate.getMonth() - 1, 1)
@@ -59,7 +59,7 @@ const CalendarEventView = ({ initialDate, events }: Props) => {
       splitted.push(_calendarDays.slice(7 * i, 7 + 7 * i))
     }
     setActiveDays(splitted)
-  }, [activeDate])
+  }, [activeDate, today])
 
   const isEqualDate = (firstDate: Date, secondDate: Date) => {
     return firstDate.getDate() === secondDate.getDate() && firstDate.getMonth() === secondDate.getMonth() && firstDate.getFullYear() === secondDate.getFullYear()
@@ -157,7 +157,7 @@ const CalendarEventView = ({ initialDate, events }: Props) => {
                               }}
                             >
                               <div
-                                className={`h-full rounded-full aspect-square text-center p-[0.5vh] ${
+                                className={`h-full rounded-full aspect-square text-center w-6 flex items-center justify-center ${
                                   day.date &&
                                   (isEqualDate(activeDate, day.date)
                                     ? 'bg-blue-400 text-white'

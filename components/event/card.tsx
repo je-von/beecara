@@ -30,7 +30,7 @@ export const SkeletonCard = () => (
   </div>
 )
 
-const Card = ({ event, showRegisterStatus, showImage, showTitle, showDate, showSlot, showOrganizer, showBenefits }: Props) => {
+const Card = ({ event, showRegisterStatus = true, showImage = true, showTitle = true, showDate = true, showSlot = true, showOrganizer = true, showBenefits = true }: Props) => {
   const { user, loading: loadingAuth } = useAuth()
   const ref = collection(db, `event/${event.eventId}/registeredUsers`).withConverter(eventRegisteredUsersConverter)
   const [data, loadingRegistered, error] = useCollectionData(query(ref, where('user', '==', doc(db, 'user', `${user?.userId}`))))
@@ -46,7 +46,7 @@ const Card = ({ event, showRegisterStatus, showImage, showTitle, showDate, showS
         {showRegisterStatus && isRegistered ? (
           <div
             className={`absolute top-0 left-0 z-10 text-sm font-bold text-white ${
-              data[0].status === 'Approved' ? 'bg-sky-400' : data[0].status === 'Pending' ? 'bg-orange-400' : 'bg-red-400'
+              data[0].status === 'Registered' ? 'bg-sky-400' : data[0].status === 'Pending' ? 'bg-orange-400' : 'bg-red-400'
             } px-4 py-2 rounded-br-xl`}
           >
             {data[0].status}

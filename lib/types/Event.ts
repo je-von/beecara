@@ -11,7 +11,7 @@ export interface Fee {
 }
 
 export interface RegisteredUsers {
-  status: 'Pending' | 'Approved' | 'Rejected'
+  status: 'Pending' | 'Registered' | 'Rejected'
   proof?: string
   isPresent: boolean
   paymentDeadline: Timestamp
