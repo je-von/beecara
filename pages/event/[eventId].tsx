@@ -4,9 +4,9 @@ import { GiAchievement } from 'react-icons/gi'
 import { IoMdArrowBack } from 'react-icons/io'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { arrayRemove, arrayUnion, collection, doc, limit, query, updateDoc, where } from 'firebase/firestore'
+import { Timestamp, addDoc, collection, doc, limit, query, where } from 'firebase/firestore'
 import { db } from '../../lib/firebaseConfig/init'
-import { Benefit, eventConverter } from '../../lib/types/Event'
+import { Benefit, eventConverter, eventRegisteredUsersConverter } from '../../lib/types/Event'
 import { useCollectionData, useDocumentData } from 'react-firebase-hooks/firestore'
 import NotFoundPage from '../404'
 import { useAuth } from '../../lib/authContext'
@@ -48,19 +48,31 @@ const EventDetail = () => {
   }
 
   const registerEvent = () => {
-    updateDoc(doc(db, 'event', `${eventId}`), {
-      users: arrayUnion(doc(db, 'user', `${userAuth?.userId}`)),
+    //TODO: kasih terms and condition dulu mungkin, pokoknya ada prosesnya, biar gabisa gasengajar keklik. terus validasi juga, profile udah complete belom
+    // updateDoc(doc(db, 'event', `${eventId}`), {
+    //   users: arrayUnion(doc(db, 'user', `${userAuth?.userId}`)),
+    // }).then(() => {
+    //   console.log('Register Success') // TODO: create alert / toast
+    // })
+
+    addDoc(collection(db, `event/${eventId}/registeredUsers`).withConverter(eventRegisteredUsersConverter), {
+      isPresent: false,
+      paymentDeadline: event?.startDate as Timestamp, //TODO: fix,
+      status: 'Pending',
+      user: doc(db, 'user', `${userAuth?.userId}`),
+      proof: '', //TODO: fix
     }).then(() => {
       console.log('Register Success') // TODO: create alert / toast
     })
   }
 
   const unregisterEvent = () => {
-    updateDoc(doc(db, 'event', `${eventId}`), {
-      users: arrayRemove(doc(db, 'user', `${userAuth?.userId}`)),
-    }).then(() => {
-      console.log('Unregister success') // TODO: create alert / toast
-    })
+    //TODO: updatenya nanti change status di dalem collectionnya aja
+    // updateDoc(doc(db, 'event', `${eventId}`), {
+    //   users: arrayRemove(doc(db, 'user', `${userAuth?.userId}`)),
+    // }).then(() => {
+    //   console.log('Unregister success') // TODO: create alert / toast
+    // })
   }
 
   return (
