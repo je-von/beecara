@@ -66,14 +66,14 @@ const CalendarEventView = ({ initialDate, events }: Props) => {
   }
 
   return (
-    <div className="flex sm:min-h-[100vh] items-stretch justify-center ">
+    <div className="flex min-h-[100vh] items-stretch justify-center ">
       <div className="flex flex-col-reverse md:flex-row w-full shadow-lg">
         <div className="flex-1 w-full md:w-2/3 h-full md:py-8 py-5 md:px-16 px-5 bg-[#0290d1]/10 rounded-none rounded-b md:rounded-l">
           <div className="flex flex-col gap-4">
             {events
               ?.filter((ev) => ev.startDate && isEqualDate(ev.startDate?.toDate(), activeDate))
               .map((en, index) => {
-                return <Card key={en.eventId} event={en} />
+                return <Card key={en.eventId} event={en} horizontalLayout />
               })}
           </div>
         </div>
