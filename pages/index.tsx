@@ -63,7 +63,7 @@ const Home: NextPage = () => {
         getDoc(userRef.withConverter(userConverter)).then((res) => {
           if (!res.exists()) {
             // Kalo gak di cek dulu (getDoc dulu), sebenernya aman2 aja di db, tapi pas difetch pertama kali abis login, adminOf suka undefined (mungkin karna caching)
-            setDoc(userRef, { name: user.displayName, email: user.email }, { merge: true }).then(() => router.push('/home'))
+            setDoc(userRef, { name: user.displayName, email: user.email, lineID: null, phoneNumber: null, instagram: null }, { merge: true }).then(() => router.push('/home'))
           }
         })
       })
