@@ -24,6 +24,7 @@ import '@fontsource/public-sans/800.css'
 import '@fontsource/public-sans/900.css'
 
 import '../styles/globals.css'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
