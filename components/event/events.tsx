@@ -1,9 +1,10 @@
 import { collection, orderBy, query } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
-import { BsCheckSquareFill, BsFillCalendarWeekFill, BsFilter, BsSquare, BsViewStacked } from 'react-icons/bs'
+import { BsCalendar, BsCheckSquareFill, BsFilter, BsSquare, BsViewStacked } from 'react-icons/bs'
 import { db } from '../../lib/firebaseConfig/init'
 import { eventConverter } from '../../lib/types/Event'
+import UnderlineButton from '../button/UnderlineButton'
 import CalendarEventView from './calendar'
 import Card from './card'
 
@@ -30,36 +31,63 @@ const EventList = () => {
         <p>Blablabla, kasih text gitu kek: register to any of the following events to increase your SAT ato apa gt!</p>
       </div>
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between items-center">
+        <div className="flex md:flex-row flex-col gap-2 justify-between items-center">
           <div className="relative">
-            <button className="flex gap-2 items-center cursor-pointer" onClick={toggleDropdown}>
-              <BsFilter /> Filter
-            </button>
-            <div className={`${!showFilterDropdown && 'hidden'}  absolute left-0 z-50 w-52 origin-top-right rounded-md border border-gray-100 bg-white shadow-lg`}>
-              <div className="p-2">
-                {['SAT Points', 'ComServ Hours'].map((e, index) => (
-                  <div
-                    key={index}
-                    className="rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700 cursor-pointer flex items-center justify-between"
-                    onClick={() => {
-                      setFilters((filters) => (filters.includes(e) ? filters.filter((f) => f != e) : filters.concat(e)))
-                      toggleDropdown()
-                    }}
-                  >
-                    {e}
-                    {benefitFilters.includes(e) ? <BsCheckSquareFill className="text-sky-400" /> : <BsSquare className="text-gray-400" />}
+            <div className="flex items-center gap-7 text-sm my-2 relative">
+              <UnderlineButton className="flex gap-2 items-center cursor-pointer" onClick={() => setIsCalendarView(!isCalendarView)}>
+                {isCalendarView ? (
+                  <>
+                    <BsViewStacked />
+                    Change to List View
+                  </>
+                ) : (
+                  <>
+                    <BsCalendar />
+                    Change to Calendar View
+                  </>
+                )}
+              </UnderlineButton>
+              {!isCalendarView && (
+                <div className="relative">
+                  <UnderlineButton className="flex gap-2 items-center cursor-pointer" onClick={toggleDropdown}>
+                    <BsFilter /> Filter
+                  </UnderlineButton>
+                  <div className={`${!showFilterDropdown && 'hidden'} absolute z-50 w-52 origin-top-right rounded-md border border-gray-100 bg-white shadow-lg`}>
+                    <div className="p-2">
+                      {['SAT Points', 'ComServ Hours'].map((e, index) => (
+                        <div
+                          key={index}
+                          className="rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700 cursor-pointer flex items-center justify-between"
+                          onClick={() => {
+                            setFilters((filters) => (filters.includes(e) ? filters.filter((f) => f != e) : filters.concat(e)))
+                            toggleDropdown()
+                          }}
+                        >
+                          {e}
+                          {benefitFilters.includes(e) ? <BsCheckSquareFill className="text-sky-400" /> : <BsSquare className="text-gray-400" />}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
             </div>
           </div>
-          <input type="search" className="border border-gray-300 rounded-md px-2 py-1" placeholder="Search events..." onChange={(e) => setKeyword(e.target.value.toLowerCase())} />
+          {!isCalendarView && (
+            <input
+              type="search"
+              className="border border-gray-300 rounded-md px-2 py-1"
+              placeholder="Search events..."
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value.toLowerCase())}
+            />
+          )}
         </div>
-        <div className="flex justify-end">
+        {/* <div className="flex justify-end">
           <div className="p-4 cursor-pointer" onClick={() => setIsCalendarView(!isCalendarView)}>
             {isCalendarView ? <BsFillCalendarWeekFill /> : <BsViewStacked />}
           </div>
-        </div>
+        </div> */}
       </div>
       {isCalendarView ? (
         <CalendarEventView events={data} />
