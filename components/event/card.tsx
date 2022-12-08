@@ -10,10 +10,21 @@ import { useAuth } from '../../lib/authContext'
 import { collection, limit, query, where } from 'firebase/firestore'
 import { db } from '../../lib/firebaseConfig/init'
 import { userConverter } from '../../lib/types/User'
+import Skeleton from 'react-loading-skeleton'
 
 interface Props {
   event: Event
 }
+
+export const SkeletonCard = () => (
+  <div className={`p-5 h-full w-full rounded-lg shadow-lg bg-white flex flex-col justify-between`}>
+    <div className="flex flex-col gap-5">
+      <Skeleton height={120} width={'100%'} />
+      <Skeleton count={3} width={'100%'} height={25} />
+    </div>
+    <Skeleton count={2} width={'100%'} height={25} />
+  </div>
+)
 
 const Card = ({ event }: Props) => {
   const { user: userAuth, loading: loadingAuth } = useAuth()
@@ -22,7 +33,7 @@ const Card = ({ event }: Props) => {
   const [user, loadingUser, errorUser] = useCollectionData(query(userRef, where('email', '==', `${userAuth?.email}`), limit(1)))
   const [organization, loadingOrganization, errorOrganization] = useDocumentData(organizationRef)
   //TODO: add spinner / skeleton
-  if (loadingAuth || loadingUser || loadingOrganization) return <h1>Loading...</h1>
+  if (loadingAuth || loadingUser || loadingOrganization) return <SkeletonCard />
   const isRegistered = user && user.length > 0 && event && event.users && event.users.length > 0 && event.users.some((u) => u.id === user[0].userId)
   return (
     <Link href={`event/${event.eventId}`} key={event.eventId} passHref>
