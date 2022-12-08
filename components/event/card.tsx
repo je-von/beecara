@@ -89,20 +89,6 @@ const Card = ({
             ></Image>
           </div>
         )}
-
-        {isRegistered && <div className="absolute top-0 left-0 z-10 text-sm font-bold text-white bg-sky-400 px-4 py-2 rounded-br-xl">Registered</div>}
-        <div className="w-full h-40 relative rounded">
-          <Image
-            placeholder={'blur'}
-            blurDataURL={event.image}
-            className="relative rounded"
-            objectFit="cover"
-            src={event.image}
-            alt={event.name}
-            sizes="100%"
-            layout="fill"
-          ></Image>
-        </div>
         <div className="flex items-start md:basis-5/6">
           <div className="flex flex-col gap-1 h-full justify-between">
             <div className="flex flex-col gap-1">
@@ -111,7 +97,6 @@ const Card = ({
                   {event.name}
                 </h4>
               )}
-
               <div className="flex flex-col md:gap-6 lg:gap-1">
                 {showDate && (
                   <div className="flex items-center gap-1">
