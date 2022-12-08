@@ -30,7 +30,7 @@ const Input = ({ name, validation, inputType, placeholder, title, width, isDisab
   return (
     <div className={`${width === 'full' ? 'md:w-full' : width === '1/2' ? 'md:w-1/2' : 'md:w-1/3'} w-full px-3`}>
       <label className="flex gap-2 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 w-full">
-        {title} {validation?.required && '*'}
+        {title} {validation?.required && <span className="text-red-400">*</span>}
       </label>
       <div className="flex mb-3">
         {additionalPrepend}

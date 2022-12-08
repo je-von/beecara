@@ -225,7 +225,12 @@ const AddEventPage = () => {
                           className={`appearance-none block w-full bg-white text-gray-700 border-gray-300 focus:ring-sky-400 border rounded py-3 px-4 leading-tight focus:outline-none rounded-r-none`}
                           type={methods.watch(`benefits.${index}.type`) == 'Others' ? 'text' : 'number'}
                         />
-                        <select {...methods.register(`benefits.${index}.type`)} className="w-52 inline-flex items-center px-2 text-gray-600 bg-gray-300 rounded-r border-0">
+                        <select
+                          {...methods.register(`benefits.${index}.type`)}
+                          value={methods.watch(`benefits.${index}.type`)}
+                          onChange={(e) => methods.setValue(`benefits.${index}.type`, e.target.value)}
+                          className="w-52 inline-flex items-center px-2 text-gray-600 bg-gray-300 rounded-r border-0"
+                        >
                           <option value="" hidden>
                             Type
                           </option>
