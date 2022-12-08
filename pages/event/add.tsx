@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { FormProvider, SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
 import { BsInfoCircle } from 'react-icons/bs'
@@ -9,9 +9,12 @@ import { BiMinusCircle, BiPlusCircle } from 'react-icons/bi'
 import ReactTooltip from 'react-tooltip'
 import Input from '../../components/form/FormInput'
 import { useAuth } from '../../lib/authContext'
-import { Benefit, Fee } from '../../lib/types/Event'
+import { Benefit, Fee, eventConverter } from '../../lib/types/Event'
 import { organizationConverter } from '../../lib/types/Organization'
 import { Fade } from 'react-awesome-reveal'
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
+import { db, storage } from '../../lib/firebaseConfig/init'
+import { DocumentReference, Timestamp, addDoc, collection } from 'firebase/firestore'
 interface FormValues {
   name: string
   description: string
@@ -39,31 +42,37 @@ const AddEventPage = () => {
   })
   const [hasFee, setHasFee] = useState(false)
   const [hasMaxRegDate, setHasMaxRegDate] = useState(false)
+  useEffect(() => {
+    console.log(methods.formState)
+  }, [methods.formState])
   const benefitTypes = ['SAT Points', 'ComServ Hours', 'Others']
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     const imageFile = data.image[0]
 
     console.log(data)
     // Upload Image to Storage
-    // uploadBytesResumable(ref(storage, `image/event/${imageFile.name}`), imageFile).then((snapshot) => {
-    //   // Get URL
-    //   getDownloadURL(snapshot.ref).then((value) => {
-    //     // Add to firestore
-    //     addDoc(collection(db, 'event').withConverter(eventConverter), {
-    //       name: data.name,
-    //       description: data.description,
-    //       capacity: data.capacity,
-    //       organization: organizationRef as DocumentReference,
-    //       image: value,
-    //       benefit: data.benefits.filter((b) => b.amount),
-    //       startDate: Timestamp.fromDate(new Date(data.startDate)),
-    //       endDate: Timestamp.fromDate(new Date(data.endDate)),
-    //       users: [],
-    //     }).then(() => {
-    //       router.push('/home')
-    //     })
-    //   })
-    // })
+    uploadBytesResumable(ref(storage, `image/event/${imageFile.name}`), imageFile).then((snapshot) => {
+      // Get URL
+      getDownloadURL(snapshot.ref).then((value) => {
+        // Add to firestore
+        addDoc(collection(db, 'event').withConverter(eventConverter), {
+          name: data.name,
+          description: data.description,
+          capacity: data.capacity,
+          organization: organizationRef as DocumentReference,
+          image: value,
+          benefit: data.benefits.filter((b) => b.amount),
+          startDate: Timestamp.fromDate(new Date(data.startDate)),
+          endDate: Timestamp.fromDate(new Date(data.endDate)),
+          users: [],
+          fee: hasFee ? data.fee : { amount: 0, description: '' },
+          maxRegistrationDate: hasMaxRegDate ? Timestamp.fromDate(new Date(data.maxRegistrationDate)) : Timestamp.fromDate(new Date(data.startDate)),
+          postRegistrationDescription: data.postRegistrationDescription,
+        }).then(() => {
+          router.push('/home')
+        })
+      })
+    })
     //TODO: show toast / alert after add
   }
 
@@ -149,7 +158,13 @@ const AddEventPage = () => {
                 title={'Max Registration Date'}
                 titleLabel={
                   <>
-                    <input type="checkbox" className="bg-gray-100 border-gray-300 text-sky-400 focus:ring-sky-200 rounded" onChange={(e) => setHasMaxRegDate(e.target.checked)} />
+                    <input
+                      type="checkbox"
+                      className="bg-gray-100 border-gray-300 text-sky-400 focus:ring-sky-200 rounded"
+                      onChange={(e) => {
+                        setHasMaxRegDate(e.target.checked)
+                      }}
+                    />
                     <span className="truncate">Max Registration Date </span>
                     <BsInfoCircle
                       data-for="max-reg-date-info"
@@ -183,7 +198,16 @@ const AddEventPage = () => {
                 title={'Fee'}
                 titleLabel={
                   <>
-                    <input type="checkbox" className="bg-gray-100 border-gray-300 text-sky-400 focus:ring-sky-200 rounded" onChange={(e) => setHasFee(e.target.checked)} />
+                    <input
+                      type="checkbox"
+                      className="bg-gray-100 border-gray-300 text-sky-400 focus:ring-sky-200 rounded"
+                      onChange={(e) => {
+                        setHasFee(e.target.checked)
+                        // methods.re
+                        // methods.setError('fee.description', { message: 'aaaz' })
+                        // methods.trigger()
+                      }}
+                    />
                     Fee <BsInfoCircle data-for="fee-info" data-tip={`Leave this field unchecked and empty if this event is <b>FREE</b>.`} />
                   </>
                 }
@@ -192,18 +216,17 @@ const AddEventPage = () => {
                 additionalPrepend={<span className="inline-flex items-center px-3 text-gray-600 bg-gray-300 rounded-l">Rp</span>}
               />
               <ReactTooltip html multiline className="text-center leading-5" place="right" id="fee-info" />
-              {hasFee && (
-                <Fade triggerOnce className="w-full">
-                  <Input
-                    name="fee.description"
-                    inputType="textarea"
-                    validation={{ required: hasFee }}
-                    placeholder="Put the available payment methods here, e.g: the bank account number and the account holder name. Make sure to describe it clearly and as detail as possible to avoid payment errors at the user's end."
-                    titleLabel="Fee Description"
-                    width="full"
-                  />
-                </Fade>
-              )}
+              <Fade triggerOnce className={`w-full ${!hasFee ? 'hidden' : ''}`}>
+                <Input
+                  name="fee.description"
+                  inputType="textarea"
+                  isDisabled={!hasFee}
+                  validation={{ required: hasFee }}
+                  placeholder="Put the available payment methods here, e.g: the bank account number and the account holder name. Make sure to describe it clearly and as detail as possible to avoid payment errors at the user's end."
+                  titleLabel="Fee Description"
+                  width="full"
+                />
+              </Fade>
             </div>
             <div className="flex flex-wrap -mx-3 ">
               <div className="w-full px-3">
