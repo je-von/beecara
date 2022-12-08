@@ -84,11 +84,6 @@ const EventList = () => {
             />
           )}
         </div>
-        {/* <div className="flex justify-end">
-          <div className="p-4 cursor-pointer" onClick={() => setIsCalendarView(!isCalendarView)}>
-            {isCalendarView ? <BsFillCalendarWeekFill /> : <BsViewStacked />}
-          </div>
-        </div> */}
       </div>
       {isCalendarView ? (
         <CalendarEventView events={data} />
