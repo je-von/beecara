@@ -203,9 +203,7 @@ const AddEventPage = () => {
                       className="bg-gray-100 border-gray-300 text-sky-400 focus:ring-sky-200 rounded"
                       onChange={(e) => {
                         setHasFee(e.target.checked)
-                        // methods.re
-                        // methods.setError('fee.description', { message: 'aaaz' })
-                        // methods.trigger()
+                        methods.resetField('fee')
                       }}
                     />
                     Fee <BsInfoCircle data-for="fee-info" data-tip={`Leave this field unchecked and empty if this event is <b>FREE</b>.`} />
