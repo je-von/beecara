@@ -1,5 +1,3 @@
-import { DocumentReference, Timestamp, addDoc, collection } from 'firebase/firestore'
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -11,8 +9,7 @@ import { BiMinusCircle, BiPlusCircle } from 'react-icons/bi'
 import ReactTooltip from 'react-tooltip'
 import Input from '../../components/form/FormInput'
 import { useAuth } from '../../lib/authContext'
-import { db, storage } from '../../lib/firebaseConfig/init'
-import { Benefit, Fee, eventConverter } from '../../lib/types/Event'
+import { Benefit, Fee } from '../../lib/types/Event'
 import { organizationConverter } from '../../lib/types/Organization'
 import { Fade } from 'react-awesome-reveal'
 interface FormValues {
@@ -46,26 +43,27 @@ const AddEventPage = () => {
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     const imageFile = data.image[0]
 
+    console.log(data)
     // Upload Image to Storage
-    uploadBytesResumable(ref(storage, `image/event/${imageFile.name}`), imageFile).then((snapshot) => {
-      // Get URL
-      getDownloadURL(snapshot.ref).then((value) => {
-        // Add to firestore
-        addDoc(collection(db, 'event').withConverter(eventConverter), {
-          name: data.name,
-          description: data.description,
-          capacity: data.capacity,
-          organization: organizationRef as DocumentReference,
-          image: value,
-          benefit: data.benefits.filter((b) => b.amount),
-          startDate: Timestamp.fromDate(new Date(data.startDate)),
-          endDate: Timestamp.fromDate(new Date(data.endDate)),
-          users: [],
-        }).then(() => {
-          router.push('/home')
-        })
-      })
-    })
+    // uploadBytesResumable(ref(storage, `image/event/${imageFile.name}`), imageFile).then((snapshot) => {
+    //   // Get URL
+    //   getDownloadURL(snapshot.ref).then((value) => {
+    //     // Add to firestore
+    //     addDoc(collection(db, 'event').withConverter(eventConverter), {
+    //       name: data.name,
+    //       description: data.description,
+    //       capacity: data.capacity,
+    //       organization: organizationRef as DocumentReference,
+    //       image: value,
+    //       benefit: data.benefits.filter((b) => b.amount),
+    //       startDate: Timestamp.fromDate(new Date(data.startDate)),
+    //       endDate: Timestamp.fromDate(new Date(data.endDate)),
+    //       users: [],
+    //     }).then(() => {
+    //       router.push('/home')
+    //     })
+    //   })
+    // })
     //TODO: show toast / alert after add
   }
 
@@ -117,11 +115,11 @@ const AddEventPage = () => {
           </div>
           <div className="lg:basis-2/3">
             <div className="flex flex-wrap -mx-3 mb-6">
-              <Input name="name" inputType="text" validation={{ required: true, maxLength: 255 }} placeholder="Event" title="Event Name" width="1/2" />
+              <Input name="name" inputType="text" validation={{ required: true, maxLength: 255 }} placeholder="Event" titleLabel="Event Name" width="1/2" />
               <Input
                 inputType="text"
                 name="organization"
-                title={
+                titleLabel={
                   <>
                     Organization{' '}
                     <BsInfoCircle
@@ -137,17 +135,19 @@ const AddEventPage = () => {
               <ReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="org-info" />
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
-              <Input name="description" inputType="textarea" validation={{ required: true }} placeholder="A Very Fun Event" title="Event Description" width="full" />
+              <Input name="description" inputType="textarea" validation={{ required: true }} placeholder="A Very Fun Event" titleLabel="Event Description" width="full" />
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
-              <Input name="startDate" inputType="datetime-local" validation={{ required: true }} title="Start Time" width="1/3" />
-              <Input name="endDate" inputType="datetime-local" validation={{ required: true }} title="End Time" width="1/3" />
+              <Input name="startDate" inputType="datetime-local" validation={{ required: true }} titleLabel="Start Time" width="1/3" />
+              <Input name="endDate" inputType="datetime-local" validation={{ required: true }} titleLabel="End Time" width="1/3" />
               {/* TODO: validate date must before start date */}
               <Input
                 name="maxRegistrationDate"
                 inputType="datetime-local"
                 isDisabled={!hasMaxRegDate}
-                title={
+                validation={{ required: hasMaxRegDate }}
+                title={'Max Registration Date'}
+                titleLabel={
                   <>
                     <input type="checkbox" className="bg-gray-100 border-gray-300 text-sky-400 focus:ring-sky-200 rounded" onChange={(e) => setHasMaxRegDate(e.target.checked)} />
                     <span className="truncate">Max Registration Date </span>
@@ -163,12 +163,12 @@ const AddEventPage = () => {
               <ReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="max-reg-date-info" />
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
-              <Input name="location" inputType="text" validation={{ required: true, maxLength: 255 }} title="Location" width="1/2" placeholder="Location" />
+              <Input name="location" inputType="text" validation={{ required: true, maxLength: 255 }} titleLabel="Location" width="1/2" placeholder="Location" />
               <Input
                 name="capacity"
                 inputType="number"
                 validation={{ required: true, min: 1 }}
-                title="Capacity"
+                titleLabel="Capacity"
                 width="1/2"
                 placeholder="Capacity"
                 additionalAppend={<span className="inline-flex items-center px-3 text-gray-600 bg-gray-300 rounded-r">People</span>}
@@ -178,9 +178,10 @@ const AddEventPage = () => {
               <Input
                 name="fee.amount"
                 inputType="number"
-                validation={{ min: 1000 }}
+                validation={{ min: 1000, required: hasFee }}
                 isDisabled={!hasFee}
-                title={
+                title={'Fee'}
+                titleLabel={
                   <>
                     <input type="checkbox" className="bg-gray-100 border-gray-300 text-sky-400 focus:ring-sky-200 rounded" onChange={(e) => setHasFee(e.target.checked)} />
                     Fee <BsInfoCircle data-for="fee-info" data-tip={`Leave this field unchecked and empty if this event is <b>FREE</b>.`} />
@@ -198,7 +199,7 @@ const AddEventPage = () => {
                     inputType="textarea"
                     validation={{ required: hasFee }}
                     placeholder="Put the available payment methods here, e.g: the bank account number and the account holder name. Make sure to describe it clearly and as detail as possible to avoid payment errors at the user's end."
-                    title="Fee Description"
+                    titleLabel="Fee Description"
                     width="full"
                   />
                 </Fade>
@@ -224,6 +225,7 @@ const AddEventPage = () => {
                           {...methods.register(`benefits.${index}.amount`)}
                           className={`appearance-none block w-full bg-white text-gray-700 border-gray-300 focus:ring-sky-400 border rounded py-3 px-4 leading-tight focus:outline-none rounded-r-none`}
                           type={methods.watch(`benefits.${index}.type`) == 'Others' ? 'text' : 'number'}
+                          min={1}
                         />
                         <select
                           {...methods.register(`benefits.${index}.type`)}
@@ -270,7 +272,7 @@ const AddEventPage = () => {
                 name="postRegistrationDescription"
                 inputType="textarea"
                 placeholder="Show a text to the user after they have succesfully registered to this event and their registration has been approved. E.g: zoom meeting link, meeting id, and/or meeting passcode."
-                title="Post-Registration Description"
+                titleLabel="Post-Registration Description"
                 width="full"
               />
             </div>

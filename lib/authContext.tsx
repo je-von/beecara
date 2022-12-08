@@ -1,9 +1,10 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { getAuth, onAuthStateChanged, signOut as signout } from 'firebase/auth'
 import { destroyCookie, setCookie } from 'nookies'
-import { doc, getDoc } from 'firebase/firestore'
+import { doc } from 'firebase/firestore'
 import { db } from './firebaseConfig/init'
 import { User, userConverter } from './types/User'
+import { useDocumentData } from 'react-firebase-hooks/firestore'
 
 // export type TIdTokenResult = {
 //   token: string
@@ -23,18 +24,21 @@ type Props = {
 
 type UserContext = {
   // user: TIdTokenResult | null
-  user: User | null
+  user?: User
   loading: boolean
 }
 
 const authContext = createContext<UserContext>({
-  user: null,
+  user: undefined,
   loading: true,
 })
 
 export default function AuthContextProvider({ children }: Props) {
-  const [user, setUser] = useState<User | null>(null)
+  // const [user, setUser] = useState<User | null>(null)
+  const [userId, setUserId] = useState<string | undefined>()
   const [loading, setLoading] = useState(true)
+  const userRef = doc(db, 'user', `${userId}`).withConverter(userConverter)
+  const [user, loadingSnapshot, error, snapshot] = useDocumentData(userRef)
 
   useEffect(() => {
     const auth = getAuth()
@@ -51,18 +55,19 @@ export default function AuthContextProvider({ children }: Props) {
 
         // Save decoded token on the state
         user.getIdTokenResult().then((result) => {
-          getDoc(doc(db, 'user', result.claims.user_id).withConverter(userConverter)).then((docResult) => {
-            if (docResult.exists()) {
-              const data = docResult.data()
-              setUser(data)
-            }
-          })
+          setUserId(result.claims.user_id)
+          // getDoc(doc(db, 'user', result.claims.user_id).withConverter(userConverter)).then((docResult) => {
+          //   if (docResult.exists()) {
+          //     const data = docResult.data()
+          //     setUser(data)
+          //   }
+          // })
         })
       }
-      if (!user) setUser(null)
-      setLoading(false)
+      // if (!user) setUser(null)
+      setLoading(loadingSnapshot)
     })
-  }, [])
+  }, [loadingSnapshot])
 
   return <authContext.Provider value={{ user, loading }}>{children}</authContext.Provider>
 }
