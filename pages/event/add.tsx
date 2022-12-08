@@ -6,7 +6,8 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { FormProvider, SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
-import { BsInfoCircle, BsPlusCircle } from 'react-icons/bs'
+import { BsInfoCircle } from 'react-icons/bs'
+import { BiMinusCircle, BiPlusCircle } from 'react-icons/bi'
 import ReactTooltip from 'react-tooltip'
 import Input from '../../components/form/FormInput'
 import { useAuth } from '../../lib/authContext'
@@ -35,7 +36,7 @@ const AddEventPage = () => {
   const [organization, loadingOrg, error] = useDocumentData(organizationRef)
   const [imageURL, setImageURL] = useState<string>()
   const methods = useForm<FormValues>({ defaultValues: { benefits: [{ amount: '', type: '' }] } })
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     name: 'benefits',
     control: methods.control,
   })
@@ -207,9 +208,9 @@ const AddEventPage = () => {
               <div className="w-full px-3">
                 <label className="flex gap-2 items-center justify-between uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                   Benefits{' '}
-                  <BsPlusCircle
+                  <BiPlusCircle
                     strokeWidth={0.5}
-                    className="text-lg cursor-pointer hover:text-sky-400 transition hover:scale-105 duration-300 ease-in-out "
+                    className="text-xl cursor-pointer hover:text-sky-400 transition hover:scale-105 duration-300 ease-in-out "
                     onClick={() => {
                       if (fields.length < 3) append({ amount: '', type: '' })
                     }}
@@ -217,31 +218,42 @@ const AddEventPage = () => {
                 </label>
                 {fields.map((f, index) => {
                   const el = (
-                    <div className="flex mb-3">
-                      <input
-                        {...methods.register(`benefits.${index}.amount`)}
-                        className={`appearance-none block w-full bg-white text-gray-700 border-gray-300 focus:ring-sky-400 border rounded py-3 px-4 leading-tight focus:outline-none rounded-r-none`}
-                        type={methods.watch(`benefits.${index}.type`) == 'Others' ? 'text' : 'number'}
+                    <>
+                      <div className="flex w-full">
+                        <input
+                          {...methods.register(`benefits.${index}.amount`)}
+                          className={`appearance-none block w-full bg-white text-gray-700 border-gray-300 focus:ring-sky-400 border rounded py-3 px-4 leading-tight focus:outline-none rounded-r-none`}
+                          type={methods.watch(`benefits.${index}.type`) == 'Others' ? 'text' : 'number'}
+                        />
+                        <select {...methods.register(`benefits.${index}.type`)} className="w-52 inline-flex items-center px-2 text-gray-600 bg-gray-300 rounded-r border-0">
+                          <option value="" hidden>
+                            Type
+                          </option>
+                          {benefitTypes
+                            .filter((b) => methods.watch(`benefits`).find((m, innerIndex) => innerIndex != index && m.type == b) == null)
+                            .map((b, innerInnerIndex) => {
+                              return (
+                                <option value={b} key={innerInnerIndex}>
+                                  {b}
+                                </option>
+                              )
+                            })}
+                        </select>
+                      </div>
+                      <BiMinusCircle
+                        onClick={() => remove(index)}
+                        className="ml-3 text-xl min-w-fit cursor-pointer text-red-300 hover:text-red-500 transition hover:scale-105 duration-300 ease-in-out "
                       />
-                      <select {...methods.register(`benefits.${index}.type`)} className="w-40 inline-flex items-center px-2 text-gray-600 bg-gray-300 rounded-r border-0">
-                        <option value="" disabled hidden>
-                          Type
-                        </option>
-                        {benefitTypes
-                          .filter((b) => methods.watch(`benefits`).find((m, innerIndex) => innerIndex != index && m.type == b) == null)
-                          .map((b, index) => {
-                            return (
-                              <option value={b} key={index}>
-                                {b}
-                              </option>
-                            )
-                          })}
-                      </select>
-                    </div>
+                    </>
                   )
-                  if (index === 0) return el
+                  if (index === 0)
+                    return (
+                      <div className="flex mb-3 items-center" key={index}>
+                        {el}
+                      </div>
+                    )
                   return (
-                    <Fade triggerOnce className="w-full" key={index}>
+                    <Fade triggerOnce className="w-full flex mb-3 items-center" key={index}>
                       {el}
                     </Fade>
                   )
