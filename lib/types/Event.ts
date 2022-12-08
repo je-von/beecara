@@ -12,7 +12,7 @@ export interface Fee {
 
 export interface RegisteredUsers {
   status: 'Pending' | 'Approved' | 'Rejected'
-  proof: string
+  proof?: string
   isPresent: boolean
   paymentDeadline: Timestamp
   user: DocumentReference
@@ -69,6 +69,28 @@ export const eventConverter = {
       postRegistrationDescription: data.postRegistrationDescription,
       maxRegistrationDate: data.maxRegistrationDate,
       fee: data.fee,
+    }
+  },
+}
+
+export const eventRegisteredUsersConverter = {
+  toFirestore(ru: WithFieldValue<RegisteredUsers>): DocumentData {
+    return {
+      status: ru.status,
+      proof: ru.proof,
+      isPresent: ru.isPresent,
+      paymentDeadline: ru.paymentDeadline,
+      user: ru.user,
+    }
+  },
+  fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): RegisteredUsers {
+    const data = snapshot.data(options)! as RegisteredUsers
+    return {
+      status: data.status,
+      proof: data.proof,
+      isPresent: data.isPresent,
+      paymentDeadline: data.paymentDeadline,
+      user: data.user,
     }
   },
 }

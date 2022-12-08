@@ -1,57 +1,37 @@
-import { FaCalendar, FaClock, FaMoneyBillWaveAlt } from "react-icons/fa";
-import { BsPeopleFill, BsQuestionCircle } from "react-icons/bs";
-import { GiAchievement } from "react-icons/gi";
-import { IoMdArrowBack } from "react-icons/io";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import {
-  arrayUnion,
-  doc,
-  updateDoc,
-  collection,
-  where,
-  limit,
-  query,
-  arrayRemove,
-} from "firebase/firestore";
-import { db } from "../../lib/firebaseConfig/init";
-import { Benefit, eventConverter } from "../../lib/types/Event";
-import {
-  useDocumentData,
-  useCollectionData,
-} from "react-firebase-hooks/firestore";
-import NotFoundPage from "../404";
-import { useAuth } from "../../lib/authContext";
-import { organizationConverter } from "../../lib/types/Organization";
-import { userConverter } from "../../lib/types/User";
+import { FaCalendar, FaClock, FaMoneyBillWaveAlt } from 'react-icons/fa'
+import { BsPeopleFill } from 'react-icons/bs'
+import { GiAchievement } from 'react-icons/gi'
+import { IoMdArrowBack } from 'react-icons/io'
+import Image from 'next/image'
+import { useRouter } from 'next/router'
+import { arrayRemove, arrayUnion, collection, doc, limit, query, updateDoc, where } from 'firebase/firestore'
+import { db } from '../../lib/firebaseConfig/init'
+import { Benefit, eventConverter } from '../../lib/types/Event'
+import { useCollectionData, useDocumentData } from 'react-firebase-hooks/firestore'
+import NotFoundPage from '../404'
+import { useAuth } from '../../lib/authContext'
+import { organizationConverter } from '../../lib/types/Organization'
+import { userConverter } from '../../lib/types/User'
 
 const EventDetail = () => {
-  const router = useRouter();
-  const { user: userAuth, loading: loadAuth } = useAuth();
-  const { eventId } = router.query;
+  const router = useRouter()
+  const { user: userAuth, loading: loadAuth } = useAuth()
+  const { eventId } = router.query
 
-  const userRef = collection(db, "user").withConverter(userConverter);
-  const [user, loadingUser, errorUser] = useCollectionData(
-    query(userRef, where("email", "==", userAuth?.email), limit(1))
-  );
-  console.log(userRef);
+  const userRef = collection(db, 'user').withConverter(userConverter)
+  const [user, loadingUser, errorUser] = useCollectionData(query(userRef, where('email', '==', `${userAuth?.email}`), limit(1)))
+  console.log(userRef)
 
-  const eventRef = doc(db, "event", `${eventId}`).withConverter(eventConverter);
-  const [event, loadingEvent, errorEvent, snapshot] = useDocumentData(eventRef);
+  const eventRef = doc(db, 'event', `${eventId}`).withConverter(eventConverter)
+  const [event, loadingEvent, errorEvent, snapshot] = useDocumentData(eventRef)
 
   // const registeredUsersRef = collection(db, 'event', `${eventId}`, 'registeredUsers') //.withConverter(eventConverter);
   // const [registeredUsers, loadingRegisteredUsers, errorRegisteredUsers] = useCollectionData(registeredUsersRef)
 
-  const orgRef = event?.organization.withConverter(organizationConverter);
-  const [organization, loadingOrg, errorOrg] = useDocumentData(orgRef);
+  const orgRef = event?.organization.withConverter(organizationConverter)
+  const [organization, loadingOrg, errorOrg] = useDocumentData(orgRef)
 
-  const isRegistered =
-    user &&
-    user.length > 0 &&
-    event &&
-    event.users &&
-    event.users.length > 0 &&
-    event.users.some((u) => u.id === user[0].userId);
+  const isRegistered = user && user.length > 0 && event && event.users && event.users.length > 0 && event.users.some((u) => u.id === user[0].userId)
 
   // useEffect(() => {
   //   console.log(event)
@@ -60,28 +40,28 @@ const EventDetail = () => {
   //   })
   // }, [event])
   if (loadingEvent || loadingOrg) {
-    return <>Loading</>;
+    return <>Loading</>
   }
 
   if (!loadingEvent && (errorEvent || !event)) {
-    return <NotFoundPage />;
+    return <NotFoundPage />
   }
 
   const registerEvent = () => {
-    updateDoc(doc(db, "event", `${eventId}`), {
-      users: arrayUnion(doc(db, "user", `${userAuth?.userId}`)),
+    updateDoc(doc(db, 'event', `${eventId}`), {
+      users: arrayUnion(doc(db, 'user', `${userAuth?.userId}`)),
     }).then(() => {
-      console.log("Register Success"); // TODO: create alert / toast
-    });
-  };
+      console.log('Register Success') // TODO: create alert / toast
+    })
+  }
 
   const unregisterEvent = () => {
-    updateDoc(doc(db, "event", `${eventId}`), {
-      users: arrayRemove(doc(db, "user", `${userAuth?.userId}`)),
+    updateDoc(doc(db, 'event', `${eventId}`), {
+      users: arrayRemove(doc(db, 'user', `${userAuth?.userId}`)),
     }).then(() => {
-      console.log("Unregister success"); // TODO: create alert / toast
-    });
-  };
+      console.log('Unregister success') // TODO: create alert / toast
+    })
+  }
 
   return (
     <div className="px-40">
@@ -90,40 +70,29 @@ const EventDetail = () => {
           <IoMdArrowBack className="mr-2 text-xl cursor-pointer" />
         </div>
         <h4 className="font-secondary text-2xl mb-1 gap-2 flex md:flex-row flex-col ">
-          <b>{event?.name}</b>{" "}
-          <span className="text-gray-400">({organization?.name})</span>
+          <b>{event?.name}</b> <span className="text-gray-400">({organization?.name})</span>
         </h4>
       </div>
       <div className="overflow-hidden">
-        <Image
-          className="rounded-xl"
-          objectFit="contain"
-          src={`${event?.image}`}
-          alt="event-poster"
-          width={150}
-          height={150}
-        />
+        <Image className="rounded-xl" objectFit="contain" src={`${event?.image}`} alt="event-poster" width={150} height={150} />
       </div>
       <p className="text-justify">{event?.description} </p>
       <p className="flex items-center">
         <FaCalendar className="mr-1" />
-        {event?.startDate?.toDate().toLocaleDateString("en-US", {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
+        {event?.startDate?.toDate().toLocaleDateString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
         })}
       </p>
       <p className="flex items-center">
         <FaClock className="mr-1" />
-        {event?.startDate?.toDate().toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "numeric",
-        })}{" "}
-        -{" "}
-        {event?.endDate
-          ?.toDate()
-          .toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric" })}
+        {event?.startDate?.toDate().toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: 'numeric',
+        })}{' '}
+        - {event?.endDate?.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
       </p>
       <p className="flex items-center">
         <BsPeopleFill className="mr-1" />
@@ -136,7 +105,7 @@ const EventDetail = () => {
           <GiAchievement className="mr-1" />
           {event?.benefit?.map((b: Benefit) => (
             <>
-              {b.type + " : " + b.amount + " "}
+              {b.type + ' : ' + b.amount + ' '}
               <br />
             </>
           ))}
@@ -150,20 +119,18 @@ const EventDetail = () => {
             <FaMoneyBillWaveAlt className="mr-1" />
             IDR{event?.fee?.amount}
           </p>
-          <p className="flex items-center">
-            Transfer to: {event?.fee?.description}
-          </p>
+          <p className="flex items-center">Transfer to: {event?.fee?.description}</p>
         </div>
       )}
 
       <div className="pt-4">
         <b>Registration Deadline</b>
         <p>
-          {event?.maxRegistrationDate?.toDate().toLocaleDateString("en-US", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
+          {event?.maxRegistrationDate?.toDate().toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
           })}
         </p>
       </div>
@@ -187,7 +154,7 @@ const EventDetail = () => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default EventDetail;
+export default EventDetail
