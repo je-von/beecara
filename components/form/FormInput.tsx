@@ -50,11 +50,11 @@ const Input = ({ name, validation, inputType, placeholder, titleLabel, title, wi
   }, [errors, name])
 
   return (
-    <div className={`${width === 'full' ? 'md:w-full' : width === '1/2' ? 'md:w-1/2' : 'md:w-1/3'} w-full px-3`}>
-      <label className="flex gap-2 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 w-full">
+    <div className={`${width === 'full' ? 'md:w-full' : width === '1/2' ? 'md:w-1/2' : 'md:w-1/3'} w-full px-3 mb-5 flex flex-col gap-2 `}>
+      <label className="flex gap-2 uppercase tracking-wide text-gray-700 text-xs font-bold w-full">
         {titleLabel} {validation?.required && <span className="text-red-400">*</span>}
       </label>
-      <div className="flex mb-3">
+      <div className="flex ">
         {additionalPrepend}
         <RawInput
           className={`resize-none appearance-none block w-full ${isDisabled ? 'bg-gray-200' : 'bg-white'} text-gray-700 border ${

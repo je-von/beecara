@@ -114,7 +114,7 @@ const AddEventPage = () => {
             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Upload Image (jpg,png,svg,jpeg) *</label>
           </div>
           <div className="lg:basis-2/3">
-            <div className="flex flex-wrap -mx-3 mb-6">
+            <div className="flex flex-wrap -mx-3 ">
               <Input name="name" inputType="text" validation={{ required: true, maxLength: 255 }} placeholder="Event" titleLabel="Event Name" width="1/2" />
               <Input
                 inputType="text"
@@ -134,10 +134,10 @@ const AddEventPage = () => {
               />
               <ReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="org-info" />
             </div>
-            <div className="flex flex-wrap -mx-3 mb-6">
+            <div className="flex flex-wrap -mx-3 ">
               <Input name="description" inputType="textarea" validation={{ required: true }} placeholder="A Very Fun Event" titleLabel="Event Description" width="full" />
             </div>
-            <div className="flex flex-wrap -mx-3 mb-6">
+            <div className="flex flex-wrap -mx-3 ">
               <Input name="startDate" inputType="datetime-local" validation={{ required: true }} titleLabel="Start Time" width="1/3" />
               <Input name="endDate" inputType="datetime-local" validation={{ required: true }} titleLabel="End Time" width="1/3" />
               {/* TODO: validate date must before start date */}
@@ -162,7 +162,7 @@ const AddEventPage = () => {
               />
               <ReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="max-reg-date-info" />
             </div>
-            <div className="flex flex-wrap -mx-3 mb-6">
+            <div className="flex flex-wrap -mx-3 ">
               <Input name="location" inputType="text" validation={{ required: true, maxLength: 255 }} titleLabel="Location" width="1/2" placeholder="Location" />
               <Input
                 name="capacity"
@@ -174,11 +174,11 @@ const AddEventPage = () => {
                 additionalAppend={<span className="inline-flex items-center px-3 text-gray-600 bg-gray-300 rounded-r">People</span>}
               />
             </div>
-            <div className="flex flex-wrap -mx-3 mb-6">
+            <div className="flex flex-wrap -mx-3 ">
               <Input
                 name="fee.amount"
                 inputType="number"
-                validation={{ min: 1000, required: hasFee }}
+                validation={{ min: hasFee ? 1000 : undefined, required: hasFee }}
                 isDisabled={!hasFee}
                 title={'Fee'}
                 titleLabel={
@@ -205,7 +205,7 @@ const AddEventPage = () => {
                 </Fade>
               )}
             </div>
-            <div className="flex flex-wrap -mx-3 mb-6">
+            <div className="flex flex-wrap -mx-3 ">
               <div className="w-full px-3">
                 <label className="flex gap-2 items-center justify-between uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                   Benefits{' '}
@@ -267,7 +267,7 @@ const AddEventPage = () => {
                 })}
               </div>
             </div>
-            <div className="flex flex-wrap -mx-3 mb-6">
+            <div className="flex flex-wrap -mx-3 ">
               <Input
                 name="postRegistrationDescription"
                 inputType="textarea"
