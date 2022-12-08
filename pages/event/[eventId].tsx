@@ -12,6 +12,7 @@ import {
   where,
   limit,
   query,
+  arrayRemove,
 } from "firebase/firestore";
 import { db } from "../../lib/firebaseConfig/init";
 import { Benefit, eventConverter } from "../../lib/types/Event";
@@ -74,6 +75,13 @@ const EventDetail = () => {
     });
   };
 
+  const unregisterEvent = () => {
+    updateDoc(doc(db, "event", `${eventId}`), {
+      users: arrayRemove(doc(db, "user", `${userAuth?.userId}`)),
+    }).then(() => {
+      console.log("Unregister success"); // TODO: create alert / toast
+    });
+  };
 
   return (
     <div className="px-40">
@@ -162,7 +170,10 @@ const EventDetail = () => {
 
       <div>
         {isRegistered && (
-          <button className="flex items-center justify-center bg-red-600 text-white font-bold rounded py-3 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
+          <button
+            className="flex items-center justify-center bg-red-600 text-white font-bold rounded py-3 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
+            onClick={unregisterEvent}
+          >
             Unregister
           </button>
         )}
