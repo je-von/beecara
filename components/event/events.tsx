@@ -49,23 +49,24 @@ const EventList = () => {
                   <UnderlineButton className="flex gap-2 items-center cursor-pointer" onClick={toggleDropdown}>
                     <BsFilter /> Filter
                   </UnderlineButton>
-                  <div className={`${!showFilterDropdown && 'hidden'} absolute z-50 w-52 origin-top-right rounded-md border border-gray-100 bg-white shadow-lg`}>
-                    <div className="p-2">
-                      {['SAT Points', 'ComServ Hours'].map((e, index) => (
-                        <div
-                          key={index}
-                          className="rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700 cursor-pointer flex items-center justify-between"
-                          onClick={() => {
-                            setFilters((filters) => (filters.includes(e) ? filters.filter((f) => f != e) : filters.concat(e)))
-                            toggleDropdown()
-                          }}
-                        >
-                          {e}
-                          {benefitFilters.includes(e) ? <BsCheckSquareFill className="text-sky-400" /> : <BsSquare className="text-gray-400" />}
-                        </div>
-                      ))}
-                    </div>
+                  <div className={`${!showFilterDropdown && 'hidden'} fixed z-20 top-0 left-0 w-[100vw] h-[100vh]`} onClick={toggleDropdown}>
                   </div>
+                    <div className={`${!showFilterDropdown && 'hidden'} absolute z-50 w-52 origin-top-right rounded-md border border-gray-100 bg-white shadow-lg`}>
+                      <div className="p-2">
+                        {['SAT Points', 'ComServ Hours'].map((e, index) => (
+                          <div
+                            key={index}
+                            className="rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700 cursor-pointer flex items-center justify-between"
+                            onClick={() => {
+                              setFilters((filters) => (filters.includes(e) ? filters.filter((f) => f != e) : filters.concat(e)))
+                            }}
+                          >
+                            {e}
+                            {benefitFilters.includes(e) ? <BsCheckSquareFill className="text-sky-400" /> : <BsSquare className="text-gray-400" />}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                 </div>
               )}
             </div>
@@ -80,11 +81,6 @@ const EventList = () => {
             />
           )}
         </div>
-        {/* <div className="flex justify-end">
-          <div className="p-4 cursor-pointer" onClick={() => setIsCalendarView(!isCalendarView)}>
-            {isCalendarView ? <BsFillCalendarWeekFill /> : <BsViewStacked />}
-          </div>
-        </div> */}
       </div>
       {isCalendarView ? (
         <CalendarEventView events={data} />

@@ -1,6 +1,5 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
 import { FaCalendar } from 'react-icons/fa'
 import { BsPeopleFill } from 'react-icons/bs'
 import { Event } from '../../lib/types/Event'
@@ -94,10 +93,6 @@ const Card = ({ event }: Props) => {
             </div>
           </div>
         </div>
-
-        {/* <div className="border border-blue-500 rounded-lg bg-blue-500 text-white px-3 cursor-pointer">
-          <button className="">Detail</button>
-        </div> */}
       </div>
     </Link>
   )
