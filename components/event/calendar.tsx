@@ -157,9 +157,6 @@ const CalendarEventView = ({ initialDate, events }: Props) => {
                   return (
                     <tr key={i}>
                       {dayArr.map((day, index) => {
-                        if (day.date && day.date.getMonth() === activeDate.getMonth() && day.date.getFullYear() === activeDate.getFullYear() && events?.some((e) => e.startDate && day.date && isEqualDate(e.startDate?.toDate(), day.date)))
-                          console.log('called')
-                        //   setActiveDate(day.date);
                         return (
                           <td className="pt-4" key={index}>
                             <div
