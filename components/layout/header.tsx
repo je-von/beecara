@@ -38,7 +38,7 @@ export default function Header(props: any) {
                           <div className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700">Add Event</div>
                         </Link>
                       )}
-                      <Link href={'/profile/view'} passHref>
+                      <Link href={'/profile'} passHref>
                         <div className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700">Profile</div>
                       </Link>
                       <div
