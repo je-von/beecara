@@ -2,14 +2,12 @@ import { FaCalendar, FaClock } from 'react-icons/fa'
 import { IoMdArrowBack, IoMdPricetag } from 'react-icons/io'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Timestamp, doc, setDoc, updateDoc } from 'firebase/firestore'
 import { db, storage } from '../../lib/firebaseConfig/init'
-import { eventConverter, eventRegisteredUsersConverter } from '../../lib/types/Event'
-import { useDocumentData } from 'react-firebase-hooks/firestore'
+import { eventRegisteredUsersConverter } from '../../lib/types/Event'
 import NotFoundPage from '../404'
 import { useAuth } from '../../lib/authContext'
-import { organizationConverter } from '../../lib/types/Organization'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import BenefitTags from '../../components/event/BenefitTags'
@@ -17,7 +15,7 @@ import { getDateFormat, getMoneyFormat, getTimeFormat } from '../../lib/helper/u
 import { BsPeopleFill } from 'react-icons/bs'
 import moment from 'moment'
 import Button from '../../components/button/Button'
-import { useEventRegistrant } from '../../lib/hook/EventRegistrant'
+import { useEvent, useUserRegisterStatus } from '../../lib/hook/Event'
 
 interface FormValues {
   proof: File
@@ -30,23 +28,11 @@ const EventDetail = () => {
 
   const [imageURL, setImageURL] = useState<string>()
 
-  const eventRef = doc(db, 'event', `${eventId}`).withConverter(eventConverter)
-  const [event, loadingEvent, errorEvent, snapshot] = useDocumentData(eventRef)
-  const { data, loading, error } = useEventRegistrant(event, userAuth)
+  const { data: event, loading, error } = useEvent(`${eventId}`)
+  const { registerStatus } = useUserRegisterStatus(event)
 
-  const isRegistered = data?.status
-
-  // const registeredUsersRef = collection(db, 'event', `${eventId}`, 'registeredUsers') //.withConverter(eventConverter);
-  // const [registeredUsers, loadingRegisteredUsers, errorRegisteredUsers] = useCollectionData(registeredUsersRef)
-
-  const orgRef = event?.organization.withConverter(organizationConverter)
-  const [organization, loadingOrg, errorOrg] = useDocumentData(orgRef)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const methods = useForm<FormValues>()
-
-  useEffect(() => {
-    console.log(methods.formState)
-  }, [methods.formState])
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     setIsSubmitting(true)
@@ -83,11 +69,11 @@ const EventDetail = () => {
   //     value.forEach((v) => console.log(v.data()))
   //   })
   // }, [event])
-  if (loadingEvent || loadingOrg) {
+  if (loading) {
     return <>Loading</>
   }
 
-  if (!loadingEvent && (errorEvent || !event)) {
+  if (!loading && (error || !event)) {
     return <NotFoundPage />
   }
 
@@ -136,18 +122,18 @@ const EventDetail = () => {
           <IoMdArrowBack className="mr-2 text-xl cursor-pointer stroke-black" strokeWidth={40} />
         </div>
         <h4 className="font-secondary text-2xl mb-1 gap-2 flex md:flex-row flex-col ">
-          <b>{event?.name}</b> <span className="text-gray-400">({organization?.name})</span>
+          <b>{event?.name}</b> <span className="text-gray-400">({event?.organization.id})</span>
         </h4>
       </div>
       <div className="grid grid-cols-7 gap-7">
         <div className="h-96 relative rounded-lg shadow-lg border col-span-2">
-          {isRegistered ? (
+          {registerStatus ? (
             <div
               className={`absolute top-0 left-0 z-10 text-sm font-bold text-white ${
-                isRegistered === 'Registered' ? 'bg-sky-400' : isRegistered === 'Pending' ? 'bg-orange-400' : 'bg-red-400'
+                registerStatus === 'Registered' ? 'bg-sky-400' : registerStatus === 'Pending' ? 'bg-orange-400' : 'bg-red-400'
               } px-4 py-2 rounded-br-lg rounded-tl-lg`}
             >
-              {isRegistered}
+              {registerStatus}
             </div>
           ) : undefined}
           <Image
@@ -185,7 +171,7 @@ const EventDetail = () => {
         <div className="flex border flex-col rounded-lg p-4 shadow-lg w-full col-span-2 justify-between">
           <FormProvider {...methods}>
             <div className="flex-col flex gap-3">
-              {isRegistered === 'Pending' ? (
+              {registerStatus === 'Pending' ? (
                 <>
                   <b className="text-sky-500 text-justify">Your registration is being reviewed by the organization&apos; admin!</b>
                   {event?.fee?.amount !== 0 && (
@@ -212,7 +198,7 @@ const EventDetail = () => {
                     </div>
                   )}
                 </>
-              ) : isRegistered === 'Registered' ? (
+              ) : registerStatus === 'Registered' ? (
                 <>
                   <b className="text-sky-500 text-justify">You have succesfully registered to this event!</b>
 
@@ -250,16 +236,17 @@ const EventDetail = () => {
                 <b className="text-gray-600">Available Slots</b>
                 <p className="flex items-center">
                   <BsPeopleFill className="mr-2 text-gray-400" />
+                  {event?.registeredUsers?.filter((ru) => ru.status === 'Registered').length} / {event?.capacity}
                   {/* {event?.users?.length} / {event?.capacity} */}
                 </p>
               </div>
             </div>
             {/* TODO: validasi juga kalo slot udah penuh */}
-            {isRegistered === 'Pending' ? (
+            {registerStatus === 'Pending' ? (
               <Button onClick={unregisterEvent} color={'red'}>
                 Unregister
               </Button>
-            ) : isRegistered === 'Registered' ? (
+            ) : registerStatus === 'Registered' ? (
               <Button onClick={unregisterEvent} color={'red'}>
                 Unregister
               </Button>

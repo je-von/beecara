@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { BsCalendar, BsCheckSquareFill, BsFilter, BsSquare, BsViewStacked } from 'react-icons/bs'
-import { useEvents } from '../../lib/hook/EventRegistrant'
+import { useEvents } from '../../lib/hook/Event'
 import UnderlineButton from '../button/UnderlineButton'
 import CalendarEventView from './calendar'
 import Card, { SkeletonCard } from './card'
@@ -12,12 +12,8 @@ const EventList = () => {
   const [benefitFilters, setFilters] = useState<string[]>([])
   const [keyword, setKeyword] = useState('')
   const listHeight = useRef(null)
-  // const ref = collection(db, 'event').withConverter(eventConverter)
-  // const [data, loading, error] = useCollectionData(query(ref, orderBy('startDate', 'asc')))
-  const { data, loading, error } = useEvents('Registered')
-  useEffect(() => {
-    console.log(benefitFilters)
-  }, [benefitFilters])
+
+  const { data, loading, error } = useEvents()
 
   useEffect(() => {
     if (isCalendarView === false) {

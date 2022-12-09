@@ -3,10 +3,9 @@ import Link from 'next/link'
 import { FaCalendar } from 'react-icons/fa'
 import { BsPeopleFill } from 'react-icons/bs'
 import { Event } from '../../lib/types/Event'
-import { useAuth } from '../../lib/authContext'
 import Skeleton from 'react-loading-skeleton'
 import BenefitTags from './BenefitTags'
-import { useEventRegistrant } from '../../lib/hook/EventRegistrant'
+import { useUserRegisterStatus } from '../../lib/hook/Event'
 
 interface Props {
   event: Event
@@ -41,11 +40,9 @@ const Card = ({
   showBenefits = true,
   horizontalLayout,
 }: Props) => {
-  const { user, loading: loadingAuth } = useAuth()
-  const { data, loading, error } = useEventRegistrant(event, user)
-  if (loadingAuth || loading) return <SkeletonCard />
+  const { registerStatus, loading } = useUserRegisterStatus(event)
+  if (loading) return <SkeletonCard />
 
-  const isRegistered = data?.status
   return (
     <Link href={`event/${event.eventId}`} key={event.eventId} passHref>
       <div
@@ -53,13 +50,13 @@ const Card = ({
           !horizontalLayout ? 'flex-col' : ''
         }`}
       >
-        {showRegisterStatus && isRegistered ? (
+        {showRegisterStatus && registerStatus ? (
           <div
             className={`absolute top-0 left-0 z-10 text-xs sm:text-sm font-bold text-white ${
-              isRegistered === 'Registered' ? 'bg-sky-400' : isRegistered === 'Pending' ? 'bg-orange-400' : 'bg-red-400'
+              registerStatus === 'Registered' ? 'bg-sky-400' : registerStatus === 'Pending' ? 'bg-orange-400' : 'bg-red-400'
             } px-4 py-2 rounded-br-xl`}
           >
-            {isRegistered}
+            {registerStatus}
           </div>
         ) : undefined}
         {showImage && (
@@ -87,7 +84,7 @@ const Card = ({
                 {showSlot && (
                   <div className="flex items-center gap-1">
                     <BsPeopleFill className="text-gray-400" />
-                    {event.registeredUsers?.length} / {event.capacity}
+                    {event?.registeredUsers?.filter((ru) => ru.status === 'Registered').length} / {event.capacity}
                     {/* {data ? data.filter((d) => d.status === 'Registered').length : 0} / {event.capacity} */}
                   </div>
                 )}
