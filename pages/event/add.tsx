@@ -301,7 +301,7 @@ const AddEventPage = () => {
               <button
                 type="submit"
                 className={`flex w-32 items-center justify-center bg-sky-400 text-white font-bold rounded py-3 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition ${
-                  isSubmitting ? 'cursor-not-allowed' : 'hover:scale-105'
+                  isSubmitting ? 'cursor-wait' : 'hover:scale-105'
                 } duration-300 ease-in-out`}
               >
                 {isSubmitting ? <ClipLoader size={24} color={'#ffffff'} /> : 'SUBMIT'}
