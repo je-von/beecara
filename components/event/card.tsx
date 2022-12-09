@@ -2,14 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaCalendar } from "react-icons/fa";
 import { BsPeopleFill } from "react-icons/bs";
-import {
-  Event,
-  RegisteredUsers,
-  eventRegisteredUsersConverter,
-} from "../../lib/types/Event";
+import { Event, eventRegisteredUsersConverter } from "../../lib/types/Event";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { useAuth } from "../../lib/authContext";
-import { collection } from "firebase/firestore";
+import { collection, doc, query, where } from "firebase/firestore";
 import { db } from "../../lib/firebaseConfig/init";
 import Skeleton from "react-loading-skeleton";
 import BenefitTags from "./BenefitTags";
@@ -26,29 +22,15 @@ interface Props {
   horizontalLayout?: Boolean;
 }
 
-export const SkeletonCard = ({
-  horizontalLayout,
-}: {
-  horizontalLayout?: Boolean;
-}) => (
+export const SkeletonCard = () => (
   <div
-    className={`p-5 h-full w-full rounded-lg shadow-lg bg-white flex ${
-      horizontalLayout ? "flex-row" : "flex-col"
-    } justify-between`}
+    className={`p-5 h-full w-full rounded-lg shadow-lg bg-white flex flex-col justify-between`}
   >
-    <div
-      className={`flex ${
-        horizontalLayout ? "flex-row" : "flex-col"
-      } gap-5 w-full`}
-    >
-      <Skeleton height={160} width={horizontalLayout ? 160 : "100%"} />
-      <Skeleton
-        count={horizontalLayout ? 5 : 3}
-        width={horizontalLayout ? 370 : "100%"}
-        height={25}
-      />
+    <div className="flex flex-col gap-5">
+      <Skeleton height={120} width={"100%"} />
+      <Skeleton count={3} width={"100%"} height={25} />
     </div>
-    {!horizontalLayout && <Skeleton count={2} width={"100%"} height={25} />}
+    <Skeleton count={2} width={"100%"} height={25} />
   </div>
 );
 
@@ -68,13 +50,12 @@ const Card = ({
     db,
     `event/${event.eventId}/registeredUsers`
   ).withConverter(eventRegisteredUsersConverter);
-  const [data, loadingRegistered, error] = useCollectionData(ref);
-
+  const [data, loadingRegistered, error] = useCollectionData(
+    query(ref, where("user", "==", doc(db, "user", `${user?.userId}`)))
+  );
   if (loadingAuth || loadingRegistered) return <SkeletonCard />;
-
-  const isRegistered: RegisteredUsers | null = data
-    ? data.filter((d) => d.user.id === user?.userId)[0]
-    : null;
+  // const isRegistered = event?.users?.some((u) => u.id === user?.userId)
+  const isRegistered = data?.length && data[0].status;
   return (
     <Link href={`event/${event.eventId}`} key={event.eventId} passHref>
       <div
@@ -85,14 +66,14 @@ const Card = ({
         {showRegisterStatus && isRegistered ? (
           <div
             className={`absolute top-0 left-0 z-10 text-xs sm:text-sm font-bold text-white ${
-              isRegistered.status === "Registered"
+              data[0].status === "Registered"
                 ? "bg-sky-400"
-                : isRegistered.status === "Pending"
+                : data[0].status === "Pending"
                 ? "bg-orange-400"
                 : "bg-red-400"
             } px-4 py-2 rounded-br-xl`}
           >
-            {isRegistered.status}
+            {data[0].status}
           </div>
         ) : undefined}
         {showImage && (
@@ -135,10 +116,7 @@ const Card = ({
                 {showSlot && (
                   <div className="flex items-center gap-1">
                     <BsPeopleFill className="text-gray-400" />
-                    {data
-                      ? data.filter((d) => d.status === "Registered").length
-                      : 0}{" "}
-                    / {event.capacity}
+                    {data ? data.length : 0} / {event.capacity}
                   </div>
                 )}
               </div>
