@@ -61,16 +61,16 @@ const AddEventPage = () => {
             <h1 className="text-2xl font-black font-secondary">Edit Profile</h1>
           </div>
           <div className="lg:basis-2/3">
-            <div className="flex flex-wrap -mx-3 mb-6">
+            <div className="flex flex-wrap -mx-3">
               <Input name="name" inputType="text" titleLabel="Name" placeholder={user?.name} isDisabled={true} width="full" />
             </div>
-            <div className="flex flex-wrap -mx-3 mb-6">
+            <div className="flex flex-wrap -mx-3">
               <Input name="email" inputType="text" titleLabel="Email" placeholder={user?.email} isDisabled={true} width="full" />
             </div>
-            <div className="flex flex-wrap -mx-3 mb-6">
+            <div className="flex flex-wrap -mx-3">
               <Input name="lineID" inputType="text" validation={{ required: true, maxLength: 255 }} placeholder="Line ID" value={user?.lineID} titleLabel="Line ID" width="full" />
             </div>
-            <div className="flex flex-wrap -mx-3 mb-6">
+            <div className="flex flex-wrap -mx-3">
               <Input
                 name="instagram"
                 inputType="text"
@@ -81,7 +81,7 @@ const AddEventPage = () => {
                 width="full"
               />
             </div>
-            <div className="flex flex-wrap -mx-3 mb-6">
+            <div className="flex flex-wrap -mx-3">
               <Input
                 name="phoneNumber"
                 inputType="tel"

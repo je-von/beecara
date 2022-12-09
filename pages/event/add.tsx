@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { FormProvider, SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
 import { BsInfoCircle } from 'react-icons/bs'
@@ -45,9 +45,7 @@ const AddEventPage = () => {
   const [hasFee, setHasFee] = useState(false)
   const [hasMaxRegDate, setHasMaxRegDate] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  useEffect(() => {
-    console.log(methods.formState)
-  }, [methods.formState])
+
   const benefitTypes = ['SAT Points', 'ComServ Hours', 'Others']
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     setIsSubmitting(true)
@@ -105,7 +103,7 @@ const AddEventPage = () => {
             <div className=" flex items-center justify-center w-full h-full mt-5 mb-2">
               <label
                 className={`relative flex flex-col w-full border-4 border-dashed ${
-                  methods.formState.errors.image ? 'border-red-500' : ''
+                  methods.getFieldState('image', methods.formState).error ? 'border-red-500' : ''
                 } hover:bg-gray-100 hover:border-gray-300 h-full cursor-pointer`}
               >
                 {imageURL ? (
