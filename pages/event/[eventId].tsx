@@ -3,10 +3,10 @@ import { IoMdArrowBack, IoMdPricetag } from 'react-icons/io'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { Timestamp, addDoc, collection, doc, query, updateDoc, where } from 'firebase/firestore'
+import { Timestamp, doc, setDoc, updateDoc } from 'firebase/firestore'
 import { db, storage } from '../../lib/firebaseConfig/init'
 import { eventConverter, eventRegisteredUsersConverter } from '../../lib/types/Event'
-import { useCollectionData, useDocumentData } from 'react-firebase-hooks/firestore'
+import { useDocumentData } from 'react-firebase-hooks/firestore'
 import NotFoundPage from '../404'
 import { useAuth } from '../../lib/authContext'
 import { organizationConverter } from '../../lib/types/Organization'
@@ -17,6 +17,7 @@ import { getDateFormat, getMoneyFormat, getTimeFormat } from '../../lib/helper/u
 import { BsPeopleFill } from 'react-icons/bs'
 import moment from 'moment'
 import Button from '../../components/button/Button'
+import { useEventRegistrant } from '../../lib/hook/EventRegistrant'
 
 interface FormValues {
   proof: File
@@ -31,10 +32,9 @@ const EventDetail = () => {
 
   const eventRef = doc(db, 'event', `${eventId}`).withConverter(eventConverter)
   const [event, loadingEvent, errorEvent, snapshot] = useDocumentData(eventRef)
-  const registeredRef = collection(db, `event/${event?.eventId}/registeredUsers`).withConverter(eventRegisteredUsersConverter)
-  const [data, loadingRegistered, error] = useCollectionData(query(registeredRef, where('user', '==', doc(db, 'user', `${userAuth?.userId}`))))
+  const { data, loading, error } = useEventRegistrant(event, userAuth)
 
-  const isRegistered = data?.length && data[0].status
+  const isRegistered = data?.status
 
   // const registeredUsersRef = collection(db, 'event', `${eventId}`, 'registeredUsers') //.withConverter(eventConverter);
   // const [registeredUsers, loadingRegisteredUsers, errorRegisteredUsers] = useCollectionData(registeredUsersRef)
@@ -102,15 +102,22 @@ const EventDetail = () => {
     const startDate = moment(event?.startDate?.toDate())
     const isDeadlineBeforeStartDate = expectedDeadline.diff(startDate) < 0 // jadi kalo deadlinenya tryt setelah start date, ya pakenya start date eventnya
 
-    addDoc(collection(db, `event/${eventId}/registeredUsers`).withConverter(eventRegisteredUsersConverter), {
+    setDoc(doc(db, `event/${eventId}/registeredUsers/${userAuth?.userId}`).withConverter(eventRegisteredUsersConverter), {
       isPresent: false,
       paymentDeadline: isDeadlineBeforeStartDate ? Timestamp.fromDate(expectedDeadline.toDate()) : (event?.startDate as Timestamp), //TODO: test
       status: 'Pending',
-      user: doc(db, 'user', `${userAuth?.userId}`),
       proof: '', //TODO: fix
-    }).then(() => {
-      console.log('Register Success') // TODO: create alert / toast
     })
+
+    // addDoc(collection(db, `event/${eventId}/registeredUsers`).withConverter(eventRegisteredUsersConverter), {
+    //   isPresent: false,
+    //   paymentDeadline: isDeadlineBeforeStartDate ? Timestamp.fromDate(expectedDeadline.toDate()) : (event?.startDate as Timestamp), //TODO: test
+    //   status: 'Pending',
+    //   user: doc(db, 'user', `${userAuth?.userId}`),
+    //   proof: '', //TODO: fix
+    // }).then(() => {
+    //   console.log('Register Success') // TODO: create alert / toast
+    // })
   }
 
   const unregisterEvent = () => {
@@ -137,10 +144,10 @@ const EventDetail = () => {
           {isRegistered ? (
             <div
               className={`absolute top-0 left-0 z-10 text-sm font-bold text-white ${
-                data[0].status === 'Registered' ? 'bg-sky-400' : data[0].status === 'Pending' ? 'bg-orange-400' : 'bg-red-400'
+                isRegistered === 'Registered' ? 'bg-sky-400' : isRegistered === 'Pending' ? 'bg-orange-400' : 'bg-red-400'
               } px-4 py-2 rounded-br-lg rounded-tl-lg`}
             >
-              {data[0].status}
+              {isRegistered}
             </div>
           ) : undefined}
           <Image

@@ -11,11 +11,13 @@ export interface Fee {
 }
 
 export interface RegisteredUsers {
+  // id nya pake id usernya
+  userId?: string
   status: 'Pending' | 'Registered' | 'Rejected'
   proof?: string
   isPresent: boolean
   paymentDeadline: Timestamp
-  user: DocumentReference
+  // user: DocumentReference
 }
 
 export interface Event {
@@ -80,17 +82,18 @@ export const eventRegisteredUsersConverter = {
       proof: ru.proof,
       isPresent: ru.isPresent,
       paymentDeadline: ru.paymentDeadline,
-      user: ru.user,
+      // user: ru.user,
     }
   },
   fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): RegisteredUsers {
     const data = snapshot.data(options)! as RegisteredUsers
     return {
+      userId: snapshot.id,
       status: data.status,
       proof: data.proof,
       isPresent: data.isPresent,
       paymentDeadline: data.paymentDeadline,
-      user: data.user,
+      // user: data.user,
     }
   },
 }
