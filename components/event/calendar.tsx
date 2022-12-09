@@ -12,13 +12,18 @@ interface Props {
   events?: Event[]
 }
 
-const CalendarEventView = ({ initialDate, events}: Props) => {
+const CalendarEventView = ({ initialDate, events }: Props) => {
+
+  const getEarliestEventInMonth = (date: Date) : Date => {
+    const filteredEvent = events?.filter(e => e.startDate && date && e.startDate.toDate().getMonth() === date.getMonth() && e.startDate.toDate().getFullYear() === date.getFullYear())
+    return filteredEvent && filteredEvent?.length > 0 && filteredEvent[0].startDate ? filteredEvent[0].startDate?.toDate() : date;
+  }
+
   const calendarHeader = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
   const colorDateToday = 'bg-blue-600', colorDateSelected = 'bg-blue-400', colorDateEvent = 'bg-violet-700'
-  const [activeDate, setActiveDate] = useState<Date>(initialDate ? initialDate : new Date())
+  const [activeDate, setActiveDate] = useState<Date>(initialDate ? initialDate : getEarliestEventInMonth(new Date()))
   const [activeDays, setActiveDays] = useState<CalendarDay[][]>([])
 
-  console.log(typeof colorDateToday)
   const today = useMemo(() => new Date(), [])
   useEffect(() => {
     let _active = new Date(activeDate.getFullYear(), activeDate.getMonth(), 1)
@@ -79,18 +84,14 @@ const CalendarEventView = ({ initialDate, events}: Props) => {
               })}
           </div>
         </div>
-        <div className="p-5 bg-[#daeffb]/10 rounded-none rounded-t md:rounded-r">
-          <div className="px-4 flex items-center justify-between">
-            <h1 className="text-sm md:text-xl font-bold text-gray-800">
-              {`${activeDate.toLocaleString('default', {
-                month: 'long',
-              })} ${activeDate.getFullYear()}`}
-            </h1>
+        <div className="p-8 basis-5/12 bg-[#daeffb]/10 rounded-none rounded-t md:rounded-r">
+          <div className="flex items-center justify-between">
+            
             <div className="flex items-center text-gray-800 cursor-pointer">
               {activeDate.getFullYear() > today.getFullYear() && (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="icon icon-tabler icon-tabler-chevron-left"
+                  className="icon icon-tabler icon-tabler-chevron-left transition-all stroke-1 hover:stroke-2"
                   width={24}
                   height={24}
                   viewBox="0 0 24 24"
@@ -101,17 +102,23 @@ const CalendarEventView = ({ initialDate, events}: Props) => {
                   strokeLinejoin="round"
                   onClick={() => {
                     activeDate.setMonth(activeDate.getMonth() - 1)
-                    setActiveDate(new Date(activeDate))
+                    setActiveDate(getEarliestEventInMonth(new Date(activeDate)))
                   }}
                 >
                   <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                   <polyline points="15 6 9 12 15 18" />
                 </svg>
               )}
-
+            </div>
+            <h1 className="text-sm md:text-xl font-bold text-gray-800">
+              {`${activeDate.toLocaleString('default', {
+                month: 'long',
+              })} ${activeDate.getFullYear()}`}
+            </h1>
+            <div className="flex items-center text-gray-800 cursor-pointer">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="icon icon-tabler ml-3 icon-tabler-chevron-right"
+                className="icon icon-tabler icon-tabler-chevron-right transition-all stroke-1 hover:stroke-2"
                 width={24}
                 height={24}
                 viewBox="0 0 24 24"
@@ -122,7 +129,7 @@ const CalendarEventView = ({ initialDate, events}: Props) => {
                 strokeLinejoin="round"
                 onClick={() => {
                   activeDate.setMonth(activeDate.getMonth() + 1)
-                  setActiveDate(new Date(activeDate))
+                  setActiveDate(getEarliestEventInMonth(new Date(activeDate)))
                 }}
               >
                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -150,6 +157,9 @@ const CalendarEventView = ({ initialDate, events}: Props) => {
                   return (
                     <tr key={i}>
                       {dayArr.map((day, index) => {
+                        if (day.date && day.date.getMonth() === activeDate.getMonth() && day.date.getFullYear() === activeDate.getFullYear() && events?.some((e) => e.startDate && day.date && isEqualDate(e.startDate?.toDate(), day.date)))
+                          console.log('called')
+                        //   setActiveDate(day.date);
                         return (
                           <td className="pt-4" key={index}>
                             <div
@@ -170,7 +180,7 @@ const CalendarEventView = ({ initialDate, events}: Props) => {
                                     : activeDate.getMonth() === day.date?.getMonth()
                                     ? 'text-gray-500'
                                     : 'text-gray-300')
-                                }`}
+                                  }`}
                               >
                                 <p className={`text-sm font-medium`}>{day.day}</p>
                               </div>
