@@ -12,11 +12,13 @@ interface Props {
   events?: Event[]
 }
 
-const CalendarEventView = ({ initialDate, events }: Props) => {
+const CalendarEventView = ({ initialDate, events}: Props) => {
   const calendarHeader = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  const colorDateToday = 'bg-blue-600', colorDateSelected = 'bg-blue-400', colorDateEvent = 'bg-violet-700'
   const [activeDate, setActiveDate] = useState<Date>(initialDate ? initialDate : new Date())
   const [activeDays, setActiveDays] = useState<CalendarDay[][]>([])
 
+  console.log(typeof colorDateToday)
   const today = useMemo(() => new Date(), [])
   useEffect(() => {
     let _active = new Date(activeDate.getFullYear(), activeDate.getMonth(), 1)
@@ -160,11 +162,11 @@ const CalendarEventView = ({ initialDate, events }: Props) => {
                                 className={`h-full rounded-full aspect-square text-center w-6 flex items-center justify-center ${
                                   day.date &&
                                   (isEqualDate(activeDate, day.date)
-                                    ? 'bg-blue-400 text-white'
+                                    ? `${colorDateSelected} text-white`
                                     : isEqualDate(today, day.date)
-                                    ? 'bg-blue-600 text-white'
+                                    ? `${colorDateToday} text-white`
                                     : events?.some((e) => e.startDate && day.date && isEqualDate(e.startDate?.toDate(), day.date))
-                                    ? 'bg-violet-700 text-white'
+                                    ? `${colorDateEvent} text-white`
                                     : activeDate.getMonth() === day.date?.getMonth()
                                     ? 'text-gray-500'
                                     : 'text-gray-300')
@@ -181,6 +183,20 @@ const CalendarEventView = ({ initialDate, events }: Props) => {
                 })}
               </tbody>
             </table>
+          </div>
+          <div className="flex flex-col pt-8 w-full gap-1">
+            <div className="flex gap-4 items-center">
+              <div className={`w-3 h-full aspect-square rounded-full ${colorDateSelected}`}></div>
+              <p className='flex-1 text-sm text-gray-600'>Selected</p>
+            </div>
+            <div className="flex gap-4 items-center">
+              <div className={`w-3 h-full aspect-square rounded-full ${colorDateToday}`}></div>
+              <p className='flex-1 text-sm text-gray-600'>Today</p>
+            </div>
+            <div className="flex gap-4 items-center">
+              <div className={`w-3 h-full aspect-square rounded-full ${colorDateEvent}`}></div>
+              <p className='flex-1 text-sm text-gray-600'>Available Event</p>
+            </div>
           </div>
         </div>
       </div>
