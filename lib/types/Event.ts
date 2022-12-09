@@ -34,6 +34,8 @@ export interface Event {
   postRegistrationDescription?: string
   maxRegistrationDate?: Timestamp
   fee?: Fee // kalo null, berarti eventnya free
+
+  registeredUsers?: RegisteredUsers[]
 }
 
 export const eventConverter = {

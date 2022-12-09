@@ -88,6 +88,7 @@ const Card = ({
                 {showSlot && (
                   <div className="flex items-center gap-1">
                     <BsPeopleFill className="text-gray-400" />
+                    {event.registeredUsers?.length} / {event.capacity}
                     {/* {data ? data.filter((d) => d.status === 'Registered').length : 0} / {event.capacity} */}
                   </div>
                 )}

@@ -1,9 +1,6 @@
-import { collection, orderBy, query } from 'firebase/firestore'
 import { useEffect, useRef, useState } from 'react'
-import { useCollectionData } from 'react-firebase-hooks/firestore'
 import { BsCalendar, BsCheckSquareFill, BsFilter, BsSquare, BsViewStacked } from 'react-icons/bs'
-import { db } from '../../lib/firebaseConfig/init'
-import { eventConverter } from '../../lib/types/Event'
+import { useEvents } from '../../lib/hook/EventRegistrant'
 import UnderlineButton from '../button/UnderlineButton'
 import CalendarEventView from './calendar'
 import Card, { SkeletonCard } from './card'
@@ -15,8 +12,9 @@ const EventList = () => {
   const [benefitFilters, setFilters] = useState<string[]>([])
   const [keyword, setKeyword] = useState('')
   const listHeight = useRef(null)
-  const ref = collection(db, 'event').withConverter(eventConverter)
-  const [data, loading, error] = useCollectionData(query(ref, orderBy('startDate', 'asc')))
+  // const ref = collection(db, 'event').withConverter(eventConverter)
+  // const [data, loading, error] = useCollectionData(query(ref, orderBy('startDate', 'asc')))
+  const { data, loading, error } = useEvents('Registered')
   useEffect(() => {
     console.log(benefitFilters)
   }, [benefitFilters])
