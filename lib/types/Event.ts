@@ -28,7 +28,7 @@ export interface Event {
   startDate?: Timestamp
   endDate?: Timestamp
   description: string
-  users?: DocumentReference[]
+  // users?: DocumentReference[]
   postRegistrationDescription?: string
   maxRegistrationDate?: Timestamp
   fee?: Fee // kalo null, berarti eventnya free
@@ -45,7 +45,7 @@ export const eventConverter = {
       startDate: event.startDate,
       endDate: event.endDate,
       description: event.description,
-      users: event.users,
+      // users: event.users,
       postRegistrationDescription: event.postRegistrationDescription,
       maxRegistrationDate: event.maxRegistrationDate,
       fee: event.fee,
@@ -65,7 +65,7 @@ export const eventConverter = {
       startDate: data.startDate,
       endDate: data.endDate,
       description: data.description,
-      users: data.users,
+      // users: data.users,
       postRegistrationDescription: data.postRegistrationDescription,
       maxRegistrationDate: data.maxRegistrationDate,
       fee: data.fee,

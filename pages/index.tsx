@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { userConverter } from '../lib/types/User'
 import { db } from '../lib/firebaseConfig/init'
+import Button from '../components/button/Button'
 
 const Home: NextPage = () => {
   const [email, setEmail] = useState<string>('')
@@ -81,13 +82,10 @@ const Home: NextPage = () => {
             <p className="uppercase tracking-loose w-full">Welcome to</p>
             <h1 className="my-4 text-5xl font-extrabold leading-tight font-secondary">BeeCara</h1>
             <p className="leading-normal text-2xl mb-8">An application for Binusian to seek and join events to get SAT points and Community Service Hour!</p>
-            <button
-              onClick={loginWithOutlook}
-              className="flex items-center justify-center mx-auto lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
-            >
+            <Button onClick={loginWithOutlook} color={'white'}>
               <Image src={'/assets/icon_microsoft.svg'} width={24} height={24} alt={'Microsoft'} />
               <span className="ml-2">Sign in with Microsoft</span>
-            </button>
+            </Button>
           </div>
           <Image src={'/assets/home_vector.svg'} width={500} height={500} alt={'Illustration'} />
         </div>

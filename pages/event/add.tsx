@@ -16,6 +16,7 @@ import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { db, storage } from '../../lib/firebaseConfig/init'
 import { DocumentReference, Timestamp, addDoc, collection } from 'firebase/firestore'
 import ClipLoader from 'react-spinners/ClipLoader'
+import Button from '../../components/button/Button'
 interface FormValues {
   name: string
   description: string
@@ -66,7 +67,7 @@ const AddEventPage = () => {
           benefit: data.benefits.filter((b) => b.amount),
           startDate: Timestamp.fromDate(new Date(data.startDate)),
           endDate: Timestamp.fromDate(new Date(data.endDate)),
-          users: [],
+          // users: [],
           fee: hasFee ? data.fee : { amount: 0, description: '' },
           maxRegistrationDate: hasMaxRegDate ? Timestamp.fromDate(new Date(data.maxRegistrationDate)) : Timestamp.fromDate(new Date(data.startDate)),
           postRegistrationDescription: data.postRegistrationDescription,
@@ -298,14 +299,9 @@ const AddEventPage = () => {
               />
             </div>
             <div className="w-full flex justify-end">
-              <button
-                type="submit"
-                className={`flex w-32 items-center justify-center bg-sky-400 text-white font-bold rounded py-3 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition ${
-                  isSubmitting ? 'cursor-wait' : 'hover:scale-105'
-                } duration-300 ease-in-out`}
-              >
+              <Button isSubmitButton className={isSubmitting ? 'cursor-wait' : 'cursor-pointer'}>
                 {isSubmitting ? <ClipLoader size={24} color={'#ffffff'} /> : 'SUBMIT'}
-              </button>
+              </Button>
             </div>
           </div>
         </form>

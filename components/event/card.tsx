@@ -53,7 +53,7 @@ const Card = ({
   return (
     <Link href={`event/${event.eventId}`} key={event.eventId} passHref>
       <div
-        className={`cursor-pointer transition-all duration-[400ms] overflow-hidden rounded-lg shadow-lg hover:ring-2 hover:ring-sky-300 bg-white flex justify-between gap-5 items-start relative p-2 sm:p-3 md:p-5 ${
+        className={`border cursor-pointer transition-all duration-[400ms] overflow-hidden rounded-lg shadow-lg hover:ring-2 hover:ring-sky-300 bg-white flex justify-between gap-5 items-start relative p-2 sm:p-3 md:p-5 ${
           !horizontalLayout ? 'flex-col' : ''
         }`}
       >
@@ -91,7 +91,7 @@ const Card = ({
                 {showSlot && (
                   <div className="flex items-center gap-1">
                     <BsPeopleFill className="text-gray-400" />
-                    {event.users?.length} / {event.capacity}
+                    {/* {event.users?.length} / {event.capacity} */}
                   </div>
                 )}
               </div>

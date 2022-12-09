@@ -16,6 +16,7 @@ import BenefitTags from '../../components/event/BenefitTags'
 import { getDateFormat, getMoneyFormat, getTimeFormat } from '../../lib/helper/util'
 import { BsPeopleFill } from 'react-icons/bs'
 import moment from 'moment'
+import Button from '../../components/button/Button'
 
 interface FormValues {
   proof: File
@@ -174,7 +175,7 @@ const EventDetail = () => {
             <div className="flex items-start flex-wrap gap-2 mt-2">{<BenefitTags benefits={event?.benefit} />}</div>
           </div>
         </div>
-        <div className="flex border flex-col rounded-lg p-4 shadow-md w-full col-span-2 justify-between">
+        <div className="flex border flex-col rounded-lg p-4 shadow-lg w-full col-span-2 justify-between">
           <FormProvider {...methods}>
             <div className="flex-col flex gap-3">
               {isRegistered === 'Pending' ? (
@@ -242,32 +243,21 @@ const EventDetail = () => {
                 <b className="text-gray-600">Available Slots</b>
                 <p className="flex items-center">
                   <BsPeopleFill className="mr-2 text-gray-400" />
-                  {event?.users?.length} / {event?.capacity}
+                  {/* {event?.users?.length} / {event?.capacity} */}
                 </p>
               </div>
             </div>
             {/* TODO: validasi juga kalo slot udah penuh */}
             {isRegistered === 'Pending' ? (
-              <button
-                className="mt-3 flex items-center justify-center bg-red-400 text-white font-bold rounded py-3 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
-                onClick={unregisterEvent}
-              >
+              <Button onClick={unregisterEvent} color={'red'}>
                 Unregister
-              </button>
+              </Button>
             ) : isRegistered === 'Registered' ? (
-              <button
-                className="mt-3 flex items-center justify-center bg-red-400 text-white font-bold rounded py-3 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
-                onClick={unregisterEvent}
-              >
+              <Button onClick={unregisterEvent} color={'red'}>
                 Unregister
-              </button>
+              </Button>
             ) : (
-              <button
-                className="mt-3 flex items-center justify-center bg-sky-400 text-white font-bold rounded py-3 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
-                onClick={registerEvent}
-              >
-                Register
-              </button>
+              <Button onClick={registerEvent}>Register</Button>
             )}
           </FormProvider>
         </div>
