@@ -46,7 +46,6 @@ const Card = ({
   const { user, loading: loadingAuth } = useAuth()
   const ref = collection(db, `event/${event.eventId}/registeredUsers`).withConverter(eventRegisteredUsersConverter)
   const [data, loadingRegistered, error] = useCollectionData(query(ref, where('user', '==', doc(db, 'user', `${user?.userId}`))))
-
   if (loadingAuth || loadingRegistered) return <SkeletonCard horizontalLayout={horizontalLayout} />
   // const isRegistered = event?.users?.some((u) => u.id === user?.userId)
   const isRegistered = data?.length && data[0].status
@@ -91,7 +90,7 @@ const Card = ({
                 {showSlot && (
                   <div className="flex items-center gap-1">
                     <BsPeopleFill className="text-gray-400" />
-                    {/* {event.users?.length} / {event.capacity} */}
+                    {data ? data.length : 0} / {event.capacity}
                   </div>
                 )}
               </div>
