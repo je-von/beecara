@@ -1,4 +1,4 @@
-import { collection, doc, onSnapshot, orderBy, query, where } from 'firebase/firestore'
+import { Unsubscribe, collection, doc, onSnapshot, orderBy, query, where } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { useCollectionData, useDocumentData } from 'react-firebase-hooks/firestore'
 import { useAuth } from '../authContext'
@@ -39,17 +39,18 @@ export function useEvents(status?: string) {
   const [events, setEvents] = useState(data)
   useEffect(() => {
     if (loadingEvent) return
+    let unsubscribe: Unsubscribe
     setEvents(
       data?.map((d) => {
         const registeredUsers: RegisteredUsers[] = []
         const col = collection(db, `event/${d.eventId}/registeredUsers`).withConverter(eventRegisteredUsersConverter)
-        onSnapshot(status ? query(col, where('status', '==', status)) : col, (snapshot) => {
-          let i = 0
-          snapshot.forEach((s) => {
-            i++
+        unsubscribe = onSnapshot(status ? query(col, where('status', '==', status)) : col, (snapshot) => {
+          registeredUsers.length = 0
+          setLoadingRegUsers(true)
+          for (const s of snapshot.docs) {
             registeredUsers.push(s.data())
-          })
-          if (i >= snapshot.size) setLoadingRegUsers(false)
+          }
+          setLoadingRegUsers(false)
         })
 
         return {
@@ -58,6 +59,7 @@ export function useEvents(status?: string) {
         }
       })
     )
+    return () => unsubscribe()
   }, [data, loadingEvent, status])
 
   return { data: events, loading: loadingEvent || loadingRegUsers, error }
