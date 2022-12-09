@@ -51,11 +51,13 @@ const Card = ({
     `event/${event.eventId}/registeredUsers`
   ).withConverter(eventRegisteredUsersConverter);
   const [data, loadingRegistered, error] = useCollectionData(
-    query(ref, where("user", "==", doc(db, "user", `${user?.userId}`)))
+    query(ref, where("status", "==", "Registered"))
   );
+
   if (loadingAuth || loadingRegistered) return <SkeletonCard />;
-  // const isRegistered = event?.users?.some((u) => u.id === user?.userId)
-  const isRegistered = data?.length && data[0].status;
+
+  const isRegistered = data?.length && data.some((d) => d.user === doc(db, "user", `${user?.userId}`));
+  
   return (
     <Link href={`event/${event.eventId}`} key={event.eventId} passHref>
       <div
