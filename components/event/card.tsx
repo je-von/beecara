@@ -22,13 +22,13 @@ interface Props {
   horizontalLayout?: Boolean
 }
 
-export const SkeletonCard = () => (
-  <div className={`p-5 h-full w-full rounded-lg shadow-lg bg-white flex flex-col justify-between`}>
-    <div className="flex flex-col gap-5">
-      <Skeleton height={120} width={'100%'} />
-      <Skeleton count={3} width={'100%'} height={25} />
+export const SkeletonCard = ({ horizontalLayout }: { horizontalLayout?: Boolean }) => (
+  <div className={`p-5 h-full w-full rounded-lg shadow-lg bg-white flex ${horizontalLayout ? 'flex-row' : 'flex-col'} justify-between`}>
+    <div className={`flex ${horizontalLayout ? 'flex-row' : 'flex-col'} gap-5 w-full`}>
+      <Skeleton height={160} width={horizontalLayout ? 160 : '100%'} />
+      <Skeleton count={horizontalLayout ? 5 : 3} width={horizontalLayout ? 370 : '100%'} height={25} />
     </div>
-    <Skeleton count={2} width={'100%'} height={25} />
+    {!horizontalLayout && <Skeleton count={2} width={'100%'} height={25} />}
   </div>
 )
 
@@ -47,7 +47,7 @@ const Card = ({
   const ref = collection(db, `event/${event.eventId}/registeredUsers`).withConverter(eventRegisteredUsersConverter)
   const [data, loadingRegistered, error] = useCollectionData(query(ref, where('user', '==', doc(db, 'user', `${user?.userId}`))))
 
-  if (loadingAuth || loadingRegistered) return <SkeletonCard />
+  if (loadingAuth || loadingRegistered) return <SkeletonCard horizontalLayout={horizontalLayout} />
   // const isRegistered = event?.users?.some((u) => u.id === user?.userId)
   const isRegistered = data?.length && data[0].status
   return (
