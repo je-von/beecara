@@ -17,6 +17,7 @@ import { getDateFormat, getMoneyFormat, getTimeFormat } from '../../lib/helper/u
 import { BsPeopleFill } from 'react-icons/bs'
 import moment from 'moment'
 import Button from '../../components/button/Button'
+import { useEventRegistrant } from '../../lib/hook/EventRegistrant'
 
 interface FormValues {
   proof: File
@@ -31,8 +32,7 @@ const EventDetail = () => {
 
   const eventRef = doc(db, 'event', `${eventId}`).withConverter(eventConverter)
   const [event, loadingEvent, errorEvent, snapshot] = useDocumentData(eventRef)
-  const registeredRef = doc(db, `event/${event?.eventId}/registeredUsers/${userAuth?.userId}`).withConverter(eventRegisteredUsersConverter)
-  const [data, loadingRegistered, error] = useDocumentData(registeredRef)
+  const { data, loading, error } = useEventRegistrant(event, userAuth)
 
   const isRegistered = data?.status
 

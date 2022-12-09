@@ -2,13 +2,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FaCalendar } from 'react-icons/fa'
 import { BsPeopleFill } from 'react-icons/bs'
-import { Event, eventRegisteredUsersConverter } from '../../lib/types/Event'
-import { useDocumentData } from 'react-firebase-hooks/firestore'
+import { Event } from '../../lib/types/Event'
 import { useAuth } from '../../lib/authContext'
-import { doc } from 'firebase/firestore'
-import { db } from '../../lib/firebaseConfig/init'
 import Skeleton from 'react-loading-skeleton'
 import BenefitTags from './BenefitTags'
+import { useEventRegistrant } from '../../lib/hook/EventRegistrant'
 
 interface Props {
   event: Event
@@ -44,10 +42,9 @@ const Card = ({
   horizontalLayout,
 }: Props) => {
   const { user, loading: loadingAuth } = useAuth()
-  const registeredRef = doc(db, `event/${event?.eventId}/registeredUsers/${user?.userId}`).withConverter(eventRegisteredUsersConverter)
-  const [data, loadingRegistered, error] = useDocumentData(registeredRef)
+  const { data, loading, error } = useEventRegistrant(event, user)
 
-  if (loadingAuth || loadingRegistered) return <SkeletonCard />
+  if (loadingAuth || loading) return <SkeletonCard />
 
   const isRegistered = data?.status
   return (
