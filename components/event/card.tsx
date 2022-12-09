@@ -8,6 +8,7 @@ import { useAuth } from '../../lib/authContext'
 import { collection, doc, query, where } from 'firebase/firestore'
 import { db } from '../../lib/firebaseConfig/init'
 import Skeleton from 'react-loading-skeleton'
+import BenefitTags from './BenefitTags'
 
 interface Props {
   event: Event
@@ -31,7 +32,17 @@ export const SkeletonCard = () => (
   </div>
 )
 
-const Card = ({ event, showRegisterStatus = true, showImage = true, showTitle = true, showDate = true, showSlot = true, showOrganizer = true, showBenefits = true, horizontalLayout }: Props) => {
+const Card = ({
+  event,
+  showRegisterStatus = true,
+  showImage = true,
+  showTitle = true,
+  showDate = true,
+  showSlot = true,
+  showOrganizer = true,
+  showBenefits = true,
+  horizontalLayout,
+}: Props) => {
   const { user, loading: loadingAuth } = useAuth()
   const ref = collection(db, `event/${event.eventId}/registeredUsers`).withConverter(eventRegisteredUsersConverter)
   const [data, loadingRegistered, error] = useCollectionData(query(ref, where('user', '==', doc(db, 'user', `${user?.userId}`))))
@@ -42,7 +53,9 @@ const Card = ({ event, showRegisterStatus = true, showImage = true, showTitle = 
   return (
     <Link href={`event/${event.eventId}`} key={event.eventId} passHref>
       <div
-        className={`cursor-pointer transition-all duration-[400ms] overflow-hidden rounded-lg shadow-lg hover:ring-2 hover:ring-sky-300 bg-white flex justify-between gap-5 items-start relative p-2 sm:p-3 md:p-5 ${!horizontalLayout ? 'flex-col' : ''}`}
+        className={`cursor-pointer transition-all duration-[400ms] overflow-hidden rounded-lg shadow-lg hover:ring-2 hover:ring-sky-300 bg-white flex justify-between gap-5 items-start relative p-2 sm:p-3 md:p-5 ${
+          !horizontalLayout ? 'flex-col' : ''
+        }`}
       >
         {showRegisterStatus && isRegistered ? (
           <div
@@ -86,21 +99,7 @@ const Card = ({ event, showRegisterStatus = true, showImage = true, showTitle = 
             <div className="flex flex-col gap-2">
               {showBenefits && (
                 <div className="flex items-start flex-wrap gap-2 mt-2">
-                  {event.benefit
-                    ?.sort((a, b) => {
-                      return a.type.length < b.type.length ? -1 : a.type.length === b.type.length ? 0 : 1
-                    })
-                    .map((b, index) => (
-                      <div key={index} className="bg-gray-200 text-gray-500 px-2 py-1 rounded-lg text-xs">
-                        {b.type == 'Others' ? (
-                          b.amount
-                        ) : (
-                          <>
-                            <b>{b.amount}</b> {b.type}
-                          </>
-                        )}
-                      </div>
-                    ))}
+                  <BenefitTags benefits={event.benefit} />
                 </div>
               )}
               {showOrganizer && (
