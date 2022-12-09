@@ -4,25 +4,28 @@ import NotFoundPage from "../404";
 import { useAuth } from "../../lib/authContext";
 import { useRouter } from "next/router";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import { collection, limit, orderBy, query } from "firebase/firestore";
+import { collection, limit, orderBy, query, serverTimestamp, Timestamp, where } from "firebase/firestore";
 import { db } from "../../lib/firebaseConfig/init";
-import { eventConverter } from "../../lib/types/Event";
+import { eventConverter, eventRegisteredUsersConverter } from "../../lib/types/Event";
 import Card from "../../components/event/card";
 import Link from "next/link";
 import { BiPencil, BiRightArrow } from "react-icons/bi";
 import { BsChevronRight } from "react-icons/bs";
+import { useMemo } from "react";
 
 const EventDetail = () => {
   const router = useRouter();
   const { user, loading: loadAuth } = useAuth();
 
   const ref = collection(db, "event").withConverter(eventConverter);
+  const today = useMemo(() => Timestamp.now(), [])
   const [data, loading, error] = useCollectionData(
-    query(ref, orderBy("startDate", "asc"), limit(3))
+    query(ref, where("startDate", ">", today), orderBy("startDate", "asc"), limit(3))
   );
   if (loadAuth || loading) {
     return <>Loading</>;
   }
+
 
   if (!user) {
     return <NotFoundPage />;
@@ -83,7 +86,7 @@ const EventDetail = () => {
                 <FaCalendar />
                 <h4 className="tracking-wid text-base">Your Upcoming Event</h4>
               </div>
-              <Link href={"/"} passHref>
+              <Link href={"/profile/upcoming-events"} passHref>
                 <div className="flex items-center gap-3 text-base cursor-pointer hover:text-sky-700 font-bold">
                   <h5>View All</h5>
                   <BsChevronRight className="stroke-1"/>
@@ -92,6 +95,7 @@ const EventDetail = () => {
             </div>
             <div className="grid grid-cols-1 space-y-2 gap-4 mt-6">
               {data?.map((d) => (
+
                 <Card key={d.eventId} event={d} horizontalLayout showSlot={false} />
               ))}
             </div>

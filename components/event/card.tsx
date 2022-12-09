@@ -20,13 +20,13 @@ interface Props {
   horizontalLayout?: Boolean
 }
 
-export const SkeletonCard = ({ horizontalLayout }: { horizontalLayout?: Boolean }) => (
-  <div className={`p-5 h-full w-full rounded-lg shadow-lg bg-white flex ${horizontalLayout ? 'flex-row' : 'flex-col'} justify-between`}>
-    <div className={`flex ${horizontalLayout ? 'flex-row' : 'flex-col'} gap-5 w-full`}>
-      <Skeleton height={160} width={horizontalLayout ? 160 : '100%'} />
-      <Skeleton count={horizontalLayout ? 5 : 3} width={horizontalLayout ? 370 : '100%'} height={25} />
+export const SkeletonCard = () => (
+  <div className={`p-5 h-full w-full rounded-lg shadow-lg bg-white flex flex-col justify-between`}>
+    <div className="flex flex-col gap-5">
+      <Skeleton height={120} width={'100%'} />
+      <Skeleton count={3} width={'100%'} height={25} />
     </div>
-    {!horizontalLayout && <Skeleton count={2} width={'100%'} height={25} />}
+    <Skeleton count={2} width={'100%'} height={25} />
   </div>
 )
 
@@ -43,7 +43,6 @@ const Card = ({
 }: Props) => {
   const { user, loading: loadingAuth } = useAuth()
   const { data, loading, error } = useEventRegistrant(event, user)
-
   if (loadingAuth || loading) return <SkeletonCard />
 
   const isRegistered = data?.status
