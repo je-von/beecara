@@ -13,14 +13,17 @@ interface Props {
 }
 
 const CalendarEventView = ({ initialDate, events }: Props) => {
-
-  const getEarliestEventInMonth = (date: Date) : Date => {
-    const filteredEvent = events?.filter(e => e.startDate && date && e.startDate.toDate().getMonth() === date.getMonth() && e.startDate.toDate().getFullYear() === date.getFullYear())
-    return filteredEvent && filteredEvent?.length > 0 && filteredEvent[0].startDate ? filteredEvent[0].startDate?.toDate() : date;
+  const getEarliestEventInMonth = (date: Date): Date => {
+    const filteredEvent = events?.filter(
+      (e) => e.startDate && date && e.startDate.toDate().getMonth() === date.getMonth() && e.startDate.toDate().getFullYear() === date.getFullYear()
+    )
+    return filteredEvent && filteredEvent?.length > 0 && filteredEvent[0].startDate ? filteredEvent[0].startDate?.toDate() : date
   }
 
   const calendarHeader = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-  const colorDateToday = 'bg-blue-600', colorDateSelected = 'bg-blue-400', colorDateEvent = 'bg-violet-700'
+  const colorDateToday = 'bg-blue-600',
+    colorDateSelected = 'bg-blue-400',
+    colorDateEvent = 'bg-violet-700'
   const [activeDate, setActiveDate] = useState<Date>(initialDate ? initialDate : getEarliestEventInMonth(new Date()))
   const [activeDays, setActiveDays] = useState<CalendarDay[][]>([])
 
@@ -86,7 +89,6 @@ const CalendarEventView = ({ initialDate, events }: Props) => {
         </div>
         <div className="p-8 basis-5/12 bg-[#daeffb]/10 rounded-none rounded-t md:rounded-r">
           <div className="flex items-center justify-between">
-            
             <div className="flex items-center text-gray-800 cursor-pointer">
               {activeDate.getFullYear() > today.getFullYear() && (
                 <svg
@@ -177,7 +179,7 @@ const CalendarEventView = ({ initialDate, events }: Props) => {
                                     : activeDate.getMonth() === day.date?.getMonth()
                                     ? 'text-gray-500'
                                     : 'text-gray-300')
-                                  }`}
+                                }`}
                               >
                                 <p className={`text-sm font-medium`}>{day.day}</p>
                               </div>
@@ -194,15 +196,15 @@ const CalendarEventView = ({ initialDate, events }: Props) => {
           <div className="flex flex-col pt-8 w-full gap-1">
             <div className="flex gap-4 items-center">
               <div className={`w-3 h-full aspect-square rounded-full ${colorDateSelected}`}></div>
-              <p className='flex-1 text-sm text-gray-600'>Selected</p>
+              <p className="flex-1 text-sm text-gray-600">Selected</p>
             </div>
             <div className="flex gap-4 items-center">
               <div className={`w-3 h-full aspect-square rounded-full ${colorDateToday}`}></div>
-              <p className='flex-1 text-sm text-gray-600'>Today</p>
+              <p className="flex-1 text-sm text-gray-600">Today</p>
             </div>
             <div className="flex gap-4 items-center">
               <div className={`w-3 h-full aspect-square rounded-full ${colorDateEvent}`}></div>
-              <p className='flex-1 text-sm text-gray-600'>Available Event</p>
+              <p className="flex-1 text-sm text-gray-600">Available Event</p>
             </div>
           </div>
         </div>
