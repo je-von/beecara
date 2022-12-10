@@ -86,12 +86,12 @@ const EventList = () => {
         </div>
       </div>
       {/* <div className="-translate-y-[120%]"></div> */}
-      <div className="overflow-hidden pb-4">
+      <div className="overflow-hidden p-4">
         <div
           ref={listHeight}
           className={`transition-all grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 justify-center items-stretch gap-8`}
           style={{
-            marginTop: isCalendarView ? `-${listHeight?.current?.clientHeight + 20}px` : '0',
+            marginTop: isCalendarView ? `-${listHeight?.current?.clientHeight + 40}px` : '0',
           }}
         >
           {loading ? (
