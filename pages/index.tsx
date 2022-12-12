@@ -1,6 +1,5 @@
 import type { NextPage } from 'next'
-import { OAuthProvider, getAuth, signInWithPopup } from 'firebase/auth'
-import { useState } from 'react'
+import { OAuthProvider, getAuth, getRedirectResult, signInWithRedirect } from 'firebase/auth'
 import { useAuth } from '../lib/authContext'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -10,8 +9,6 @@ import { db } from '../lib/firebaseConfig/init'
 import Button from '../components/button/Button'
 
 const Home: NextPage = () => {
-  const [email, setEmail] = useState<string>('')
-  const [password, setPassword] = useState<string>('')
   const { user, loading } = useAuth()
   const router = useRouter()
   if (loading) return null // todo: add spinner
@@ -23,55 +20,29 @@ const Home: NextPage = () => {
 
   const auth = getAuth()
 
-  // function login() {
-  //   signInWithEmailAndPassword(auth, email, password)
-  //     .then((userCredential) => {
-  //       // Signed in
-  //       const user = userCredential.user
-  //       console.log('success', user)
-  //       // ...
-  //     })
-  //     .catch((error) => {
-  //       const errorCode = error.code
-  //       const errorMessage = error.message
-  //       console.log('error', errorMessage)
-  //       window.alert(errorMessage)
-  //     })
-  // }
-
-  function loginWithOutlook() {
+  const loginWithOutlook = async () => {
     const outlookProvider = new OAuthProvider('microsoft.com')
     outlookProvider.setCustomParameters({
-      tenant: 'binusianorg.onmicrosoft.com',
+      tenant: 'binusianorg.onmicrosoft.com'
     })
 
     // outlookProvider.addScope('mail.read')
     // outlookProvider.addScope('calendars.read') // todo: calendar need admin approval
     outlookProvider.addScope('openid')
     outlookProvider.addScope('profile')
-    signInWithPopup(auth, outlookProvider)
-      .then((result) => {
-        // User is signed in.
-        // IdP data available in result.additionalUserInfo.profile.
-
-        // Get the OAuth access token and ID Token
-        const credential = OAuthProvider.credentialFromResult(result)
-        const accessToken = credential?.accessToken
-        const idToken = credential?.idToken
-
-        const user = result.user
-        const userRef = doc(db, 'user', user.uid)
-        getDoc(userRef.withConverter(userConverter)).then((res) => {
-          if (!res.exists()) {
-            // Kalo gak di cek dulu (getDoc dulu), sebenernya aman2 aja di db, tapi pas difetch pertama kali abis login, adminOf suka undefined (mungkin karna caching)
-            setDoc(userRef, { name: user.displayName, email: user.email, lineID: null, phoneNumber: null, instagram: null }, { merge: true }).then(() => router.push('/home'))
-          }
-        })
+    await signInWithRedirect(auth, outlookProvider)
+    const result = await getRedirectResult(auth)
+    if (result) {
+      const credential = OAuthProvider.credentialFromResult(result)
+      const user = result.user
+      const userRef = doc(db, 'user', user.uid)
+      getDoc(userRef.withConverter(userConverter)).then((res) => {
+        if (!res.exists()) {
+          // Kalo gak di cek dulu (getDoc dulu), sebenernya aman2 aja di db, tapi pas difetch pertama kali abis login, adminOf suka undefined (mungkin karna caching)
+          setDoc(userRef, { name: user.displayName, email: user.email, lineID: null, phoneNumber: null, instagram: null }, { merge: true }).then(() => router.push('/home'))
+        }
       })
-      .catch((error) => {
-        // Handle error.
-        console.log(error.message)
-      })
+    }
   }
 
   return (
