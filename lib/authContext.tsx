@@ -30,7 +30,7 @@ type UserContext = {
 
 const authContext = createContext<UserContext>({
   user: undefined,
-  loading: true,
+  loading: true
 })
 
 export default function AuthContextProvider({ children }: Props) {
@@ -49,7 +49,7 @@ export default function AuthContextProvider({ children }: Props) {
         user.getIdToken().then((token) =>
           setCookie(null, 'idToken', token, {
             maxAge: 30 * 24 * 60 * 60,
-            path: '/',
+            path: '/'
           })
         )
 
@@ -64,7 +64,7 @@ export default function AuthContextProvider({ children }: Props) {
           // })
         })
       }
-      // if (!user) setUser(null)
+      if (!user) setUserId(undefined)
       setLoading(loadingSnapshot)
     })
   }, [loadingSnapshot])
@@ -78,4 +78,5 @@ export const signOut = async () => {
   const auth = getAuth()
   destroyCookie(null, 'idToken')
   await signout(auth)
+  // Router.push('/')
 }
