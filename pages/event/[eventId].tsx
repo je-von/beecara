@@ -12,7 +12,7 @@ import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import BenefitTags from '../../components/event/BenefitTags'
 import { getDateFormat, getMoneyFormat, getTimeFormat } from '../../lib/helper/util'
-import { BsPeopleFill } from 'react-icons/bs'
+import { BsPeopleFill, BsTelephoneXFill } from 'react-icons/bs'
 import moment from 'moment'
 import Button from '../../components/button/Button'
 import { useEvent, useUserRegisterStatus } from '../../lib/hook/Event'
@@ -96,6 +96,8 @@ const EventDetail = () => {
       paymentDeadline: isDeadlineBeforeStartDate ? Timestamp.fromDate(expectedDeadline.toDate()) : (event?.startDate as Timestamp), //TODO: test
       status: 'Pending',
       proof: '' //TODO: fix
+    }).then(() => {
+      setShowModal(false)
     })
 
     // addDoc(collection(db, `event/${eventId}/registeredUsers`).withConverter(eventRegisteredUsersConverter), {
@@ -115,6 +117,7 @@ const EventDetail = () => {
       status: ''
     }).then(() => {
       console.log('Unregister success') // TODO: create alert / toast
+      setShowModal(false)
     })
   }
 
