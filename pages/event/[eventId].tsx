@@ -16,6 +16,7 @@ import { BsPeopleFill } from 'react-icons/bs'
 import moment from 'moment'
 import Button from '../../components/button/Button'
 import { useEvent, useUserRegisterStatus } from '../../lib/hook/Event'
+import Modal from '../../components/modal/Modal'
 
 interface FormValues {
   proof: File
@@ -34,6 +35,8 @@ const EventDetail = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const methods = useForm<FormValues>()
 
+  const [showModal, setShowModal] = useState(false)
+
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     setIsSubmitting(true)
     const imageFile = data.proof
@@ -43,12 +46,12 @@ const EventDetail = () => {
       // Get URL
       getDownloadURL(snapshot.ref).then((value) => {
         // Add to firestore
-        updateDoc(doc(db, 'event', `${event?.eventId}/registeredUsers`).withConverter(eventRegisteredUsersConverter), {
-          proof: value,
+        updateDoc(doc(db, 'event', `${event?.eventId}/registeredUsers/${userAuth?.userId}`).withConverter(eventRegisteredUsersConverter), {
+          proof: value
           // status: "Registered",
         }).then(() => {
           setIsSubmitting(false)
-          router.push('/event/${event?.eventId}')
+          router.push(`/event/${event?.eventId}`)
         })
       })
     })
@@ -92,7 +95,7 @@ const EventDetail = () => {
       isPresent: false,
       paymentDeadline: isDeadlineBeforeStartDate ? Timestamp.fromDate(expectedDeadline.toDate()) : (event?.startDate as Timestamp), //TODO: test
       status: 'Pending',
-      proof: '', //TODO: fix
+      proof: '' //TODO: fix
     })
 
     // addDoc(collection(db, `event/${eventId}/registeredUsers`).withConverter(eventRegisteredUsersConverter), {
@@ -174,7 +177,7 @@ const EventDetail = () => {
               {registerStatus === 'Pending' ? (
                 <>
                   <b className="text-sky-500 text-justify">Your registration is being reviewed by the organization&apos; admin!</b>
-                  {event?.fee?.amount !== 0 && (
+                  {event?.fee?.amount !== 0 && event?.registeredUsers?.find((ru) => ru.userId === userAuth?.userId)?.proof !== null && (
                     <div className="flex flex-col">
                       <b>Upload Payment Proof</b>
                       <p className="flex items-center whitespace-pre-wrap text-justify">{event?.fee?.description}</p>
@@ -243,7 +246,7 @@ const EventDetail = () => {
             </div>
             {/* TODO: validasi juga kalo slot udah penuh */}
             {registerStatus === 'Pending' ? (
-              <Button onClick={unregisterEvent} color={'red'}>
+              <Button onClick={() => setShowModal(true)} color={'red'}>
                 Unregister
               </Button>
             ) : registerStatus === 'Registered' ? (
@@ -251,8 +254,16 @@ const EventDetail = () => {
                 Unregister
               </Button>
             ) : (
-              <Button onClick={registerEvent}>Register</Button>
+              <Button onClick={() => setShowModal(true)}>Register</Button>
             )}
+
+            {showModal && registerStatus === 'Pending' ? (
+              <Modal content="Are you sure you want to unregister?" onClose={() => setShowModal(false)} onRegister={() => unregisterEvent()} />
+            ) : showModal && registerStatus === 'Registered' ? (
+              <Modal content="Are you sure you want to unregister?" onClose={() => setShowModal(false)} onRegister={() => unregisterEvent()} />
+            ) : showModal && registerStatus === '' ? (
+              <Modal content="Are you sure you want to register?" onClose={() => setShowModal(false)} onRegister={() => registerEvent()} />
+            ) : null}
           </FormProvider>
         </div>
       </div>
