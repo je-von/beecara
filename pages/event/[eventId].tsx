@@ -111,11 +111,11 @@ const EventDetail = () => {
 
   const unregisterEvent = () => {
     //TODO: updatenya nanti change status di dalem collectionnya aja
-    // updateDoc(doc(db, 'event', `${eventId}`), {
-    //   users: arrayRemove(doc(db, 'user', `${userAuth?.userId}`)),
-    // }).then(() => {
-    //   console.log('Unregister success') // TODO: create alert / toast
-    // })
+    updateDoc(doc(db, 'event', `${eventId}/registeredUsers/${userAuth?.userId}`), {
+      status: ''
+    }).then(() => {
+      console.log('Unregister success') // TODO: create alert / toast
+    })
   }
 
   return (
