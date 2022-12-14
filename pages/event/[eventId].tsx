@@ -298,47 +298,73 @@ const EventDetail = () => {
       </div>
 
       <div>
-        <h3>Registrants</h3>
-        <p>
-          {event?.registeredUsers
-            ?.filter((ru) => ru.status !== 'Registered' && ru.status !== 'Rejected')
-            .map((user) => (
-              <>
-                <div>
-                  User:
-                  {user?.userId}
-                </div>
-                <div>
-                  <div>
-                    {user?.proof ? (
-                      <div>
-                        <div>Proof:</div>
-                        <Image className="" src={`${event?.image}`} alt="event-poster" width={150} height={150} />
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
+        {userAuth?.adminOf?.id === event?.organization?.id && (
+          <>
+            <h3>Registrants</h3>
+            {event?.registeredUsers
+              ?.filter((ru) => ru.status !== 'Registered' && ru.status !== 'Rejected')
+              .map((user) => (
+                <>
+                  <div className="overflow-x-auto relative shadow-md sm:rounded-lg">
+                    <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                      <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                          <th scope="col" className="py-3 px-6">
+                            Name
+                          </th>
+                          <th scope="col" className="py-3 px-6">
+                            Proof
+                          </th>
+                          <th scope="col" className="py-3 px-6">
+                            Action
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="bg-white border-b  hover:bg-gray-50 ">
+                          <th scope="row" className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
+                            <div>{user?.userId}</div>
+                          </th>
+                          <td className="py-4 px-6">
+                            {' '}
+                            <div>
+                              {user?.proof ? (
+                                <div>
+                                  <Image className="" src={`${event?.image}`} alt="event-poster" width={150} height={150} />
+                                </div>
+                              ) : (
+                                'No Proof!'
+                              )}
+                            </div>
+                          </td>
 
-                <div className="flex gap-4">
-                  <Button
-                    onClick={() => {
-                      acceptParticipant(user?.userId)
-                    }}
-                  >
-                    Approve
-                  </Button>
-                  <Button
-                    color={'red'}
-                    onClick={() => {
-                      rejectParticipant(user?.userId)
-                    }}
-                  >
-                    Reject
-                  </Button>
-                </div>
-              </>
-            ))}
-        </p>
+                          <td className="py-4 px-6 text-right">
+                            <div className="flex gap-4">
+                              <Button
+                                onClick={() => {
+                                  acceptParticipant(user?.userId)
+                                }}
+                              >
+                                Approve
+                              </Button>
+                              <Button
+                                color={'red'}
+                                onClick={() => {
+                                  rejectParticipant(user?.userId)
+                                }}
+                              >
+                                Reject
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              ))}
+          </>
+        )}
       </div>
     </div>
   )
