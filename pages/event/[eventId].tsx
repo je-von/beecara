@@ -3,9 +3,9 @@ import { IoMdArrowBack, IoMdPricetag } from 'react-icons/io'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { Timestamp, doc, setDoc, updateDoc } from 'firebase/firestore'
+import { Timestamp, doc, setDoc, updateDoc, collection } from 'firebase/firestore'
 import { db, storage } from '../../lib/firebaseConfig/init'
-import { eventRegisteredUsersConverter } from '../../lib/types/Event'
+import { eventConverter, eventRegisteredUsersConverter } from '../../lib/types/Event'
 import NotFoundPage from '../404'
 import { useAuth } from '../../lib/authContext'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
@@ -17,7 +17,6 @@ import moment from 'moment'
 import Button from '../../components/button/Button'
 import { useEvent, useUserRegisterStatus } from '../../lib/hook/Event'
 import Modal from '../../components/modal/Modal'
-import { useUser } from '../../lib/hook/User'
 
 interface FormValues {
   proof: File
@@ -38,6 +37,8 @@ const EventDetail = () => {
   const methods = useForm<FormValues>()
 
   const [showModal, setShowModal] = useState(false)
+
+  const refUser = collection(db, 'user').withConverter(userConverter)
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     setIsSubmitting(true)
@@ -123,19 +124,20 @@ const EventDetail = () => {
     })
   }
 
-  const acceptParticipant = () => {
+  const acceptParticipant = (userId: string | undefined) => {
     //TODO: updatenya nanti change status di dalem collectionnya aja
-    updateDoc(doc(db, 'event', `${eventId}/registeredUsers/${userAuth?.userId}`), {
+    updateDoc(doc(db, 'event', `${eventId}/registeredUsers/${userId}`), {
       status: 'Registered'
     }).then(() => {
       console.log('Success accept participant') // TODO: create alert / toast
       setShowModal(false)
     })
+    // console.log(userId)
   }
 
-  const rejectParticipant = () => {
+  const rejectParticipant = (userId: string | undefined) => {
     //TODO: updatenya nanti change status di dalem collectionnya aja
-    updateDoc(doc(db, 'event', `${eventId}/registeredUsers/${userAuth?.userId}`), {
+    updateDoc(doc(db, 'event', `${eventId}/registeredUsers/${userId}`), {
       status: 'Rejected'
     }).then(() => {
       console.log('Reject participant') // TODO: create alert / toast
@@ -298,11 +300,11 @@ const EventDetail = () => {
       <div>
         <h3>Registrants</h3>
         <p>
-          {event?.registeredUsers?.filter((ru) => ru.status !== 'Registered') &&
-            event?.registeredUsers?.map((user) => (
+          {event?.registeredUsers
+            ?.filter((ru) => ru.status !== 'Registered' && ru.status !== 'Rejected')
+            .map((user) => (
               <>
                 <div>User: {user?.userId}</div>
-                {/* <div>User Name : {useUser(user.userId)}</div> */}
                 <div>
                   <div>
                     {user?.proof ? (
@@ -315,8 +317,21 @@ const EventDetail = () => {
                 </div>
 
                 <div className="flex gap-4">
-                  <Button>Approve</Button>
-                  <Button color={'red'}>Reject</Button>
+                  <Button
+                    onClick={() => {
+                      acceptParticipant(user?.userId)
+                    }}
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    color={'red'}
+                    onClick={() => {
+                      rejectParticipant(user?.userId)
+                    }}
+                  >
+                    Reject
+                  </Button>
                 </div>
               </>
             ))}
