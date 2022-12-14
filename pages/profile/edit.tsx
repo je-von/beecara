@@ -15,7 +15,7 @@ interface FormValues {
   phoneNumber: string
 }
 
-const AddEventPage = () => {
+const EditProfilePage = () => {
   const router = useRouter()
   const { user, loading } = useAuth()
   const methods = useForm<FormValues>()
@@ -104,4 +104,4 @@ const AddEventPage = () => {
   )
 }
 
-export default AddEventPage
+export default EditProfilePage

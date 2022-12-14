@@ -12,16 +12,15 @@ import Link from "next/link";
 import { BiPencil, BiRightArrow } from "react-icons/bi";
 import { BsChevronRight } from "react-icons/bs";
 import { useMemo } from "react";
+import { useEvents } from "../../lib/hook/Event";
 
-const EventDetail = () => {
+const ProfilePage = () => {
   const router = useRouter();
   const { user, loading: loadAuth } = useAuth();
 
   const ref = collection(db, "event").withConverter(eventConverter);
   const today = useMemo(() => Timestamp.now(), [])
-  const [data, loading, error] = useCollectionData(
-    query(ref, where("startDate", ">", today), orderBy("startDate", "asc"), limit(3))
-  );
+  const {data, loading, error} = useEvents();
   if (loadAuth || loading) {
     return <>Loading</>;
   }
@@ -94,10 +93,11 @@ const EventDetail = () => {
               </Link>
             </div>
             <div className="grid grid-cols-1 space-y-2 gap-4 mt-6">
-              {data?.map((d) => (
-
-                <Card key={d.eventId} event={d} horizontalLayout showSlot={false} />
-              ))}
+            {data?.filter((d) => d.startDate && d.startDate > today).slice(0,3).map((d) => (
+                d.registeredUsers?.length != 0 && d.registeredUsers?.filter((ru)=> ru.userId == user.userId).map((ru)=>(
+                  <Card key={d.eventId} event={d} horizontalLayout showSlot={false} />
+                )
+              )))}
             </div>
           </div>
         </div>
@@ -106,4 +106,4 @@ const EventDetail = () => {
   );
 };
 
-export default EventDetail;
+export default ProfilePage;
