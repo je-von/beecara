@@ -121,6 +121,26 @@ const EventDetail = () => {
     })
   }
 
+  const acceptParticipant = () => {
+    //TODO: updatenya nanti change status di dalem collectionnya aja
+    updateDoc(doc(db, 'event', `${eventId}/registeredUsers/${userAuth?.userId}`), {
+      status: 'Registered'
+    }).then(() => {
+      console.log('Success accept participant') // TODO: create alert / toast
+      setShowModal(false)
+    })
+  }
+
+  const rejectParticipant = () => {
+    //TODO: updatenya nanti change status di dalem collectionnya aja
+    updateDoc(doc(db, 'event', `${eventId}/registeredUsers/${userAuth?.userId}`), {
+      status: 'Rejected'
+    }).then(() => {
+      console.log('Reject participant') // TODO: create alert / toast
+      setShowModal(false)
+    })
+  }
+
   return (
     <div className="px-40 pb-5 flex flex-col gap-4">
       <div className="flex items-center">
@@ -266,9 +286,38 @@ const EventDetail = () => {
               <Modal content="Are you sure you want to unregister?" onClose={() => setShowModal(false)} onRegister={() => unregisterEvent()} />
             ) : showModal && registerStatus === '' ? (
               <Modal content="Are you sure you want to register?" onClose={() => setShowModal(false)} onRegister={() => registerEvent()} />
+            ) : showModal ? (
+              <Modal content="Are you sure you want to register?" onClose={() => setShowModal(false)} onRegister={() => registerEvent()} />
             ) : null}
           </FormProvider>
         </div>
+      </div>
+
+      <div>
+        <h3>Registrants</h3>
+        <p>
+          {event?.registeredUsers?.filter((ru) => ru.status !== 'Registered') &&
+            event?.registeredUsers?.map((user) => (
+              <>
+                <div>User: {user?.userId}</div>
+                <div>
+                  <div>
+                    {user?.proof ? (
+                      <div>
+                        <div>Proof:</div>
+                        <Image className="" src={`${event?.image}`} alt="event-poster" width={150} height={150} />
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <Button>Approve</Button>
+                  <Button color={'red'}>Reject</Button>
+                </div>
+              </>
+            ))}
+        </p>
       </div>
     </div>
   )
