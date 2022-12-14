@@ -17,6 +17,7 @@ import moment from 'moment'
 import Button from '../../components/button/Button'
 import { useEvent, useUserRegisterStatus } from '../../lib/hook/Event'
 import Modal from '../../components/modal/Modal'
+import { useUser } from '../../lib/hook/User'
 
 interface FormValues {
   proof: File
@@ -30,6 +31,7 @@ const EventDetail = () => {
   const [imageURL, setImageURL] = useState<string>()
 
   const { data: event, loading, error } = useEvent(`${eventId}`)
+  
   const { registerStatus } = useUserRegisterStatus(event)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -300,6 +302,7 @@ const EventDetail = () => {
             event?.registeredUsers?.map((user) => (
               <>
                 <div>User: {user?.userId}</div>
+                {/* <div>User Name : {useUser(user.userId)}</div> */}
                 <div>
                   <div>
                     {user?.proof ? (
