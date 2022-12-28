@@ -305,12 +305,12 @@ const EventDetail = () => {
               </thead>
               <tbody>
                 {event?.registeredUsers
-                  ?.filter(
-                    (ru) =>
-                      // ru.status !== 'Registered' &&
-                      ru.status !== 'Rejected'
-                  )
-                  .map((ru) => (
+                  // ?.filter(
+                  //   (ru) =>
+                  //     // ru.status !== 'Registered' &&
+                  //     ru.status !== 'Rejected'
+                  // )
+                  ?.map((ru) => (
                     <tr className="bg-white border-b hover:bg-gray-50 " key={ru.userId}>
                       <th scope="row" className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
                         <div>
@@ -330,24 +330,28 @@ const EventDetail = () => {
                         </div>
                       </td>
 
-                      <td className="py-4 px-6 text-right">
-                        <div className="flex gap-4">
-                          <Button
-                            onClick={() => {
-                              acceptParticipant(ru?.userId)
-                            }}
-                          >
-                            Approve
-                          </Button>
-                          <Button
-                            color={'red'}
-                            onClick={() => {
-                              rejectParticipant(ru?.userId)
-                            }}
-                          >
-                            Reject
-                          </Button>
-                        </div>
+                      <td className="py-4 px-6">
+                        {ru.status !== 'Rejected' && ru.status !== 'Registered' ? (
+                          <div className="flex gap-4">
+                            <Button
+                              onClick={() => {
+                                acceptParticipant(ru?.userId)
+                              }}
+                            >
+                              Approve
+                            </Button>
+                            <Button
+                              color={'red'}
+                              onClick={() => {
+                                rejectParticipant(ru?.userId)
+                              }}
+                            >
+                              Reject
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="">{ru.status}</div>
+                        )}
                       </td>
                     </tr>
                   ))}
