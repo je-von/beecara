@@ -297,79 +297,77 @@ const EventDetail = () => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-5 mt-5">
-        <h3>Registrants</h3>
-        <div className="overflow-x-auto relative shadow-md sm:rounded-lg  ">
-          <table className="w-full text-sm text-left text-gray-400 ">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-              <tr>
-                <th scope="col" className="py-3 px-6">
-                  Name
-                </th>
-                <th scope="col" className="py-3 px-6">
-                  Proof
-                </th>
-                <th scope="col" className="py-3 px-6">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {userAuth?.adminOf?.id === event?.organization?.id && (
-                <>
-                  {event?.registeredUsers
-                    ?.filter(
-                      (ru) =>
-                        // ru.status !== 'Registered' &&
-                        ru.status !== 'Rejected'
-                    )
-                    .map((ru) => (
-                      <tr className="bg-white border-b hover:bg-gray-50 " key={ru.userId}>
-                        <th scope="row" className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
-                          <div>
-                            {ru.user?.name} <span className="text-gray-400">({ru.user?.email})</span>
-                          </div>
-                        </th>
-                        <td className="py-4 px-6">
-                          {' '}
-                          <div>
-                            {ru?.proof ? (
-                              <div>
-                                <Image className="" src={`${event?.image}`} alt="event-poster" width={150} height={150} />
-                              </div>
-                            ) : (
-                              'No Proof!'
-                            )}
-                          </div>
-                        </td>
+      {userAuth?.adminOf?.id === event?.organization?.id && (
+        <div className="flex flex-col gap-5 mt-5">
+          <h3>Registrants</h3>
+          <div className="overflow-x-auto relative shadow-md sm:rounded-lg  ">
+            <table className="w-full text-sm text-left text-gray-400 ">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                <tr>
+                  <th scope="col" className="py-3 px-6">
+                    Name
+                  </th>
+                  <th scope="col" className="py-3 px-6">
+                    Proof
+                  </th>
+                  <th scope="col" className="py-3 px-6">
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {event?.registeredUsers
+                  ?.filter(
+                    (ru) =>
+                      // ru.status !== 'Registered' &&
+                      ru.status !== 'Rejected'
+                  )
+                  .map((ru) => (
+                    <tr className="bg-white border-b hover:bg-gray-50 " key={ru.userId}>
+                      <th scope="row" className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
+                        <div>
+                          {ru.user?.name} <span className="text-gray-400">({ru.user?.email})</span>
+                        </div>
+                      </th>
+                      <td className="py-4 px-6">
+                        {' '}
+                        <div>
+                          {ru?.proof ? (
+                            <div>
+                              <Image className="" src={`${event?.image}`} alt="event-poster" width={150} height={150} />
+                            </div>
+                          ) : (
+                            'No Proof!'
+                          )}
+                        </div>
+                      </td>
 
-                        <td className="py-4 px-6 text-right">
-                          <div className="flex gap-4">
-                            <Button
-                              onClick={() => {
-                                acceptParticipant(ru?.userId)
-                              }}
-                            >
-                              Approve
-                            </Button>
-                            <Button
-                              color={'red'}
-                              onClick={() => {
-                                rejectParticipant(ru?.userId)
-                              }}
-                            >
-                              Reject
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                </>
-              )}
-            </tbody>
-          </table>
+                      <td className="py-4 px-6 text-right">
+                        <div className="flex gap-4">
+                          <Button
+                            onClick={() => {
+                              acceptParticipant(ru?.userId)
+                            }}
+                          >
+                            Approve
+                          </Button>
+                          <Button
+                            color={'red'}
+                            onClick={() => {
+                              rejectParticipant(ru?.userId)
+                            }}
+                          >
+                            Reject
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
