@@ -3,16 +3,16 @@ import { IoMdArrowBack, IoMdPricetag } from 'react-icons/io'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { Timestamp, doc, setDoc, updateDoc, collection } from 'firebase/firestore'
+import { Timestamp, collection, doc, setDoc, updateDoc } from 'firebase/firestore'
 import { db, storage } from '../../lib/firebaseConfig/init'
-import { eventConverter, eventRegisteredUsersConverter } from '../../lib/types/Event'
+import { eventRegisteredUsersConverter } from '../../lib/types/Event'
 import NotFoundPage from '../404'
 import { useAuth } from '../../lib/authContext'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import BenefitTags from '../../components/event/BenefitTags'
 import { getDateFormat, getMoneyFormat, getTimeFormat } from '../../lib/helper/util'
-import { BsPeopleFill, BsTelephoneXFill } from 'react-icons/bs'
+import { BsPeopleFill } from 'react-icons/bs'
 import moment from 'moment'
 import Button from '../../components/button/Button'
 import { useEvent, useUserRegisterStatus } from '../../lib/hook/Event'
@@ -297,30 +297,34 @@ const EventDetail = () => {
         </div>
       </div>
 
-      <div>
-        {userAuth?.adminOf?.id === event?.organization?.id && (
-          <>
-            <h3>Registrants</h3>
-            {event?.registeredUsers
-              ?.filter((ru) => ru.status !== 'Registered' && ru.status !== 'Rejected')
-              .map((user) => (
+      <div className="flex flex-col gap-5 mt-5">
+        <h3>Registrants</h3>
+        <div className="overflow-x-auto relative shadow-md sm:rounded-lg  ">
+          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+              <tr>
+                <th scope="col" className="py-3 px-6">
+                  Name
+                </th>
+                <th scope="col" className="py-3 px-6">
+                  Proof
+                </th>
+                <th scope="col" className="py-3 px-6">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {userAuth?.adminOf?.id === event?.organization?.id && (
                 <>
-                  <div className="overflow-x-auto relative shadow-md sm:rounded-lg">
-                    <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                      <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-                        <tr>
-                          <th scope="col" className="py-3 px-6">
-                            Name
-                          </th>
-                          <th scope="col" className="py-3 px-6">
-                            Proof
-                          </th>
-                          <th scope="col" className="py-3 px-6">
-                            Action
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
+                  {event?.registeredUsers
+                    ?.filter(
+                      (ru) =>
+                        // ru.status !== 'Registered' &&
+                        ru.status !== 'Rejected'
+                    )
+                    .map((user) => (
+                      <>
                         <tr className="bg-white border-b  hover:bg-gray-50 ">
                           <th scope="row" className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
                             <div>{user?.userId}</div>
@@ -358,13 +362,13 @@ const EventDetail = () => {
                             </div>
                           </td>
                         </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                      </>
+                    ))}
                 </>
-              ))}
-          </>
-        )}
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   )

@@ -12,9 +12,9 @@ const Button = ({ color, onClick, children, className, isSubmitButton }: Props) 
   return (
     <button
       type={isSubmitButton ? 'submit' : undefined}
-      className={`${className} uppercase mt-3 flex items-center justify-center ${color === 'red' ? 'bg-red-400' : color === 'white' ? 'bg-white' : 'bg-sky-400'} ${
-        color === 'white' ? 'text-black' : 'text-white'
-      } font-bold rounded py-3 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out`}
+      className={`${className} uppercase mt-3 flex items-center justify-center ${
+        color === 'red' ? 'bg-red-400 hover:ring-red-400 hover:text-red-400' : color === 'white' ? 'bg-white hover:ring-black' : 'bg-sky-400 hover:ring-blue-400 hover:text-blue-400'
+      } ${color === 'white' ? 'text-black' : 'text-white'} font-bold rounded py-3 px-8 shadow-lg focus:outline-none focus:shadow-outline hover:bg-white hover:ring transition-all `}
       onClick={onClick}
     >
       {children}
