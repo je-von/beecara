@@ -1,9 +1,10 @@
-import { Unsubscribe, collection, doc, onSnapshot, orderBy, query, where } from 'firebase/firestore'
+import { Unsubscribe, collection, doc, getDoc, onSnapshot, orderBy, query, where } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { useCollectionData, useDocumentData } from 'react-firebase-hooks/firestore'
 import { useAuth } from '../authContext'
 import { db } from '../firebaseConfig/init'
 import { Event, RegisteredUsers, eventConverter, eventRegisteredUsersConverter } from '../types/Event'
+import { userConverter } from '../types/User'
 
 export function useUserRegisterStatus(event?: Event) {
   const { user, loading } = useAuth()
@@ -17,17 +18,26 @@ export function useUserRegisterStatus(event?: Event) {
   return { registerStatus, loading }
 }
 
-export function useEvent(eventId?: string, status?: string) {
+export function useEvent(eventId?: string, includeUserData?: boolean, status?: string) {
   const eventRef = doc(db, 'event', `${eventId}`).withConverter(eventConverter)
   const [eventTemp, loadingEvent, errorEvent] = useDocumentData(eventRef)
   const registeredUsersRef = collection(db, `event/${eventId}/registeredUsers`).withConverter(eventRegisteredUsersConverter)
   const [registeredUsers, loadingReg, errorReg] = useCollectionData(status ? query(registeredUsersRef, where('status', '==', status)) : registeredUsersRef)
-
   const [event, setEvent] = useState<Event>()
+
   useEffect(() => {
     if (loadingEvent || loadingReg) return
-    setEvent({ ...(eventTemp as Event), registeredUsers: registeredUsers })
-  }, [eventTemp, loadingEvent, loadingReg, registeredUsers])
+    const getRegisteredUsers = async () => {
+      if (includeUserData && registeredUsers) {
+        for (const ru of registeredUsers) {
+          const d = await getDoc(doc(db, 'user', `${ru.userId}`).withConverter(userConverter))
+          ru.user = d.data()
+        }
+      }
+      setEvent({ ...(eventTemp as Event), registeredUsers: registeredUsers })
+    }
+    getRegisteredUsers()
+  }, [eventTemp, loadingEvent, loadingReg, registeredUsers, includeUserData])
 
   return { data: event, loading: loadingEvent || loadingReg, error: errorEvent || errorReg }
 }
@@ -48,14 +58,16 @@ export function useEvents(status?: string) {
           registeredUsers.length = 0
           setLoadingRegUsers(true)
           for (const s of snapshot.docs) {
-            registeredUsers.push(s.data())
+            const registeredUser = s.data()
+
+            registeredUsers.push(registeredUser)
           }
           setLoadingRegUsers(false)
         })
 
         return {
           ...d,
-          registeredUsers: registeredUsers,
+          registeredUsers: registeredUsers
         }
       })
     )

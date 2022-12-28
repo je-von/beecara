@@ -30,7 +30,7 @@ const EventDetail = () => {
 
   const [imageURL, setImageURL] = useState<string>()
 
-  const { data: event, loading, error } = useEvent(`${eventId}`)
+  const { data: event, loading, error } = useEvent(`${eventId}`, true)
   const { registerStatus } = useUserRegisterStatus(event)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -300,7 +300,7 @@ const EventDetail = () => {
       <div className="flex flex-col gap-5 mt-5">
         <h3>Registrants</h3>
         <div className="overflow-x-auto relative shadow-md sm:rounded-lg  ">
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+          <table className="w-full text-sm text-left text-gray-400 ">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
               <tr>
                 <th scope="col" className="py-3 px-6">
@@ -323,46 +323,46 @@ const EventDetail = () => {
                         // ru.status !== 'Registered' &&
                         ru.status !== 'Rejected'
                     )
-                    .map((user) => (
-                      <>
-                        <tr className="bg-white border-b  hover:bg-gray-50 ">
-                          <th scope="row" className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
-                            <div>{user?.userId}</div>
-                          </th>
-                          <td className="py-4 px-6">
-                            {' '}
-                            <div>
-                              {user?.proof ? (
-                                <div>
-                                  <Image className="" src={`${event?.image}`} alt="event-poster" width={150} height={150} />
-                                </div>
-                              ) : (
-                                'No Proof!'
-                              )}
-                            </div>
-                          </td>
+                    .map((ru) => (
+                      <tr className="bg-white border-b hover:bg-gray-50 " key={ru.userId}>
+                        <th scope="row" className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
+                          <div>
+                            {ru.user?.name} <span className="text-gray-400">({ru.user?.email})</span>
+                          </div>
+                        </th>
+                        <td className="py-4 px-6">
+                          {' '}
+                          <div>
+                            {ru?.proof ? (
+                              <div>
+                                <Image className="" src={`${event?.image}`} alt="event-poster" width={150} height={150} />
+                              </div>
+                            ) : (
+                              'No Proof!'
+                            )}
+                          </div>
+                        </td>
 
-                          <td className="py-4 px-6 text-right">
-                            <div className="flex gap-4">
-                              <Button
-                                onClick={() => {
-                                  acceptParticipant(user?.userId)
-                                }}
-                              >
-                                Approve
-                              </Button>
-                              <Button
-                                color={'red'}
-                                onClick={() => {
-                                  rejectParticipant(user?.userId)
-                                }}
-                              >
-                                Reject
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                      </>
+                        <td className="py-4 px-6 text-right">
+                          <div className="flex gap-4">
+                            <Button
+                              onClick={() => {
+                                acceptParticipant(ru?.userId)
+                              }}
+                            >
+                              Approve
+                            </Button>
+                            <Button
+                              color={'red'}
+                              onClick={() => {
+                                rejectParticipant(ru?.userId)
+                              }}
+                            >
+                              Reject
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
                     ))}
                 </>
               )}

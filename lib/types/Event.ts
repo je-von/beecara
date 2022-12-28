@@ -1,4 +1,5 @@
 import { DocumentData, DocumentReference, QueryDocumentSnapshot, SnapshotOptions, Timestamp, WithFieldValue } from 'firebase/firestore'
+import { User } from './User'
 
 export interface Benefit {
   amount: number | string
@@ -18,6 +19,7 @@ export interface RegisteredUsers {
   isPresent: boolean
   paymentDeadline: Timestamp
   // user: DocumentReference
+  user?: User
 }
 
 export interface Event {
@@ -52,7 +54,7 @@ export const eventConverter = {
       // users: event.users,
       postRegistrationDescription: event.postRegistrationDescription,
       maxRegistrationDate: event.maxRegistrationDate,
-      fee: event.fee,
+      fee: event.fee
     }
   },
   fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): Event {
@@ -72,9 +74,9 @@ export const eventConverter = {
       // users: data.users,
       postRegistrationDescription: data.postRegistrationDescription,
       maxRegistrationDate: data.maxRegistrationDate,
-      fee: data.fee,
+      fee: data.fee
     }
-  },
+  }
 }
 
 export const eventRegisteredUsersConverter = {
@@ -83,7 +85,7 @@ export const eventRegisteredUsersConverter = {
       status: ru.status,
       proof: ru.proof,
       isPresent: ru.isPresent,
-      paymentDeadline: ru.paymentDeadline,
+      paymentDeadline: ru.paymentDeadline
       // user: ru.user,
     }
   },
@@ -94,8 +96,8 @@ export const eventRegisteredUsersConverter = {
       status: data.status,
       proof: data.proof,
       isPresent: data.isPresent,
-      paymentDeadline: data.paymentDeadline,
+      paymentDeadline: data.paymentDeadline
       // user: data.user,
     }
-  },
+  }
 }
