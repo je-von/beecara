@@ -29,7 +29,6 @@ export function useEvent(eventId?: string, includeUserData?: boolean, status?: s
     if (loadingEvent || loadingReg || loading) return
     const getRegisteredUsers = async () => {
       if (includeUserData && registeredUsers && user?.adminOf?.id === eventTemp?.organization.id) {
-        console.log('masuk!!')
         for (const ru of registeredUsers) {
           const d = await getDoc(doc(db, 'user', `${ru.userId}`).withConverter(userConverter))
           ru.user = d.data()
