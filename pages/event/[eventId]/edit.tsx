@@ -7,7 +7,6 @@ import { FormProvider, SubmitHandler, useFieldArray, useForm } from 'react-hook-
 import { BsInfoCircle } from 'react-icons/bs'
 import { BiMinusCircle, BiPlusCircle } from 'react-icons/bi'
 import Input from '../../../components/form/FormInput'
-import { useAuth } from '../../../lib/authContext'
 import { Benefit, Event, Fee, eventConverter } from '../../../lib/types/Event'
 import { organizationConverter } from '../../../lib/types/Organization'
 import { Fade } from 'react-awesome-reveal'
@@ -19,7 +18,10 @@ import { getDateTimeFormat } from '../../../lib/helper/util'
 import { DynamicReactTooltip } from '../../../lib/helper/util'
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { db, storage } from '../../../lib/firebaseConfig/init'
-import { DocumentReference, Timestamp, doc, updateDoc } from 'firebase/firestore'
+import { DocumentReference, Timestamp, doc, getDoc, updateDoc } from 'firebase/firestore'
+import { GetServerSideProps } from 'next'
+import { userConverter } from '../../../lib/types/User'
+import { authServer } from '../../../lib/session'
 interface FormValues {
   name: string
   description: string
@@ -34,9 +36,37 @@ interface FormValues {
   maxRegistrationDate: string
 }
 
-const EditEventPage = () => {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const auth = await authServer(ctx)
+
+  const userSnapshot = await getDoc(doc(db, 'user', `${auth?.uid}`).withConverter(userConverter))
+  const user = userSnapshot.data()
+
+  const eventId = ctx.params?.eventId
+  const eventSnapshot = await getDoc(doc(db, 'event', `${eventId}`).withConverter(eventConverter))
+  const event = eventSnapshot.data()
+
+  if (user?.adminOf?.id === event?.organization.id) {
+    return {
+      // redirect: {
+      //   permanent: false,
+      //   destination: '/profile'
+      // },
+      props: { user: JSON.parse(JSON.stringify(user)) }
+    }
+  } else {
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/home'
+      }
+    }
+  }
+}
+
+const EditEventPage = ({ user }: { user: any }) => {
+  console.log(user)
   const router = useRouter()
-  const { user, loading: loadingAuth } = useAuth()
   const { eventId } = router.query
 
   const { data: event, loading: loadingEvent } = useEvent(`${eventId}`, true)
