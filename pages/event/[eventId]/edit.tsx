@@ -48,10 +48,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   if (user?.adminOf?.id === event?.organization.id) {
     return {
-      // redirect: {
-      //   permanent: false,
-      //   destination: '/profile'
-      // },
       props: { user: JSON.parse(JSON.stringify(user)) }
     }
   } else {
@@ -65,7 +61,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 }
 
 const EditEventPage = ({ user }: { user: any }) => {
-  console.log(user)
   const router = useRouter()
   const { eventId } = router.query
 
