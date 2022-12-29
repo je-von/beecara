@@ -5,7 +5,7 @@ import { BsPeopleFill } from 'react-icons/bs'
 import { Event } from '../../lib/types/Event'
 import Skeleton from 'react-loading-skeleton'
 import BenefitTags from './BenefitTags'
-import { useUserRegisterStatus } from '../../lib/hook/Event'
+import { getRegistrantCount, useUserRegisterStatus } from '../../lib/hook/Event'
 
 interface Props {
   event: Event
@@ -91,7 +91,7 @@ const Card = ({
                 {showSlot && (
                   <div className="flex items-center gap-1">
                     <BsPeopleFill className="text-gray-400" />
-                    {event?.registeredUsers?.filter((ru) => ru.status === 'Registered').length} / {event.capacity}
+                    {getRegistrantCount(event?.registeredUsers)} / {event.capacity}
                     {/* {data ? data.filter((d) => d.status === 'Registered').length : 0} / {event.capacity} */}
                   </div>
                 )}

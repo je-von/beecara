@@ -13,6 +13,7 @@ import { BsPeopleFill } from 'react-icons/bs'
 import Button from '../button/Button'
 import Modal from '../modal/Modal'
 import moment from 'moment'
+import { getRegistrantCount } from '../../lib/hook/Event'
 
 interface RegistrationCardProps {
   registerStatus?: string
@@ -91,10 +92,10 @@ const RegistrationCard = ({ registerStatus, event }: RegistrationCardProps) => {
             </div>
           )}
           <div>
-            <b className="text-gray-600">Available Slots</b>
+            <b className="text-gray-600">Quota</b>
             <p className="flex items-center">
               <BsPeopleFill className="mr-2 text-gray-400" />
-              {event?.registeredUsers?.filter((ru) => ru.status === 'Registered').length} / {event?.capacity}
+              {getRegistrantCount(event?.registeredUsers)} / {event?.capacity}
               {/* {event?.users?.length} / {event?.capacity} */}
             </p>
           </div>

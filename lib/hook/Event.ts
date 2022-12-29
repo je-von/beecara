@@ -18,6 +18,10 @@ export function useUserRegisterStatus(event?: Event) {
   return { registerStatus, loading }
 }
 
+export function getRegistrantCount(registeredUsers?: RegisteredUsers[]) {
+  return registeredUsers?.filter((ru) => ru.status !== 'Rejected').length
+}
+
 export function useEvent(eventId?: string, includeUserData?: boolean, status?: string) {
   const { user, loading } = useAuth()
   const eventRef = doc(db, 'event', `${eventId}`).withConverter(eventConverter)
@@ -44,7 +48,11 @@ export function useEvent(eventId?: string, includeUserData?: boolean, status?: s
     getRegisteredUsers()
   }, [eventTemp, loadingEvent, loadingReg, registeredUsers, includeUserData, loading, user])
 
-  return { data: event, loading: loadingRegUsers || loadingEvent || loadingReg, error: errorEvent || errorReg }
+  return {
+    data: event,
+    loading: loadingRegUsers || loadingEvent || loadingReg,
+    error: errorEvent || errorReg
+  }
 }
 
 export function useEvents(status?: string) {
