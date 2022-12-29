@@ -1,5 +1,4 @@
 import { doc, updateDoc } from 'firebase/firestore'
-import Image from 'next/image'
 import { db } from '../../lib/firebaseConfig/init'
 import { Event, RegisteredUsers } from '../../lib/types/Event'
 import Button from '../button/Button'
@@ -40,9 +39,9 @@ const RegistrantTable = ({ event }: Props) => {
             // )
             ?.map((ru) => (
               <tr className="bg-white border-b hover:bg-gray-50 " key={ru.userId}>
-                <th scope="row" className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
-                  <div>
-                    {ru.user?.name} <span className="text-gray-400">({ru.user?.email})</span>
+                <th scope="row" className="py-4 px-6 font-medium text-gray-900 w-60">
+                  <div className="w-60">
+                    {ru.user?.name} <div className="text-gray-400 truncate ">{ru.user?.email}</div>
                   </div>
                 </th>
                 <td className="py-4 px-6">
@@ -50,7 +49,8 @@ const RegistrantTable = ({ event }: Props) => {
                   <div>
                     {ru?.proof ? (
                       <div>
-                        <Image className="" src={`${ru.proof}`} alt="event-poster" width={150} height={150} />
+                        {/* <Image className="" src={`${ru.proof}`} alt="event-poster" width={150} height={150} /> */}
+                        <Button color="white">View Proof</Button>
                       </div>
                     ) : (
                       'No Proof!'
@@ -58,9 +58,9 @@ const RegistrantTable = ({ event }: Props) => {
                   </div>
                 </td>
 
-                <td className="py-4 px-6">
+                <td className="py-4 px-6 w-[20%]">
                   {ru.status !== 'Rejected' && ru.status !== 'Registered' ? (
-                    <div className="flex gap-4">
+                    <div className="flex gap-4 w-full">
                       <Button
                         onClick={() => {
                           toggleParticipant(ru?.userId!, 'Registered')

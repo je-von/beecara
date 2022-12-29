@@ -98,8 +98,8 @@ const RegistrationCard = ({ registerStatus, event }: RegistrationCardProps) => {
               {/* {event?.users?.length} / {event?.capacity} */}
             </p>
           </div>
+          {button}
         </div>
-        {button}
         {showModal && modal}
       </>
     )

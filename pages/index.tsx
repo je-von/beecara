@@ -53,7 +53,7 @@ const Home: NextPage = () => {
             <p className="uppercase tracking-loose w-full">Welcome to</p>
             <h1 className="my-4 text-5xl font-extrabold leading-tight font-secondary">BeeCara</h1>
             <p className="leading-normal text-2xl mb-8">An application for Binusian to seek and join events to get SAT points and Community Service Hour!</p>
-            <Button onClick={loginWithOutlook} color={'white'}>
+            <Button onClick={loginWithOutlook} color={'white'} className="py-4">
               <Image src={'/assets/icon_microsoft.svg'} width={24} height={24} alt={'Microsoft'} />
               <span className="ml-2">Sign in with Microsoft</span>
             </Button>

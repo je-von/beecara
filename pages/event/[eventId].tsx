@@ -2,42 +2,22 @@ import { FaCalendar, FaClock } from 'react-icons/fa'
 import { IoMdArrowBack } from 'react-icons/io'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
-import { collection } from 'firebase/firestore'
-import { db } from '../../lib/firebaseConfig/init'
 import NotFoundPage from '../404'
 import { useAuth } from '../../lib/authContext'
 import BenefitTags from '../../components/event/BenefitTags'
 import { getDateFormat, getTimeFormat } from '../../lib/helper/util'
 import { useEvent, useUserRegisterStatus } from '../../lib/hook/Event'
-import { userConverter } from '../../lib/types/User'
 import Linkify from 'react-linkify'
 import RegistrationCard from '../../components/event/RegistrationCard'
 import RegistrantTable from '../../components/event/RegistrantTable'
-interface FormValues {
-  proof: File
-}
-
 const EventDetail = () => {
   const router = useRouter()
-  const { user: userAuth, loading: loadAuth } = useAuth()
+  const { user: userAuth } = useAuth()
   const { eventId } = router.query
 
   const { data: event, loading, error } = useEvent(`${eventId}`, true)
   const { registerStatus } = useUserRegisterStatus(event)
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const [showModal, setShowModal] = useState(false)
-
-  const refUser = collection(db, 'user').withConverter(userConverter)
-
-  // useEffect(() => {
-  //   console.log(event)
-  //   getDocs(collection(db, `event/${eventId}/registeredUsers`)).then((value) => {
-  //     value.forEach((v) => console.log(v.data()))
-  //   })
-  // }, [event])
   if (loading && !event) {
     // TODO: skeleton
     return <>Loading</>
@@ -48,7 +28,7 @@ const EventDetail = () => {
   }
 
   return (
-    <div className="lg:px-40 md:px-16 px-8 pb-5 pt-5 flex flex-col gap-5">
+    <div className="lg:px-40 md:px-16 px-8 pb-9 pt-5 flex flex-col gap-5">
       <div className="flex items-start">
         <div onClick={() => router.back()}>
           <IoMdArrowBack className="mr-2 mt-[0.4rem] text-xl cursor-pointer stroke-black" strokeWidth={40} />
