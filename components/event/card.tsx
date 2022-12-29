@@ -17,6 +17,7 @@ interface Props {
   showOrganizer?: Boolean
   showBenefits?: Boolean
   horizontalLayout?: Boolean
+  statusFilterList?: string[]
 }
 
 export const SkeletonCard = () => (
@@ -39,10 +40,17 @@ const Card = ({
   showOrganizer = true,
   showBenefits = true,
   horizontalLayout,
+  statusFilterList
 }: Props) => {
   const { registerStatus, loading } = useUserRegisterStatus(event)
   if (loading) return <SkeletonCard />
 
+  console.log(!registerStatus, !statusFilterList?.includes('Unregistered'))
+  if (statusFilterList && statusFilterList?.length > 0) {
+    if (!registerStatus) {
+      if (!statusFilterList.includes('Unregistered')) return null
+    } else if (!statusFilterList.includes(`${registerStatus}`)) return null
+  }
   return (
     <Link href={`event/${event.eventId}`} key={event.eventId} passHref>
       <div
@@ -76,7 +84,7 @@ const Card = ({
                       weekday: 'short',
                       year: 'numeric',
                       month: 'short',
-                      day: 'numeric',
+                      day: 'numeric'
                     })}
                   </div>
                 )}

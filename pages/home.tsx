@@ -13,7 +13,7 @@ const Home: NextPage = () => {
   }
 
   return (
-    <div className="lg:px-40 md:px-16 px-8">
+    <div className="lg:px-36 md:px-12 px-4">
       <Head>
         <title>Events | BeeCara</title>
       </Head>

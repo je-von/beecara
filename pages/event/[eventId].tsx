@@ -108,7 +108,7 @@ const EventDetail = () => {
   }
 
   const unregisterEvent = () => {
-    //TODO: updatenya nanti change status di dalem collectionnya aja
+    //TODO: unregister jadi gak ya
     updateDoc(doc(db, 'event', `${eventId}/registeredUsers/${userAuth?.userId}`), {
       status: ''
     }).then(() => {
@@ -118,7 +118,6 @@ const EventDetail = () => {
   }
 
   const acceptParticipant = (userId: string | undefined) => {
-    //TODO: updatenya nanti change status di dalem collectionnya aja
     updateDoc(doc(db, 'event', `${eventId}/registeredUsers/${userId}`), {
       status: 'Registered'
     }).then(() => {
@@ -129,7 +128,6 @@ const EventDetail = () => {
   }
 
   const rejectParticipant = (userId: string | undefined) => {
-    //TODO: updatenya nanti change status di dalem collectionnya aja
     updateDoc(doc(db, 'event', `${eventId}/registeredUsers/${userId}`), {
       status: 'Rejected'
     }).then(() => {
