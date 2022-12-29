@@ -3,17 +3,17 @@ import { IoMdArrowBack } from 'react-icons/io'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { collection, doc, updateDoc } from 'firebase/firestore'
+import { collection } from 'firebase/firestore'
 import { db } from '../../lib/firebaseConfig/init'
 import NotFoundPage from '../404'
 import { useAuth } from '../../lib/authContext'
 import BenefitTags from '../../components/event/BenefitTags'
 import { getDateFormat, getTimeFormat } from '../../lib/helper/util'
-import Button from '../../components/button/Button'
 import { useEvent, useUserRegisterStatus } from '../../lib/hook/Event'
 import { userConverter } from '../../lib/types/User'
 import Linkify from 'react-linkify'
 import RegistrationCard from '../../components/event/RegistrationCard'
+import RegistrantTable from '../../components/event/RegistrantTable'
 interface FormValues {
   proof: File
 }
@@ -45,25 +45,6 @@ const EventDetail = () => {
 
   if (!event || error) {
     return <NotFoundPage />
-  }
-
-  const acceptParticipant = (userId: string | undefined) => {
-    updateDoc(doc(db, 'event', `${eventId}/registeredUsers/${userId}`), {
-      status: 'Registered'
-    }).then(() => {
-      console.log('Success accept participant') // TODO: create alert / toast
-      setShowModal(false)
-    })
-    // console.log(userId)
-  }
-
-  const rejectParticipant = (userId: string | undefined) => {
-    updateDoc(doc(db, 'event', `${eventId}/registeredUsers/${userId}`), {
-      status: 'Rejected'
-    }).then(() => {
-      console.log('Reject participant') // TODO: create alert / toast
-      setShowModal(false)
-    })
   }
 
   return (
@@ -137,76 +118,7 @@ const EventDetail = () => {
       {userAuth?.adminOf?.id === event?.organization?.id && (
         <div className="flex flex-col gap-5 mt-5">
           <h3>Registrants</h3>
-          <div className="overflow-x-auto relative shadow-md sm:rounded-lg  ">
-            <table className="w-full text-sm text-left text-gray-400 ">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-                <tr>
-                  <th scope="col" className="py-3 px-6">
-                    Name
-                  </th>
-                  <th scope="col" className="py-3 px-6">
-                    Proof
-                  </th>
-                  <th scope="col" className="py-3 px-6">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {event?.registeredUsers
-                  // ?.filter(
-                  //   (ru) =>
-                  //     // ru.status !== 'Registered' &&
-                  //     ru.status !== 'Rejected'
-                  // )
-                  ?.map((ru) => (
-                    <tr className="bg-white border-b hover:bg-gray-50 " key={ru.userId}>
-                      <th scope="row" className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
-                        <div>
-                          {ru.user?.name} <span className="text-gray-400">({ru.user?.email})</span>
-                        </div>
-                      </th>
-                      <td className="py-4 px-6">
-                        {' '}
-                        <div>
-                          {ru?.proof ? (
-                            <div>
-                              <Image className="" src={`${ru.proof}`} alt="event-poster" width={150} height={150} />
-                            </div>
-                          ) : (
-                            'No Proof!'
-                          )}
-                        </div>
-                      </td>
-
-                      <td className="py-4 px-6">
-                        {ru.status !== 'Rejected' && ru.status !== 'Registered' ? (
-                          <div className="flex gap-4">
-                            <Button
-                              onClick={() => {
-                                acceptParticipant(ru?.userId)
-                              }}
-                            >
-                              Approve
-                            </Button>
-                            <Button
-                              color={'red'}
-                              onClick={() => {
-                                rejectParticipant(ru?.userId)
-                              }}
-                            >
-                              Reject
-                            </Button>
-                          </div>
-                        ) : (
-                          <div className="">{ru.status}</div>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-          </div>
+          <RegistrantTable event={event} />
         </div>
       )}
     </div>
