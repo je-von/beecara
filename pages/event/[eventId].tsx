@@ -17,7 +17,7 @@ import Button from '../../components/button/Button'
 import { useEvent, useUserRegisterStatus } from '../../lib/hook/Event'
 import Modal from '../../components/modal/Modal'
 import { userConverter } from '../../lib/types/User'
-
+import Linkify from 'react-linkify'
 interface FormValues {
   proof: File
 }
@@ -137,7 +137,7 @@ const EventDetail = () => {
   }
 
   return (
-    <div className="px-40 pb-5 flex flex-col gap-4">
+    <div className="lg:px-40 md:px-16 px-8 pb-5 pt-5 flex flex-col gap-5">
       <div className="flex items-center">
         <div onClick={() => router.back()}>
           <IoMdArrowBack className="mr-2 text-xl cursor-pointer stroke-black" strokeWidth={40} />
@@ -221,7 +221,16 @@ const EventDetail = () => {
 
                 <div>
                   <b className="text-gray-600">Announcement</b>
-                  <p className="flex items-center text-justify whitespace-pre-wrap">{event?.postRegistrationDescription || '-'}</p>
+                  <Linkify>
+                    <style>
+                      {`
+                        a {
+                          color: rgb(14 165 233);
+                        }
+                      `}
+                    </style>
+                    <p className="text-justify break-all whitespace-pre-wrap">{event?.postRegistrationDescription || '-'}</p>
+                  </Linkify>
                 </div>
               </>
             ) : (

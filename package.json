@@ -30,12 +30,14 @@
     "react-firebase-hooks": "^5.0.3",
     "react-hook-form": "^7.40.0",
     "react-icons": "^4.6.0",
+    "react-linkify": "^1.0.0-alpha",
     "react-loading-skeleton": "^3.1.0",
     "react-spinners": "^0.13.7",
     "react-tooltip": "^4.5.1"
   },
   "devDependencies": {
     "@types/react": "17.0.20",
+    "@types/react-linkify": "^1.0.1",
     "autoprefixer": "^10.4.12",
     "eslint": "^7.32.0",
     "eslint-config-next": "11.1.2",
