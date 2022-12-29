@@ -138,16 +138,16 @@ const EventDetail = () => {
 
   return (
     <div className="lg:px-40 md:px-16 px-8 pb-5 pt-5 flex flex-col gap-5">
-      <div className="flex items-center">
+      <div className="flex items-start">
         <div onClick={() => router.back()}>
-          <IoMdArrowBack className="mr-2 text-xl cursor-pointer stroke-black" strokeWidth={40} />
+          <IoMdArrowBack className="mr-2 mt-[0.4rem] text-xl cursor-pointer stroke-black" strokeWidth={40} />
         </div>
-        <h4 className="font-secondary text-2xl mb-1 gap-2 flex md:flex-row flex-col ">
+        <h4 className="font-secondary text-2xl mb-1 gap-2 ">
           <b>{event?.name}</b> <span className="text-gray-400">({event?.organization.id})</span>
         </h4>
       </div>
-      <div className="grid grid-cols-7 gap-7">
-        <div className="h-96 relative rounded-lg shadow-lg border col-span-2">
+      <div className="flex flex-col lg:flex-row justify-between gap-7">
+        <div className="h-96 relative rounded-lg shadow-lg border w-full lg:w-[25%]">
           {registerStatus ? (
             <div
               className={`absolute top-0 left-0 z-10 text-sm font-bold text-white ${
@@ -167,7 +167,7 @@ const EventDetail = () => {
           />
         </div>
 
-        <div className="flex w-full flex-col col-span-3 gap-5">
+        <div className="flex flex-col gap-5 w-full lg:w-[45%]">
           <div className="">
             <b className="text-gray-600">About the Event</b>
             <Linkify
@@ -197,7 +197,7 @@ const EventDetail = () => {
             <div className="flex items-start flex-wrap gap-2 mt-2">{<BenefitTags benefits={event?.benefit} />}</div>
           </div>
         </div>
-        <div className="flex border flex-col rounded-lg p-4 shadow-lg w-full col-span-2 justify-between">
+        <div className="flex border flex-col rounded-lg p-4 shadow-lg w-full lg:w-[25%] justify-between">
           <div className="flex-col flex gap-3">
             {registerStatus === 'Pending' ? (
               <>

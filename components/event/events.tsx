@@ -37,21 +37,8 @@ const EventList = () => {
       </div>
       <div className="flex flex-col gap-4 px-4">
         <div className="flex md:flex-row flex-col gap-2 justify-between items-center">
-          <div className="relative">
-            <div className="flex items-center gap-7 text-sm my-2 relative">
-              <UnderlineButton className="flex gap-2 items-center cursor-pointer" onClick={() => setIsCalendarView(!isCalendarView)}>
-                {isCalendarView ? (
-                  <>
-                    <BsViewStacked />
-                    Change to List View
-                  </>
-                ) : (
-                  <>
-                    <BsCalendar />
-                    Change to Calendar View
-                  </>
-                )}
-              </UnderlineButton>
+          <div className="relative md:w-auto w-full">
+            <div className="flex items-center justify-between gap-7 text-sm my-2 relative">
               {!isCalendarView && (
                 <div className="relative">
                   <UnderlineButton className="flex gap-2 items-center cursor-pointer" onClick={toggleDropdown}>
@@ -109,10 +96,29 @@ const EventList = () => {
                   </div>
                 </div>
               )}
+              <UnderlineButton className="flex gap-2 items-center cursor-pointer" onClick={() => setIsCalendarView(!isCalendarView)}>
+                {isCalendarView ? (
+                  <>
+                    <BsViewStacked />
+                    Change to List View
+                  </>
+                ) : (
+                  <>
+                    <BsCalendar />
+                    Change to Calendar View
+                  </>
+                )}
+              </UnderlineButton>
             </div>
           </div>
           {!isCalendarView && (
-            <input type="search" className="border border-gray-300 rounded-md px-2 py-1" placeholder="Search events..." value={keyword} onChange={(e) => setKeyword(e.target.value.toLowerCase())} />
+            <input
+              type="search"
+              className="border border-gray-300 rounded-md px-2 py-1 md:w-auto w-full"
+              placeholder="Search events..."
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value.toLowerCase())}
+            />
           )}
         </div>
       </div>
