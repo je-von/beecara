@@ -170,7 +170,15 @@ const EventDetail = () => {
         <div className="flex w-full flex-col col-span-3 gap-5">
           <div className="">
             <b className="text-gray-600">About the Event</b>
-            <p className="text-justify whitespace-pre-wrap">{event?.description.trim()} </p>
+            <Linkify
+              componentDecorator={(decoratedHref, decoratedText, key) => (
+                <a target="_blank" rel="noreferrer" href={decoratedHref} key={key} className="text-sky-500">
+                  {decoratedText}
+                </a>
+              )}
+            >
+              <p className="text-justify break-all whitespace-pre-wrap">{event?.description.trim() || '-'}</p>
+            </Linkify>
           </div>
           <div className="">
             <b className="text-gray-600">Mark the Date!</b>
@@ -221,15 +229,14 @@ const EventDetail = () => {
 
                 <div>
                   <b className="text-gray-600">Announcement</b>
-                  <Linkify>
-                    <style>
-                      {`
-                        a {
-                          color: rgb(14 165 233);
-                        }
-                      `}
-                    </style>
-                    <p className="text-justify break-all whitespace-pre-wrap">{event?.postRegistrationDescription || '-'}</p>
+                  <Linkify
+                    componentDecorator={(decoratedHref, decoratedText, key) => (
+                      <a target="_blank" rel="noreferrer" href={decoratedHref} key={key} className="text-sky-500">
+                        {decoratedText}
+                      </a>
+                    )}
+                  >
+                    <p className="text-justify break-all whitespace-pre-wrap">{event?.postRegistrationDescription?.trim() || '-'}</p>
                   </Linkify>
                 </div>
               </>
