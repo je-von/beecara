@@ -33,6 +33,9 @@ export default function Header(props: any) {
 
                   <div className={`${!showDropdown && 'hidden'} absolute right-0 z-10 w-40 origin-top-right rounded-md border border-gray-100 bg-white shadow-lg`}>
                     <div className="p-2">
+                      <Link href={'/home'} passHref>
+                        <div className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700">Home</div>
+                      </Link>
                       {user.adminOf && (
                         <Link href={'/event/add'} passHref>
                           <div className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700">Add Event</div>

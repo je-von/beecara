@@ -28,11 +28,11 @@ const EditProfilePage = () => {
       updateDoc(doc(db, 'user', user?.userId), {
         lineID: data.lineID,
         instagram: data.instagram,
-        phoneNumber: data.phoneNumber,
+        phoneNumber: data.phoneNumber
       }).then(() => {
         setIsSubmitting(false)
 
-        router.push('/profile/view')
+        router.push('/profile')
       })
     //TODO: show toast / alert after add
   }
@@ -71,15 +71,7 @@ const EditProfilePage = () => {
               <Input name="lineID" inputType="text" validation={{ required: true, maxLength: 255 }} placeholder="Line ID" value={user?.lineID} titleLabel="Line ID" width="full" />
             </div>
             <div className="flex flex-wrap -mx-3">
-              <Input
-                name="instagram"
-                inputType="text"
-                validation={{ required: true, maxLength: 255 }}
-                placeholder="@example"
-                value={user?.instagram}
-                titleLabel="Username Instagram"
-                width="full"
-              />
+              <Input name="instagram" inputType="text" validation={{ required: true, maxLength: 255 }} placeholder="@example" value={user?.instagram} titleLabel="Username Instagram" width="full" />
             </div>
             <div className="flex flex-wrap -mx-3">
               <Input

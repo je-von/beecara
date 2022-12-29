@@ -4,9 +4,9 @@ export interface User {
   userId: string
   name: string
   email: string
-  lineID: string
-  instagram: string
-  phoneNumber: string
+  lineID?: string
+  instagram?: string
+  phoneNumber?: string
   adminOf?: DocumentReference
 }
 
@@ -30,7 +30,18 @@ export const userConverter = {
       lineID: data.lineID,
       phoneNumber: data.phoneNumber,
       instagram: data.instagram,
-      adminOf: data.adminOf,
+      adminOf: data.adminOf
     }
-  },
+  }
+}
+
+export const isProfileComplete = (user: User) => {
+  return (
+    user.phoneNumber !== undefined &&
+    user.phoneNumber.trim().length > 0 &&
+    user.instagram !== undefined &&
+    user.instagram.trim().length > 0 &&
+    user.lineID !== undefined &&
+    user.lineID.trim().length > 0
+  )
 }

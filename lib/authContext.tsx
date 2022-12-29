@@ -56,12 +56,6 @@ export default function AuthContextProvider({ children }: Props) {
         // Save decoded token on the state
         user.getIdTokenResult().then((result) => {
           setUserId(result.claims.user_id)
-          // getDoc(doc(db, 'user', result.claims.user_id).withConverter(userConverter)).then((docResult) => {
-          //   if (docResult.exists()) {
-          //     const data = docResult.data()
-          //     setUser(data)
-          //   }
-          // })
         })
       }
       if (!user) setUserId(undefined)
