@@ -3,6 +3,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { RiArrowDropDownFill } from 'react-icons/ri'
+import { TiWarningOutline } from 'react-icons/ti'
+import { isProfileComplete } from '../../lib/types/User'
 
 export default function Header(props: any) {
   const [showDropdown, setShowDropdown] = useState(false)
@@ -42,7 +44,9 @@ export default function Header(props: any) {
                         </Link>
                       )}
                       <Link href={'/profile'} passHref>
-                        <div className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700">Profile</div>
+                        <div className="rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700 flex items-center justify-between">
+                          Profile {!isProfileComplete(user) && <TiWarningOutline className="text-base text-orange-400" />}
+                        </div>
                       </Link>
                       <div
                         onClick={() => {

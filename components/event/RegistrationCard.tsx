@@ -14,10 +14,20 @@ import Button from '../button/Button'
 import Modal from '../modal/Modal'
 import moment from 'moment'
 import { getRegistrantCount } from '../../lib/hook/Event'
+import { isProfileComplete } from '../../lib/types/User'
+import ReactTooltip from 'react-tooltip'
 
 interface RegistrationCardProps {
   registerStatus?: string
   event: Event
+}
+
+interface BaseCardProps {
+  content: ReactNode
+  button?: ReactNode
+  modalContent?: string
+  onModalClose?: () => void
+  onModalRegister?: () => void
 }
 
 const RegistrationCard = ({ registerStatus, event }: RegistrationCardProps) => {
@@ -77,7 +87,7 @@ const RegistrationCard = ({ registerStatus, event }: RegistrationCardProps) => {
     })
   }
 
-  const BaseCard = ({ content, button, modal }: { content: ReactNode; button?: ReactNode; modal?: ReactNode }) => {
+  const BaseCard = ({ content, button, modalContent, onModalClose, onModalRegister }: BaseCardProps) => {
     return (
       <>
         <div className="flex-col flex gap-3">
@@ -101,7 +111,7 @@ const RegistrationCard = ({ registerStatus, event }: RegistrationCardProps) => {
           </div>
           {button}
         </div>
-        {showModal && modal}
+        {showModal && <Modal content={modalContent} onClose={onModalClose} onRegister={onModalRegister} />}
       </>
     )
   }
@@ -140,7 +150,9 @@ const RegistrationCard = ({ registerStatus, event }: RegistrationCardProps) => {
             Unregister
           </Button>
         }
-        modal={<Modal content="Are you sure you want to unregister?" onClose={() => setShowModal(false)} onRegister={() => unregisterEvent()} />}
+        modalContent="Are you sure you want to unregister?"
+        onModalClose={() => setShowModal(false)}
+        onModalRegister={() => unregisterEvent()}
       />
     )
   }
@@ -192,8 +204,19 @@ const RegistrationCard = ({ registerStatus, event }: RegistrationCardProps) => {
           </div>
         </>
       }
-      button={<Button onClick={() => setShowModal(true)}>Register</Button>}
-      modal={<Modal content="Are you sure you want to register?" onClose={() => setShowModal(false)} onRegister={() => registerEvent()} />}
+      button={
+        <>
+          <Button className="w-full" disabled={!isProfileComplete(user!)} onClick={() => setShowModal(true)}>
+            <span data-for="disabled-info" data-tip="You need to complete your profile first!" className="w-full">
+              Register
+            </span>
+          </Button>
+          {!isProfileComplete(user!) && <ReactTooltip multiline className="max-w-sm text-center leading-5" place="top" id="disabled-info" />}
+        </>
+      }
+      modalContent={'Are you sure want to register?'}
+      onModalClose={() => setShowModal(false)}
+      onModalRegister={() => registerEvent()}
     />
   )
 

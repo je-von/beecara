@@ -1,10 +1,9 @@
 import { useState } from 'react'
 
 interface Props {
-  content: string
-  onClose: () => void
-  onRegister: () => void
-
+  content?: string
+  onClose?: () => void
+  onRegister?: () => void
 }
 
 const Modal = ({ content, onClose, onRegister }: Props) => {
@@ -15,7 +14,7 @@ const Modal = ({ content, onClose, onRegister }: Props) => {
         <div className="relative w-auto my-6 mx-auto max-w-3xl">
           <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
             <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
-              <h3 className="text-3xl font-semibold">Confirmation</h3>
+              <h3 className="text-2xl font-semibold">Confirmation</h3>
             </div>
             <div className="relative p-6 flex-auto">
               <p className="my-4 text-gray-400 text-lg leading-relaxed">{content}</p>
