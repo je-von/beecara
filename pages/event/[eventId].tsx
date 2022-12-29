@@ -97,7 +97,7 @@ const EventDetail = () => {
           />
         </div>
 
-        <div className={`flex flex-col gap-5 w-full  ${userAuth?.adminOf?.id !== event.organization.id ? 'lg:w-[45%]' : 'lg:w-[72%]'}`}>
+        <div className={`flex flex-col gap-5 w-full lg:w-[45%]`}>
           <div className="">
             <b className="text-gray-600">About the Event</b>
             <Linkify
@@ -127,11 +127,11 @@ const EventDetail = () => {
             <div className="flex items-start flex-wrap gap-2 mt-2">{<BenefitTags benefits={event?.benefit} />}</div>
           </div>
         </div>
-        {userAuth?.adminOf?.id !== event.organization.id && (
-          <div className="flex border flex-col rounded-lg p-4 shadow-lg w-full lg:w-[25%] justify-between">
-            <RegistrationCard event={event} registerStatus={registerStatus} />
-          </div>
-        )}
+        {/* {userAuth?.adminOf?.id !== event.organization.id && ( */}
+        <div className="flex border flex-col rounded-lg p-4 shadow-lg w-full lg:w-[25%] justify-between h-fit">
+          <RegistrationCard event={event} registerStatus={registerStatus} />
+        </div>
+        {/* )} */}
       </div>
 
       {userAuth?.adminOf?.id === event?.organization?.id && (

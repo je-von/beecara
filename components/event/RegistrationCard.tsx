@@ -76,7 +76,7 @@ const RegistrationCard = ({ registerStatus, event }: RegistrationCardProps) => {
     })
   }
 
-  const BaseCard = ({ content, button, modal }: { content: ReactNode; button: ReactNode; modal: ReactNode }) => {
+  const BaseCard = ({ content, button, modal }: { content: ReactNode; button?: ReactNode; modal?: ReactNode }) => {
     return (
       <>
         <div className="flex-col flex gap-3">
@@ -161,12 +161,12 @@ const RegistrationCard = ({ registerStatus, event }: RegistrationCardProps) => {
           </div>
         </>
       }
-      button={
-        <Button onClick={unregisterEvent} color={'red'}>
-          Unregister
-        </Button>
-      }
-      modal={<Modal content="Are you sure you want to unregister?" onClose={() => setShowModal(false)} onRegister={() => unregisterEvent()} />}
+      // button={
+      //   <Button onClick={unregisterEvent} color={'red'}>
+      //     Unregister
+      //   </Button>
+      // }
+      // modal={<Modal content="Are you sure you want to unregister?" onClose={() => setShowModal(false)} onRegister={() => unregisterEvent()} />}
     />
   )
 
@@ -193,7 +193,27 @@ const RegistrationCard = ({ registerStatus, event }: RegistrationCardProps) => {
     />
   )
 
-  if (registerStatus === 'Registered') return <RegisteredCard />
+  const AdminCard = () => (
+    <BaseCard
+      content={
+        <div>
+          <b className="text-gray-600">Post-Registration Announcement</b>
+          <Linkify
+            componentDecorator={(decoratedHref, decoratedText, key) => (
+              <a target="_blank" rel="noreferrer" href={decoratedHref} key={key} className="text-sky-500">
+                {decoratedText}
+              </a>
+            )}
+          >
+            <p className="text-justify whitespace-pre-wrap">{event?.postRegistrationDescription?.trim() || '-'}</p>
+          </Linkify>
+        </div>
+      }
+    />
+  )
+
+  if (user?.adminOf?.id == event.organization.id) return <AdminCard />
+  else if (registerStatus === 'Registered') return <RegisteredCard />
   else if (registerStatus === 'Pending') return <PendingCard />
   else return <UnregistredCard />
 }
