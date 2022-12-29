@@ -25,21 +25,26 @@ export function useEvent(eventId?: string, includeUserData?: boolean, status?: s
   const registeredUsersRef = collection(db, `event/${eventId}/registeredUsers`).withConverter(eventRegisteredUsersConverter)
   const [registeredUsers, loadingReg, errorReg] = useCollectionData(status ? query(registeredUsersRef, where('status', '==', status)) : registeredUsersRef)
   const [event, setEvent] = useState<Event>()
+  const [loadingRegUsers, setLoadingRegUsers] = useState(false)
+
   useEffect(() => {
-    if (loadingEvent || loadingReg || loading) return
+    if (loadingEvent || loadingReg || loading || !eventTemp) return
     const getRegisteredUsers = async () => {
       if (includeUserData && registeredUsers && user?.adminOf?.id === eventTemp?.organization.id) {
+        setLoadingRegUsers(true)
+
         for (const ru of registeredUsers) {
           const d = await getDoc(doc(db, 'user', `${ru.userId}`).withConverter(userConverter))
           ru.user = d.data()
         }
       }
       setEvent({ ...(eventTemp as Event), registeredUsers: registeredUsers })
+      setLoadingRegUsers(false)
     }
     getRegisteredUsers()
   }, [eventTemp, loadingEvent, loadingReg, registeredUsers, includeUserData, loading, user])
 
-  return { data: event, loading: loadingEvent || loadingReg, error: errorEvent || errorReg }
+  return { data: event, loading: loadingRegUsers || loadingEvent || loadingReg, error: errorEvent || errorReg }
 }
 
 export function useEvents(status?: string) {

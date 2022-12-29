@@ -45,7 +45,6 @@ const Card = ({
   const { registerStatus, loading } = useUserRegisterStatus(event)
   if (loading) return <SkeletonCard />
 
-  console.log(!registerStatus, !statusFilterList?.includes('Unregistered'))
   if (statusFilterList && statusFilterList?.length > 0) {
     if (!registerStatus) {
       if (!statusFilterList.includes('Unregistered')) return null

@@ -68,11 +68,13 @@ const EventDetail = () => {
   //     value.forEach((v) => console.log(v.data()))
   //   })
   // }, [event])
-  if (loading) {
+  if (loading && !event) {
+    // TODO: skeleton
     return <>Loading</>
   }
+  console.log(loading, error, event, !loading && (!event || error))
 
-  if (!loading && (error || !event)) {
+  if (!loading && (!event || error)) {
     return <NotFoundPage />
   }
 
