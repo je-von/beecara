@@ -17,7 +17,6 @@ interface Props {
 const RawInput = (props: any) => {
   const { register } = useFormContext()
   // const { name = '', validation, ...others } = { ...props }
-  console.log(props)
   if (props.type === 'textarea') {
     return <textarea {...props} {...register(props.name, props.validation)} className={'h-32 ' + props.className}></textarea>
   } else {

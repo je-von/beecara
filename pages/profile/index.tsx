@@ -1,9 +1,7 @@
 import { FaCalendar, FaUser } from 'react-icons/fa'
 import { useAuth } from '../../lib/authContext'
 import { useRouter } from 'next/router'
-import { Timestamp, collection } from 'firebase/firestore'
-import { db } from '../../lib/firebaseConfig/init'
-import { eventConverter } from '../../lib/types/Event'
+import { Timestamp } from 'firebase/firestore'
 import Card from '../../components/event/card'
 import Link from 'next/link'
 import { BiPencil } from 'react-icons/bi'
@@ -16,7 +14,6 @@ const ProfilePage = () => {
   const router = useRouter()
   const { user, loading: loadAuth } = useAuth()
 
-  const ref = collection(db, 'event').withConverter(eventConverter)
   const today = useMemo(() => Timestamp.now(), [])
   const { data, loading, error } = useEvents()
   if (loadAuth || loading) {

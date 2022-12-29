@@ -1,22 +1,22 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { FormProvider, SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
 import { BsInfoCircle } from 'react-icons/bs'
 import { BiMinusCircle, BiPlusCircle } from 'react-icons/bi'
-import ReactTooltip from 'react-tooltip'
 import Input from '../../../components/form/FormInput'
 import { useAuth } from '../../../lib/authContext'
-import { Benefit, Fee, eventConverter } from '../../../lib/types/Event'
+import { Benefit, Fee } from '../../../lib/types/Event'
 import { organizationConverter } from '../../../lib/types/Organization'
 import { Fade } from 'react-awesome-reveal'
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
-import { db, storage } from '../../../lib/firebaseConfig/init'
-import { DocumentReference, Timestamp, addDoc, collection } from 'firebase/firestore'
 import ClipLoader from 'react-spinners/ClipLoader'
 import Button from '../../../components/button/Button'
+import { IoMdArrowBack } from 'react-icons/io'
+import { useEvent } from '../../../lib/hook/Event'
+import { getDateTimeFormat } from '../../../lib/helper/util'
+import { DynamicReactTooltip } from '../../../lib/helper/util'
 interface FormValues {
   name: string
   description: string
@@ -34,47 +34,66 @@ interface FormValues {
 const EditEventPage = () => {
   const router = useRouter()
   const { user, loading } = useAuth()
-  const organizationRef = user?.adminOf?.withConverter(organizationConverter)
+  const { eventId } = router.query
+
+  const { data: event, loading: loadingEvent } = useEvent(`${eventId}`, true)
+
+  const organizationRef = event?.organization.withConverter(organizationConverter)
   const [organization, loadingOrg, error] = useDocumentData(organizationRef)
   const [imageURL, setImageURL] = useState<string>()
   const methods = useForm<FormValues>({ defaultValues: { benefits: [{ amount: '', type: '' }] } })
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray({
     name: 'benefits',
     control: methods.control
   })
   const [hasFee, setHasFee] = useState(false)
   const [hasMaxRegDate, setHasMaxRegDate] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-
   const benefitTypes = ['SAT Points', 'ComServ Hours', 'Others']
+
+  useEffect(() => {
+    if (event) {
+      setHasMaxRegDate(event?.maxRegistrationDate !== undefined)
+      setHasFee(event?.fee !== undefined)
+      if (event.benefit) {
+        const benefits: Benefit[] = []
+
+        for (const b of event.benefit) {
+          benefits.push({ amount: b.amount, type: b.type })
+        }
+        replace(benefits)
+      }
+    }
+  }, [event, replace])
+
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     setIsSubmitting(true)
     const imageFile = data.image[0]
 
     // Upload Image to Storage
-    uploadBytesResumable(ref(storage, `image/event/${imageFile.name}`), imageFile).then((snapshot) => {
-      // Get URL
-      getDownloadURL(snapshot.ref).then((value) => {
-        // Add to firestore
-        addDoc(collection(db, 'event').withConverter(eventConverter), {
-          name: data.name,
-          description: data.description,
-          capacity: data.capacity,
-          organization: organizationRef as DocumentReference,
-          image: value,
-          benefit: data.benefits.filter((b) => b.amount),
-          startDate: Timestamp.fromDate(new Date(data.startDate)),
-          endDate: Timestamp.fromDate(new Date(data.endDate)),
-          // users: [],
-          fee: hasFee ? data.fee : { amount: 0, description: '' },
-          maxRegistrationDate: hasMaxRegDate ? Timestamp.fromDate(new Date(data.maxRegistrationDate)) : Timestamp.fromDate(new Date(data.startDate)),
-          postRegistrationDescription: data.postRegistrationDescription
-        }).then(() => {
-          setIsSubmitting(false)
-          router.push('/home')
-        })
-      })
-    })
+    // uploadBytesResumable(ref(storage, `image/event/${imageFile.name}`), imageFile).then((snapshot) => {
+    //   // Get URL
+    //   getDownloadURL(snapshot.ref).then((value) => {
+    //     // Add to firestore
+    //     addDoc(collection(db, 'event').withConverter(eventConverter), {
+    //       name: data.name,
+    //       description: data.description,
+    //       capacity: data.capacity,
+    //       organization: organizationRef as DocumentReference,
+    //       image: value,
+    //       benefit: data.benefits.filter((b) => b.amount),
+    //       startDate: Timestamp.fromDate(new Date(data.startDate)),
+    //       endDate: Timestamp.fromDate(new Date(data.endDate)),
+    //       // users: [],
+    //       fee: hasFee ? data.fee : { amount: 0, description: '' },
+    //       maxRegistrationDate: hasMaxRegDate ? Timestamp.fromDate(new Date(data.maxRegistrationDate)) : Timestamp.fromDate(new Date(data.startDate)),
+    //       postRegistrationDescription: data.postRegistrationDescription
+    //     }).then(() => {
+    //       setIsSubmitting(false)
+    //       router.push('/home')
+    //     })
+    //   })
+    // })
     //TODO: show toast / alert after add
   }
 
@@ -89,16 +108,20 @@ const EditEventPage = () => {
   //   }
 
   return (
-    <div className="lg:px-40 md:px-16 px-4 pt-10">
+    <div className="lg:px-40 md:px-16 px-4 pt-5">
       <Head>
         <title>Edit Event | BeeCara</title>
       </Head>
 
       <FormProvider {...methods}>
-        <form className="flex lg:flex-row flex-col h-full px-10 gap-7 mb-10" onSubmit={methods.handleSubmit(onSubmit)}>
+        <form className="flex lg:flex-row flex-col h-full gap-7 mb-10" onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="lg:basis-1/3 w-full lg:h-[70vh] md:h-[50vh] h-48 flex flex-col lg:mb-0 mb-5">
-            {/* <Image className="relative" objectFit="contain" src={'/assets/add_vector.svg'} alt={'Add Event'} sizes="100%" layout="fill" /> */}
-            <h1 className="text-2xl font-black font-secondary">Edit Event</h1>
+            <div className="flex items-start">
+              <div onClick={() => router.back()}>
+                <IoMdArrowBack className="mr-2 mt-[0.4rem] text-xl cursor-pointer stroke-black" strokeWidth={40} />
+              </div>
+              <h1 className="text-2xl font-black font-secondary">Edit Event</h1>
+            </div>
 
             <div className=" flex items-center justify-center w-full h-full mt-5 mb-2">
               <label
@@ -106,8 +129,8 @@ const EditEventPage = () => {
                   methods.getFieldState('image', methods.formState).error ? 'border-red-500' : ''
                 } hover:bg-gray-100 hover:border-gray-300 h-full cursor-pointer`}
               >
-                {imageURL ? (
-                  <Image src={imageURL} alt="Event Image" sizes="100%" layout="fill" className="relative" objectFit="contain" />
+                {imageURL || event?.image ? (
+                  <Image src={imageURL || event?.image!} alt="Event Image" sizes="100%" layout="fill" className="relative" objectFit="contain" />
                 ) : (
                   <div className="flex flex-col items-center justify-center pt-7 h-full">
                     <svg xmlns="http://www.w3.org/2000/svg" className="w-12 h-12 text-gray-400 group-hover:text-gray-600 " viewBox="0 0 20 20" fill="currentColor">
@@ -123,7 +146,7 @@ const EditEventPage = () => {
           </div>
           <div className="lg:basis-2/3">
             <div className="flex flex-wrap -mx-3 ">
-              <Input name="name" inputType="text" validation={{ required: true, maxLength: 255 }} placeholder="Event" titleLabel="Event Name" width="1/2" />
+              <Input name="name" inputType="text" validation={{ required: true, maxLength: 255 }} placeholder="Event" value={event?.name} titleLabel="Event Name" width="1/2" />
               <Input
                 inputType="text"
                 name="organization"
@@ -138,20 +161,21 @@ const EditEventPage = () => {
                 }
                 width="1/2"
                 isDisabled
-                value={`${loading || loadingOrg ? '-' : organization?.name}`}
+                value={organization?.name}
               />
-              <ReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="org-info" />
+              <DynamicReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="org-info" />
             </div>
             <div className="flex flex-wrap -mx-3 ">
-              <Input name="description" inputType="textarea" validation={{ required: true }} placeholder="A Very Fun Event" titleLabel="Event Description" width="full" />
+              <Input value={event?.description} name="description" inputType="textarea" validation={{ required: true }} placeholder="A Very Fun Event" titleLabel="Event Description" width="full" />
             </div>
             <div className="flex flex-wrap -mx-3 ">
-              <Input name="startDate" inputType="datetime-local" validation={{ required: true }} titleLabel="Start Time" width="1/3" />
-              <Input name="endDate" inputType="datetime-local" validation={{ required: true }} titleLabel="End Time" width="1/3" />
+              <Input value={getDateTimeFormat(event?.startDate)} name="startDate" inputType="datetime-local" validation={{ required: true }} titleLabel="Start Time" width="1/3" />
+              <Input value={getDateTimeFormat(event?.endDate)} name="endDate" inputType="datetime-local" validation={{ required: true }} titleLabel="End Time" width="1/3" />
               {/* TODO: validate date must before start date */}
               <Input
                 name="maxRegistrationDate"
                 inputType="datetime-local"
+                value={getDateTimeFormat(event?.maxRegistrationDate)}
                 isDisabled={!hasMaxRegDate}
                 validation={{ required: hasMaxRegDate }}
                 title={'Max Registration Date'}
@@ -159,6 +183,7 @@ const EditEventPage = () => {
                   <>
                     <input
                       type="checkbox"
+                      checked={hasMaxRegDate}
                       className="bg-gray-100 border-gray-300 text-sky-400 focus:ring-sky-200 rounded"
                       onChange={(e) => {
                         setHasMaxRegDate(e.target.checked)
@@ -174,13 +199,14 @@ const EditEventPage = () => {
                 }
                 width="1/3"
               />
-              <ReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="max-reg-date-info" />
+              <DynamicReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="max-reg-date-info" />
             </div>
             <div className="flex flex-wrap -mx-3 ">
-              <Input name="location" inputType="text" validation={{ required: true, maxLength: 255 }} titleLabel="Location" width="1/2" placeholder="Location" />
+              <Input value={event?.location} name="location" inputType="text" validation={{ required: true, maxLength: 255 }} titleLabel="Location" width="1/2" placeholder="Location" />
               <Input
                 name="capacity"
                 inputType="number"
+                value={`${event?.capacity}`}
                 validation={{ required: true, min: 1 }}
                 titleLabel="Capacity"
                 width="1/2"
@@ -190,6 +216,7 @@ const EditEventPage = () => {
             </div>
             <div className="flex flex-wrap -mx-3 ">
               <Input
+                value={`${event?.fee?.amount}`}
                 name="fee.amount"
                 inputType="number"
                 validation={{ min: hasFee ? 1000 : undefined, required: hasFee }}
@@ -198,6 +225,7 @@ const EditEventPage = () => {
                 titleLabel={
                   <>
                     <input
+                      checked={hasFee}
                       type="checkbox"
                       className="bg-gray-100 border-gray-300 text-sky-400 focus:ring-sky-200 rounded"
                       onChange={(e) => {
@@ -212,9 +240,10 @@ const EditEventPage = () => {
                 placeholder="0"
                 additionalPrepend={<span className="inline-flex items-center px-3 text-gray-600 bg-gray-300 rounded-l">Rp</span>}
               />
-              <ReactTooltip html multiline className="text-center leading-5" place="right" id="fee-info" />
+              <DynamicReactTooltip html multiline className="text-center leading-5" place="right" id="fee-info" />
               <Fade triggerOnce className={`w-full ${!hasFee ? 'hidden' : ''}`}>
                 <Input
+                  value={event?.fee?.description}
                   name="fee.description"
                   inputType="textarea"
                   isDisabled={!hasFee}
@@ -246,6 +275,7 @@ const EditEventPage = () => {
                           className={`appearance-none block w-full bg-white text-gray-700 border-gray-300 focus:ring-sky-400 border rounded py-3 px-4 leading-tight focus:outline-none rounded-r-none`}
                           type={methods.watch(`benefits.${index}.type`) == 'Others' ? 'text' : 'number'}
                           min={1}
+                          defaultValue={f.amount}
                         />
                         <select
                           {...methods.register(`benefits.${index}.type`)}
@@ -275,12 +305,12 @@ const EditEventPage = () => {
                   )
                   if (index === 0)
                     return (
-                      <div className="flex mb-3 items-center" key={index}>
+                      <div className="flex mb-3 items-center" key={f.id}>
                         {el}
                       </div>
                     )
                   return (
-                    <Fade triggerOnce className="w-full flex mb-3 items-center" key={index}>
+                    <Fade triggerOnce className="w-full flex mb-3 items-center" key={f.id}>
                       {el}
                     </Fade>
                   )
@@ -289,6 +319,7 @@ const EditEventPage = () => {
             </div>
             <div className="flex flex-wrap -mx-3 ">
               <Input
+                value={event?.postRegistrationDescription}
                 name="postRegistrationDescription"
                 inputType="textarea"
                 placeholder="Show a text to the user after they have succesfully registered to this event and their registration has been approved. E.g: zoom meeting link, meeting id, and/or meeting passcode."

@@ -10,6 +10,7 @@ import { useEvent, useUserRegisterStatus } from '../../../lib/hook/Event'
 import Linkify from 'react-linkify'
 import RegistrationCard from '../../../components/event/RegistrationCard'
 import RegistrantTable from '../../../components/event/RegistrantTable'
+import { HiLocationMarker } from 'react-icons/hi'
 const EventDetail = () => {
   const router = useRouter()
   const { user: userAuth } = useAuth()
@@ -80,6 +81,10 @@ const EventDetail = () => {
             <p className="flex items-center">
               <FaClock className="mr-2 text-gray-400" />
               {getTimeFormat(event?.startDate)} - {getTimeFormat(event?.endDate)}
+            </p>
+            <p className="flex items-center">
+              <HiLocationMarker className="mr-2 text-gray-400 -ml-[0.08rem] text-lg" />
+              {event.location || '-'}
             </p>
           </div>
 

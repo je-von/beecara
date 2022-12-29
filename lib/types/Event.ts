@@ -27,6 +27,7 @@ export interface Event {
   image: string
   name: string
   organization: DocumentReference
+  location: string
   capacity: number
   benefit?: Benefit[]
   startDate?: Timestamp
@@ -51,6 +52,7 @@ export const eventConverter = {
       startDate: event.startDate,
       endDate: event.endDate,
       description: event.description,
+      location: event.location,
       // users: event.users,
       postRegistrationDescription: event.postRegistrationDescription,
       maxRegistrationDate: event.maxRegistrationDate,
@@ -71,6 +73,7 @@ export const eventConverter = {
       startDate: data.startDate,
       endDate: data.endDate,
       description: data.description,
+      location: data.location,
       // users: data.users,
       postRegistrationDescription: data.postRegistrationDescription,
       maxRegistrationDate: data.maxRegistrationDate,

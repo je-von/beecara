@@ -6,7 +6,7 @@ import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { FormProvider, SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
 import { BsInfoCircle } from 'react-icons/bs'
 import { BiMinusCircle, BiPlusCircle } from 'react-icons/bi'
-import ReactTooltip from 'react-tooltip'
+import { DynamicReactTooltip } from '../../lib/helper/util'
 import Input from '../../components/form/FormInput'
 import { useAuth } from '../../lib/authContext'
 import { Benefit, Fee, eventConverter } from '../../lib/types/Event'
@@ -40,7 +40,7 @@ const AddEventPage = () => {
   const methods = useForm<FormValues>({ defaultValues: { benefits: [{ amount: '', type: '' }] } })
   const { fields, append, remove } = useFieldArray({
     name: 'benefits',
-    control: methods.control,
+    control: methods.control
   })
   const [hasFee, setHasFee] = useState(false)
   const [hasMaxRegDate, setHasMaxRegDate] = useState(false)
@@ -65,10 +65,11 @@ const AddEventPage = () => {
           benefit: data.benefits.filter((b) => b.amount),
           startDate: Timestamp.fromDate(new Date(data.startDate)),
           endDate: Timestamp.fromDate(new Date(data.endDate)),
+          location: data.location,
           // users: [],
           fee: hasFee ? data.fee : { amount: 0, description: '' },
           maxRegistrationDate: hasMaxRegDate ? Timestamp.fromDate(new Date(data.maxRegistrationDate)) : Timestamp.fromDate(new Date(data.startDate)),
-          postRegistrationDescription: data.postRegistrationDescription,
+          postRegistrationDescription: data.postRegistrationDescription
         }).then(() => {
           setIsSubmitting(false)
           router.push('/home')
@@ -89,13 +90,13 @@ const AddEventPage = () => {
   //   }
 
   return (
-    <div className="lg:px-40 md:px-16 px-4 pt-10">
+    <div className="lg:px-40 md:px-16 px-4 pt-5">
       <Head>
         <title>Add Event | BeeCara</title>
       </Head>
 
       <FormProvider {...methods}>
-        <form className="flex lg:flex-row flex-col h-full px-10 gap-7 mb-10" onSubmit={methods.handleSubmit(onSubmit)}>
+        <form className="flex lg:flex-row flex-col h-full gap-7 mb-10" onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="lg:basis-1/3 w-full lg:h-[70vh] md:h-[50vh] h-48 flex flex-col lg:mb-0 mb-5">
             {/* <Image className="relative" objectFit="contain" src={'/assets/add_vector.svg'} alt={'Add Event'} sizes="100%" layout="fill" /> */}
             <h1 className="text-2xl font-black font-secondary">Add Event</h1>
@@ -138,9 +139,9 @@ const AddEventPage = () => {
                 }
                 width="1/2"
                 isDisabled
-                value={`${loading || loadingOrg ? '-' : organization?.name}`}
+                value={organization?.name}
               />
-              <ReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="org-info" />
+              <DynamicReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="org-info" />
             </div>
             <div className="flex flex-wrap -mx-3 ">
               <Input name="description" inputType="textarea" validation={{ required: true }} placeholder="A Very Fun Event" titleLabel="Event Description" width="full" />
@@ -174,7 +175,7 @@ const AddEventPage = () => {
                 }
                 width="1/3"
               />
-              <ReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="max-reg-date-info" />
+              <DynamicReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="max-reg-date-info" />
             </div>
             <div className="flex flex-wrap -mx-3 ">
               <Input name="location" inputType="text" validation={{ required: true, maxLength: 255 }} titleLabel="Location" width="1/2" placeholder="Location" />
@@ -212,7 +213,7 @@ const AddEventPage = () => {
                 placeholder="0"
                 additionalPrepend={<span className="inline-flex items-center px-3 text-gray-600 bg-gray-300 rounded-l">Rp</span>}
               />
-              <ReactTooltip html multiline className="text-center leading-5" place="right" id="fee-info" />
+              <DynamicReactTooltip html multiline className="text-center leading-5" place="right" id="fee-info" />
               <Fade triggerOnce className={`w-full ${!hasFee ? 'hidden' : ''}`}>
                 <Input
                   name="fee.description"

@@ -7,7 +7,7 @@ import { db, storage } from '../../lib/firebaseConfig/init'
 import { Event, eventRegisteredUsersConverter } from '../../lib/types/Event'
 import Linkify from 'react-linkify'
 import { FaCalendar, FaClock } from 'react-icons/fa'
-import { getDateFormat, getMoneyFormat, getTimeFormat } from '../../lib/helper/util'
+import { DynamicReactTooltip, getDateFormat, getMoneyFormat, getTimeFormat } from '../../lib/helper/util'
 import { IoMdPricetag } from 'react-icons/io'
 import { BsPeopleFill } from 'react-icons/bs'
 import Button from '../button/Button'
@@ -15,7 +15,8 @@ import Modal from '../modal/Modal'
 import moment from 'moment'
 import { getRegistrantCount } from '../../lib/hook/Event'
 import { isProfileComplete } from '../../lib/types/User'
-import ReactTooltip from 'react-tooltip'
+import { BiPencil } from 'react-icons/bi'
+import Link from 'next/link'
 
 interface RegistrationCardProps {
   registerStatus?: string
@@ -211,7 +212,7 @@ const RegistrationCard = ({ registerStatus, event }: RegistrationCardProps) => {
               Register
             </span>
           </Button>
-          {!isProfileComplete(user!) && <ReactTooltip multiline className="max-w-sm text-center leading-5" place="top" id="disabled-info" />}
+          {!isProfileComplete(user!) && <DynamicReactTooltip multiline className="max-w-sm text-center leading-5" place="top" id="disabled-info" />}
         </>
       }
       modalContent={'Are you sure want to register?'}
@@ -235,6 +236,13 @@ const RegistrationCard = ({ registerStatus, event }: RegistrationCardProps) => {
             <p className="text-justify whitespace-pre-wrap">{event?.postRegistrationDescription?.trim() || '-'}</p>
           </Linkify>
         </div>
+      }
+      button={
+        <Link passHref href={`/event/${event.eventId}/edit`}>
+          <Button className="flex gap-1">
+            Edit Event <BiPencil className="text-sm" />
+          </Button>
+        </Link>
       }
     />
   )
