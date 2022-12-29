@@ -58,7 +58,9 @@ const RegistrantTable = ({ event }: Props) => {
                     {ru?.proof ? (
                       <div>
                         {/* <Image className="" src={`${ru.proof}`} alt="event-poster" width={150} height={150} /> */}
-                        <Button color="white">View Proof</Button>
+                        <Button color="white" onClick={() => window.open(ru.proof, '_blank')}>
+                          View Proof
+                        </Button>
                       </div>
                     ) : (
                       'No Proof!'
