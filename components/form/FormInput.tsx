@@ -18,9 +18,9 @@ const RawInput = (props: any) => {
   const { register } = useFormContext()
   // const { name = '', validation, ...others } = { ...props }
   if (props.type === 'textarea') {
-    return <textarea {...props} {...register(props.name, props.validation)} className={'h-32 ' + props.className}></textarea>
+    return <textarea {...register(props.name, props.validation)} {...props} className={'h-32 ' + props.className}></textarea>
   } else {
-    return <input {...props} {...register(props.name, props.validation)} />
+    return <input {...register(props.name, props.validation)} {...props} />
   }
 }
 

@@ -68,7 +68,7 @@ const Card = ({
         ) : undefined}
         {showImage && (
           <div className={`w-full h-40 ${horizontalLayout ? 'basis-1/3' : ''} relative rounded`}>
-            <Image className="relative rounded" objectFit="cover" src={event.image} alt={event.name} sizes="100%" layout="fill"></Image>
+            <Image className="relative rounded" objectFit="cover" src={`${event.image}`} alt={event.name} sizes="100%" layout="fill"></Image>
           </div>
         )}
         <div className="flex flex-1 items-start">

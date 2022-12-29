@@ -24,7 +24,7 @@ export interface RegisteredUsers {
 
 export interface Event {
   eventId?: string
-  image: string
+  image?: string
   name: string
   organization: DocumentReference
   location: string

@@ -8,7 +8,7 @@ import { BsInfoCircle } from 'react-icons/bs'
 import { BiMinusCircle, BiPlusCircle } from 'react-icons/bi'
 import Input from '../../../components/form/FormInput'
 import { useAuth } from '../../../lib/authContext'
-import { Benefit, Fee } from '../../../lib/types/Event'
+import { Benefit, Event, Fee, eventConverter } from '../../../lib/types/Event'
 import { organizationConverter } from '../../../lib/types/Organization'
 import { Fade } from 'react-awesome-reveal'
 import ClipLoader from 'react-spinners/ClipLoader'
@@ -17,6 +17,9 @@ import { IoMdArrowBack } from 'react-icons/io'
 import { useEvent } from '../../../lib/hook/Event'
 import { getDateTimeFormat } from '../../../lib/helper/util'
 import { DynamicReactTooltip } from '../../../lib/helper/util'
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
+import { db, storage } from '../../../lib/firebaseConfig/init'
+import { DocumentReference, Timestamp, doc, updateDoc } from 'firebase/firestore'
 interface FormValues {
   name: string
   description: string
@@ -33,7 +36,7 @@ interface FormValues {
 
 const EditEventPage = () => {
   const router = useRouter()
-  const { user, loading } = useAuth()
+  const { user, loading: loadingAuth } = useAuth()
   const { eventId } = router.query
 
   const { data: event, loading: loadingEvent } = useEvent(`${eventId}`, true)
@@ -52,9 +55,20 @@ const EditEventPage = () => {
   const benefitTypes = ['SAT Points', 'ComServ Hours', 'Others']
 
   useEffect(() => {
+    //Prefill form
     if (event) {
       setHasMaxRegDate(event?.maxRegistrationDate !== undefined)
       setHasFee(event?.fee !== undefined)
+      methods.setValue('name', event.name)
+      methods.setValue('description', event.description)
+      methods.setValue('startDate', getDateTimeFormat(event?.startDate))
+      methods.setValue('endDate', getDateTimeFormat(event?.endDate))
+      methods.setValue('maxRegistrationDate', getDateTimeFormat(event?.maxRegistrationDate))
+      methods.setValue('location', event.location)
+      methods.setValue('capacity', event.capacity)
+      methods.setValue('fee.amount', event.fee?.amount || 0)
+      methods.setValue('fee.description', event.fee?.description || '')
+      methods.setValue('postRegistrationDescription', event.postRegistrationDescription || '')
       if (event.benefit) {
         const benefits: Benefit[] = []
 
@@ -64,37 +78,38 @@ const EditEventPage = () => {
         replace(benefits)
       }
     }
-  }, [event, replace])
+  }, [event, replace, methods])
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setIsSubmitting(true)
     const imageFile = data.image[0]
 
-    // Upload Image to Storage
-    // uploadBytesResumable(ref(storage, `image/event/${imageFile.name}`), imageFile).then((snapshot) => {
-    //   // Get URL
-    //   getDownloadURL(snapshot.ref).then((value) => {
-    //     // Add to firestore
-    //     addDoc(collection(db, 'event').withConverter(eventConverter), {
-    //       name: data.name,
-    //       description: data.description,
-    //       capacity: data.capacity,
-    //       organization: organizationRef as DocumentReference,
-    //       image: value,
-    //       benefit: data.benefits.filter((b) => b.amount),
-    //       startDate: Timestamp.fromDate(new Date(data.startDate)),
-    //       endDate: Timestamp.fromDate(new Date(data.endDate)),
-    //       // users: [],
-    //       fee: hasFee ? data.fee : { amount: 0, description: '' },
-    //       maxRegistrationDate: hasMaxRegDate ? Timestamp.fromDate(new Date(data.maxRegistrationDate)) : Timestamp.fromDate(new Date(data.startDate)),
-    //       postRegistrationDescription: data.postRegistrationDescription
-    //     }).then(() => {
-    //       setIsSubmitting(false)
-    //       router.push('/home')
-    //     })
-    //   })
-    // })
-    //TODO: show toast / alert after add
+    const updatedData: Event = {
+      name: data.name,
+      description: data.description,
+      capacity: data.capacity,
+      organization: organizationRef as DocumentReference,
+      image: event?.image,
+      benefit: data.benefits.filter((b) => b.amount),
+      startDate: Timestamp.fromDate(new Date(data.startDate)),
+      endDate: Timestamp.fromDate(new Date(data.endDate)),
+      location: data.location,
+      fee: hasFee ? data.fee : { amount: 0, description: '' },
+      maxRegistrationDate: hasMaxRegDate ? Timestamp.fromDate(new Date(data.maxRegistrationDate)) : Timestamp.fromDate(new Date(data.startDate)),
+      postRegistrationDescription: data.postRegistrationDescription
+    }
+
+    if (imageFile) {
+      const snapshot = await uploadBytesResumable(ref(storage, `image/event/${imageFile.name}`), imageFile)
+      const value = await getDownloadURL(snapshot.ref)
+      updatedData.image = value
+    }
+    updateDoc(doc(db, 'event', `${eventId}`).withConverter(eventConverter), updatedData).then(() => {
+      setIsSubmitting(false)
+      router.push(`/event/${eventId}`)
+    })
+
+    //TODO: show toast / alert after update
   }
 
   function onImageChange(e: any) {
@@ -102,9 +117,10 @@ const EditEventPage = () => {
   }
 
   //TODO: middleware
-  //   if (!loading && (!user || !user.adminOf)) {
-  //     router.push('/')
-  //     return
+  //   if (!loadingEvent && !loadingOrg && !loadingAuth && (!user || user.adminOf?.id !== event?.organization.id)) {
+  //     console.log(user?.adminOf?.id, event?.organization.id)
+  //     // router.push('/')
+  //     return null
   //   }
 
   return (
@@ -139,15 +155,16 @@ const EditEventPage = () => {
                     <p className="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">Select a photo</p>
                   </div>
                 )}
-                <input type="file" {...methods.register('image', { required: true })} accept="image/*" className="opacity-0" onChange={onImageChange} />
+                <input type="file" {...methods.register('image')} accept="image/*" className="opacity-0" onChange={onImageChange} />
               </label>
             </div>
             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Upload Image (jpg,png,svg,jpeg) *</label>
           </div>
           <div className="lg:basis-2/3">
             <div className="flex flex-wrap -mx-3 ">
-              <Input name="name" inputType="text" validation={{ required: true, maxLength: 255 }} placeholder="Event" value={event?.name} titleLabel="Event Name" width="1/2" />
+              <Input name="name" inputType="text" validation={{ required: true, maxLength: 255 }} placeholder="Event" titleLabel="Event Name" width="1/2" />
               <Input
+                value={organization?.name}
                 inputType="text"
                 name="organization"
                 titleLabel={
@@ -161,21 +178,19 @@ const EditEventPage = () => {
                 }
                 width="1/2"
                 isDisabled
-                value={organization?.name}
               />
               <DynamicReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="org-info" />
             </div>
             <div className="flex flex-wrap -mx-3 ">
-              <Input value={event?.description} name="description" inputType="textarea" validation={{ required: true }} placeholder="A Very Fun Event" titleLabel="Event Description" width="full" />
+              <Input name="description" inputType="textarea" validation={{ required: true }} placeholder="A Very Fun Event" titleLabel="Event Description" width="full" />
             </div>
             <div className="flex flex-wrap -mx-3 ">
-              <Input value={getDateTimeFormat(event?.startDate)} name="startDate" inputType="datetime-local" validation={{ required: true }} titleLabel="Start Time" width="1/3" />
-              <Input value={getDateTimeFormat(event?.endDate)} name="endDate" inputType="datetime-local" validation={{ required: true }} titleLabel="End Time" width="1/3" />
+              <Input name="startDate" inputType="datetime-local" validation={{ required: true }} titleLabel="Start Time" width="1/3" />
+              <Input name="endDate" inputType="datetime-local" validation={{ required: true }} titleLabel="End Time" width="1/3" />
               {/* TODO: validate date must before start date */}
               <Input
                 name="maxRegistrationDate"
                 inputType="datetime-local"
-                value={getDateTimeFormat(event?.maxRegistrationDate)}
                 isDisabled={!hasMaxRegDate}
                 validation={{ required: hasMaxRegDate }}
                 title={'Max Registration Date'}
@@ -202,11 +217,10 @@ const EditEventPage = () => {
               <DynamicReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="max-reg-date-info" />
             </div>
             <div className="flex flex-wrap -mx-3 ">
-              <Input value={event?.location} name="location" inputType="text" validation={{ required: true, maxLength: 255 }} titleLabel="Location" width="1/2" placeholder="Location" />
+              <Input name="location" inputType="text" validation={{ required: true, maxLength: 255 }} titleLabel="Location" width="1/2" placeholder="Location" />
               <Input
                 name="capacity"
                 inputType="number"
-                value={`${event?.capacity}`}
                 validation={{ required: true, min: 1 }}
                 titleLabel="Capacity"
                 width="1/2"
@@ -216,7 +230,6 @@ const EditEventPage = () => {
             </div>
             <div className="flex flex-wrap -mx-3 ">
               <Input
-                value={`${event?.fee?.amount}`}
                 name="fee.amount"
                 inputType="number"
                 validation={{ min: hasFee ? 1000 : undefined, required: hasFee }}
@@ -243,7 +256,6 @@ const EditEventPage = () => {
               <DynamicReactTooltip html multiline className="text-center leading-5" place="right" id="fee-info" />
               <Fade triggerOnce className={`w-full ${!hasFee ? 'hidden' : ''}`}>
                 <Input
-                  value={event?.fee?.description}
                   name="fee.description"
                   inputType="textarea"
                   isDisabled={!hasFee}
@@ -275,7 +287,6 @@ const EditEventPage = () => {
                           className={`appearance-none block w-full bg-white text-gray-700 border-gray-300 focus:ring-sky-400 border rounded py-3 px-4 leading-tight focus:outline-none rounded-r-none`}
                           type={methods.watch(`benefits.${index}.type`) == 'Others' ? 'text' : 'number'}
                           min={1}
-                          defaultValue={f.amount}
                         />
                         <select
                           {...methods.register(`benefits.${index}.type`)}
@@ -319,7 +330,6 @@ const EditEventPage = () => {
             </div>
             <div className="flex flex-wrap -mx-3 ">
               <Input
-                value={event?.postRegistrationDescription}
                 name="postRegistrationDescription"
                 inputType="textarea"
                 placeholder="Show a text to the user after they have succesfully registered to this event and their registration has been approved. E.g: zoom meeting link, meeting id, and/or meeting passcode."
