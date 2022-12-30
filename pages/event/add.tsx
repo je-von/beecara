@@ -8,15 +8,17 @@ import { BsInfoCircle } from 'react-icons/bs'
 import { BiMinusCircle, BiPlusCircle } from 'react-icons/bi'
 import { DynamicReactTooltip } from '../../lib/helper/util'
 import Input from '../../components/form/FormInput'
-import { useAuth } from '../../lib/authContext'
 import { Benefit, Fee, eventConverter } from '../../lib/types/Event'
 import { organizationConverter } from '../../lib/types/Organization'
 import { Fade } from 'react-awesome-reveal'
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { db, storage } from '../../lib/firebaseConfig/init'
-import { DocumentReference, Timestamp, addDoc, collection } from 'firebase/firestore'
+import { DocumentReference, Timestamp, addDoc, collection, doc, getDoc } from 'firebase/firestore'
 import ClipLoader from 'react-spinners/ClipLoader'
 import Button from '../../components/button/Button'
+import { GetServerSideProps } from 'next'
+import { authServer } from '../../lib/session'
+import { User, userConverter } from '../../lib/types/User'
 interface FormValues {
   name: string
   description: string
@@ -31,9 +33,28 @@ interface FormValues {
   maxRegistrationDate: string
 }
 
-const AddEventPage = () => {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const auth = await authServer(ctx)
+
+  const userSnapshot = await getDoc(doc(db, 'user', `${auth?.uid}`).withConverter(userConverter))
+  const user = userSnapshot.data()
+
+  if (auth && user && user.adminOf) {
+    return {
+      props: { user: JSON.parse(JSON.stringify(user)) }
+    }
+  } else {
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/home'
+      }
+    }
+  }
+}
+
+const AddEventPage = ({ user }: { user: User }) => {
   const router = useRouter()
-  const { user, loading } = useAuth()
   const organizationRef = user?.adminOf?.withConverter(organizationConverter)
   const [organization, loadingOrg, error] = useDocumentData(organizationRef)
   const [imageURL, setImageURL] = useState<string>()
@@ -82,12 +103,6 @@ const AddEventPage = () => {
   function onImageChange(e: any) {
     if (e.target.files && e.target.files.length > 0) setImageURL(URL.createObjectURL(e.target.files[0]))
   }
-
-  //TODO: middleware
-  //   if (!loading && (!user || !user.adminOf)) {
-  //     router.push('/')
-  //     return
-  //   }
 
   return (
     <div className="lg:px-40 md:px-16 px-4 pt-5">

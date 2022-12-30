@@ -20,7 +20,7 @@ import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { db, storage } from '../../../lib/firebaseConfig/init'
 import { DocumentReference, Timestamp, doc, getDoc, updateDoc } from 'firebase/firestore'
 import { GetServerSideProps } from 'next'
-import { userConverter } from '../../../lib/types/User'
+import { User, userConverter } from '../../../lib/types/User'
 import { authServer } from '../../../lib/session'
 interface FormValues {
   name: string
@@ -60,7 +60,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
 }
 
-const EditEventPage = ({ user }: { user: any }) => {
+const EditEventPage = ({ user }: { user: User }) => {
   const router = useRouter()
   const { eventId } = router.query
 
