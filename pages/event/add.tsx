@@ -13,12 +13,12 @@ import { organizationConverter } from '../../lib/types/Organization'
 import { Fade } from 'react-awesome-reveal'
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { db, storage } from '../../lib/firebaseConfig/init'
-import { DocumentReference, Timestamp, addDoc, collection, doc, getDoc } from 'firebase/firestore'
+import { DocumentReference, Timestamp, addDoc, collection, doc } from 'firebase/firestore'
 import ClipLoader from 'react-spinners/ClipLoader'
 import Button from '../../components/button/Button'
 import { GetServerSideProps } from 'next'
-import { authServer } from '../../lib/session'
-import { User, userConverter } from '../../lib/types/User'
+import { User } from '../../lib/types/User'
+import { getServerCurrentUser } from '../../lib/serverProps'
 interface FormValues {
   name: string
   description: string
@@ -34,28 +34,30 @@ interface FormValues {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const auth = await authServer(ctx)
+  const user = await getServerCurrentUser(ctx)
 
-  const userSnapshot = await getDoc(doc(db, 'user', `${auth?.uid}`).withConverter(userConverter))
-  const user = userSnapshot.data()
-
-  if (auth && user && user.adminOf) {
+  if (user && user.adminOf) {
     return {
-      props: { user: JSON.parse(JSON.stringify(user)) }
+      props: {
+        user: JSON.parse(JSON.stringify(user)),
+        // Karena reference organizationnya pas di parse jadi JSON hilang, jadi daripada useAuth lagi di dalem componentnya, mending gini:
+        organizationId: user.adminOf.id
+      }
     }
   } else {
     return {
       redirect: {
         permanent: false,
-        destination: '/home'
+        destination: '/'
       }
     }
   }
 }
 
-const AddEventPage = ({ user }: { user: User }) => {
+const AddEventPage = ({ user, organizationId }: { user: User; organizationId: string }) => {
   const router = useRouter()
-  const organizationRef = user?.adminOf?.withConverter(organizationConverter)
+  console.log(user.adminOf?.id)
+  const organizationRef = doc(db, 'organization', organizationId).withConverter(organizationConverter)
   const [organization, loadingOrg, error] = useDocumentData(organizationRef)
   const [imageURL, setImageURL] = useState<string>()
   const methods = useForm<FormValues>({ defaultValues: { benefits: [{ amount: '', type: '' }] } })

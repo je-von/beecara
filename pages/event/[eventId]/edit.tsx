@@ -20,8 +20,8 @@ import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { db, storage } from '../../../lib/firebaseConfig/init'
 import { DocumentReference, Timestamp, doc, getDoc, updateDoc } from 'firebase/firestore'
 import { GetServerSideProps } from 'next'
-import { User, userConverter } from '../../../lib/types/User'
-import { authServer } from '../../../lib/session'
+import { User } from '../../../lib/types/User'
+import { getServerCurrentUser } from '../../../lib/serverProps'
 interface FormValues {
   name: string
   description: string
@@ -37,10 +37,7 @@ interface FormValues {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const auth = await authServer(ctx)
-
-  const userSnapshot = await getDoc(doc(db, 'user', `${auth?.uid}`).withConverter(userConverter))
-  const user = userSnapshot.data()
+  const user = await getServerCurrentUser(ctx)
 
   const eventId = ctx.params?.eventId
   const eventSnapshot = await getDoc(doc(db, 'event', `${eventId}`).withConverter(eventConverter))
@@ -54,7 +51,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     return {
       redirect: {
         permanent: false,
-        destination: '/home'
+        destination: '/'
       }
     }
   }
