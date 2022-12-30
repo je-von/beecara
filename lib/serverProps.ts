@@ -1,5 +1,5 @@
 import { doc, getDoc } from 'firebase/firestore'
-import { GetServerSideProps, GetServerSidePropsContext, PreviewData } from 'next'
+import { GetServerSideProps, GetServerSidePropsContext, PreviewData, Redirect } from 'next'
 import { NextParsedUrlQuery } from 'next/dist/server/request-meta'
 import { db } from './firebaseConfig/init'
 import { authServer } from './session'
@@ -14,6 +14,11 @@ export const getServerCurrentUser = async (ctx: GetServerSidePropsContext<NextPa
   return user
 }
 
+export const unauthorizedRedirection: Redirect = {
+  permanent: false,
+  destination: '/401'
+}
+
 // GLOBAL getServerSideProps
 const getServerSideProps: GetServerSideProps = async (ctx) => {
   const user = await getServerCurrentUser(ctx)
@@ -24,10 +29,7 @@ const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
   } else {
     return {
-      redirect: {
-        permanent: false,
-        destination: '/'
-      }
+      redirect: unauthorizedRedirection
     }
   }
 }

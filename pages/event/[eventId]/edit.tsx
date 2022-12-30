@@ -10,7 +10,7 @@ import { db } from '../../../lib/firebaseConfig/init'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { GetServerSideProps } from 'next'
 import { User } from '../../../lib/types/User'
-import { getServerCurrentUser } from '../../../lib/serverProps'
+import { getServerCurrentUser, unauthorizedRedirection } from '../../../lib/serverProps'
 import EventForm, { EventFormValues } from '../../../components/form/EventForm'
 import { toast } from 'react-toastify'
 
@@ -27,10 +27,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
   } else {
     return {
-      redirect: {
-        permanent: false,
-        destination: '/'
-      }
+      redirect: unauthorizedRedirection
     }
   }
 }
