@@ -1,6 +1,5 @@
 import { FaCalendar, FaClock } from 'react-icons/fa'
 import { IoMdArrowBack } from 'react-icons/io'
-import Image from 'next/image'
 import { useRouter } from 'next/router'
 import NotFoundPage from '../../404'
 import BenefitTags from '../../../components/event/BenefitTags'
@@ -13,6 +12,8 @@ import { HiLocationMarker } from 'react-icons/hi'
 
 import getServerSideProps from '../../../lib/serverProps'
 import { useAuth } from '../../../lib/authContext'
+import Skeleton from 'react-loading-skeleton'
+import Image from 'next/image'
 export { getServerSideProps }
 const EventDetail = () => {
   const router = useRouter()
@@ -21,12 +22,7 @@ const EventDetail = () => {
   const { data: event, loading, error } = useEvent(`${eventId}`, true)
   const { registerStatus } = useUserRegisterStatus(event)
 
-  if (loading && !event) {
-    // TODO: skeleton
-    return <>Loading</>
-  }
-
-  if (!event || error) {
+  if (!loading && (!event || error)) {
     return <NotFoundPage />
   }
 
@@ -37,7 +33,13 @@ const EventDetail = () => {
           <IoMdArrowBack className="mr-2 mt-[0.4rem] text-xl cursor-pointer stroke-black" strokeWidth={40} />
         </div>
         <h4 className="font-secondary text-2xl mb-1 gap-2 ">
-          <b>{event?.name}</b> <span className="text-gray-400">({event?.organization.id})</span>
+          {loading ? (
+            <Skeleton width={'50vw'} />
+          ) : (
+            <>
+              <b>{event?.name}</b> <span className="text-gray-400">({event?.organization.id})</span>
+            </>
+          )}
         </h4>
       </div>
       <div className="flex flex-col lg:flex-row justify-between gap-7">
@@ -51,58 +53,75 @@ const EventDetail = () => {
               {registerStatus}
             </div>
           ) : undefined}
-          <Image
-            className="relative rounded-lg object-cover transition-all hover:rounded-none hover:object-contain"
-            src={`${event?.image}`}
-            alt="event-poster"
-            layout="fill"
-            width={150}
-            height={200}
-          />
+
+          {loading ? (
+            <Skeleton width={'100%'} height={'100%'} className="relative rounded-lg" />
+          ) : (
+            <Image
+              className="relative rounded-lg object-cover transition-all hover:rounded-none hover:object-contain"
+              src={`${event?.image}`}
+              alt="event-poster"
+              layout="fill"
+              width={150}
+              height={200}
+            />
+          )}
         </div>
 
         <div className={`flex flex-col gap-5 w-full lg:w-[45%]`}>
           <div className="">
             <b className="text-gray-600">About the Event</b>
-            <Linkify
-              componentDecorator={(decoratedHref, decoratedText, key) => (
-                <a target="_blank" rel="noreferrer" href={decoratedHref} key={key} className="text-sky-500">
-                  {decoratedText}
-                </a>
-              )}
-            >
-              <p className="text-justify whitespace-pre-wrap">{event?.description.trim() || '-'}</p>
-            </Linkify>
+            {loading ? (
+              <Skeleton count={4} />
+            ) : (
+              <Linkify
+                componentDecorator={(decoratedHref, decoratedText, key) => (
+                  <a target="_blank" rel="noreferrer" href={decoratedHref} key={key} className="text-sky-500">
+                    {decoratedText}
+                  </a>
+                )}
+              >
+                <p className="text-justify whitespace-pre-wrap">{event?.description.trim() || '-'}</p>
+              </Linkify>
+            )}
           </div>
-          <div className="">
+          <div className="flex flex-col w-full">
             <b className="text-gray-600">Mark the Date!</b>
-            <p className="flex items-center">
+            <div className="flex items-center w-full">
               <FaCalendar className="mr-2 text-gray-400" />
-              {getDateFormat(event?.startDate)}
-            </p>
-            <p className="flex items-center">
+              {loading ? <Skeleton containerClassName="w-full" /> : getDateFormat(event?.startDate)}
+            </div>
+            <div className="flex items-center">
               <FaClock className="mr-2 text-gray-400" />
-              {getTimeFormat(event?.startDate)} - {getTimeFormat(event?.endDate)}
-            </p>
-            <p className="flex items-center">
+              {loading ? (
+                <Skeleton containerClassName="w-full" />
+              ) : (
+                <>
+                  {getTimeFormat(event?.startDate)} - {getTimeFormat(event?.endDate)}
+                </>
+              )}
+            </div>
+            <div className="flex items-center">
               <HiLocationMarker className="mr-2 text-gray-400 -ml-[0.08rem] text-lg" />
-              {event.location || '-'}
-            </p>
+              {loading ? <Skeleton containerClassName="w-full" /> : <>{event?.location || '-'}</>}
+            </div>
           </div>
 
           <div className=" ">
             <b className="text-gray-600">Benefit</b>
-            <div className="flex items-start flex-wrap gap-2 mt-2">{<BenefitTags benefits={event?.benefit} />}</div>
+            <div className="flex items-start flex-wrap gap-2 mt-2">
+              {loading ? <Skeleton containerClassName="w-full gap-2 flex flex-wrap" width={100} height={25} count={3} inline /> : <BenefitTags benefits={event?.benefit} />}
+            </div>
           </div>
         </div>
         {/* {userAuth?.adminOf?.id !== event.organization.id && ( */}
         <div className="flex border flex-col rounded-lg p-4 shadow-lg w-full lg:w-[25%] justify-between h-fit">
-          <RegistrationCard event={event} registerStatus={registerStatus} />
+          {loading ? <Skeleton containerClassName="w-full" count={8} height={25} /> : <RegistrationCard event={event!} registerStatus={registerStatus} />}
         </div>
         {/* )} */}
       </div>
 
-      {user?.adminOf?.id === event?.organization?.id && (
+      {event && user?.adminOf?.id === event?.organization?.id && (
         <div className="flex flex-col gap-5 mt-5">
           <h3>Registrants</h3>
           <RegistrantTable event={event} />
