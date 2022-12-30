@@ -11,7 +11,7 @@ const firebaseConfig: FirebaseOptions = {
   projectId: process.env.NEXT_PUBLIC_projectId,
   storageBucket: 'beecara-rig-2cbb9.appspot.com',
   messagingSenderId: '19808445734',
-  appId: process.env.NEXT_PUBLIC_appId,
+  appId: process.env.NEXT_PUBLIC_appId
 }
 
 // Initialize Firebase
@@ -21,4 +21,4 @@ const app = apps[0] || initializeApp(firebaseConfig)
 // }
 const db = getFirestore()
 const storage = getStorage(app)
-export { db, storage }
+export { db, storage, app }
