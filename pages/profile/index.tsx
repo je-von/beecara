@@ -1,7 +1,6 @@
 import { FaCalendar, FaUser } from 'react-icons/fa'
-import { useRouter } from 'next/router'
 import { Timestamp } from 'firebase/firestore'
-import Card from '../../components/event/card'
+import Card, { SkeletonCard } from '../../components/event/card'
 import Link from 'next/link'
 import { BiPencil } from 'react-icons/bi'
 import { BsChevronRight } from 'react-icons/bs'
@@ -13,16 +12,11 @@ import getServerSideProps from '../../lib/serverProps'
 export { getServerSideProps }
 
 const ProfilePage = ({ user }: { user: User }) => {
-  const router = useRouter()
-
   const today = useMemo(() => Timestamp.now(), [])
   const { data, loading, error } = useEvents()
-  if (loading) {
-    return <>Loading</>
-  }
 
   return (
-    <div className="lg:px-40 px-4 md:px-16 mt-8 flex w-full gap-6 justify-between">
+    <div className="lg:px-40 px-4 md:px-16 mt-8 flex lg:flex-row flex-col w-full gap-6 justify-between">
       <div className="basis-2/5 bg-white px-6 pt-6 pb-5 h-fit drop-shadow-lg rounded-lg">
         <div className="flex items-center justify-between font-bold text-gray-900">
           <div className="flex items-center gap-2">
@@ -69,12 +63,16 @@ const ProfilePage = ({ user }: { user: User }) => {
           </Link>
         </div>
         <div className="grid grid-cols-1 space-y-2 gap-4 mt-6">
-          {data
-            ?.filter((d) => d.startDate && d.startDate > today)
-            .slice(0, 3)
-            .map(
-              (d) => d.registeredUsers?.length != 0 && d.registeredUsers?.filter((ru) => ru.userId == user?.userId).map((ru) => <Card key={d.eventId} event={d} horizontalLayout showSlot={false} />)
-            )}
+          {loading ? (
+            <SkeletonCard />
+          ) : (
+            data
+              ?.filter((d) => d.startDate && d.startDate > today)
+              .slice(0, 3)
+              .map(
+                (d) => d.registeredUsers?.length != 0 && d.registeredUsers?.filter((ru) => ru.userId == user?.userId).map((ru) => <Card key={d.eventId} event={d} horizontalLayout showSlot={false} />)
+              )
+          )}
         </div>
       </div>
     </div>

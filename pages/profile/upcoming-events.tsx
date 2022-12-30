@@ -1,7 +1,7 @@
 import { FaCalendar } from 'react-icons/fa'
 import { IoMdArrowBack } from 'react-icons/io'
 import { Timestamp } from 'firebase/firestore'
-import Card from '../../components/event/card'
+import Card, { SkeletonCard } from '../../components/event/card'
 import Link from 'next/link'
 import { useMemo } from 'react'
 import { useEvents } from '../../lib/hook/Event'
@@ -12,10 +12,6 @@ export { getServerSideProps }
 const UpcomingEvents = ({ user }: { user: User }) => {
   const today = useMemo(() => Timestamp.now(), [])
   const { data, loading, error } = useEvents()
-
-  if (loading) {
-    return <>Loading</>
-  }
 
   return (
     <div className="lg:px-40 px-4 md:px-16 mt-8">
@@ -37,11 +33,16 @@ const UpcomingEvents = ({ user }: { user: User }) => {
               </div>
             </div>
             <div className="grid grid-cols-1 space-y-2 gap-4 mt-6">
-              {data
-                ?.filter((d) => d.startDate && d.startDate > today)
-                .map(
-                  (d) => d.registeredUsers?.length != 0 && d.registeredUsers?.filter((ru) => ru.userId == user.userId).map((ru) => <Card key={d.eventId} event={d} horizontalLayout showSlot={false} />)
-                )}
+              {loading ? (
+                <SkeletonCard />
+              ) : (
+                data
+                  ?.filter((d) => d.startDate && d.startDate > today)
+                  .map(
+                    (d) =>
+                      d.registeredUsers?.length != 0 && d.registeredUsers?.filter((ru) => ru.userId == user.userId).map((ru) => <Card key={d.eventId} event={d} horizontalLayout showSlot={false} />)
+                  )
+              )}
             </div>
           </div>
         </div>
