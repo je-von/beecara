@@ -47,8 +47,6 @@ const EditEventPage = ({ user }: { user: User }) => {
   useEffect(() => {
     //Prefill form
     if (event) {
-      // setHasMaxRegDate()
-      // setHasFee(event?.fee !== undefined)
       methods.setValue('name', event.name)
       methods.setValue('description', event.description)
       methods.setValue('startDate', getDateTimeFormat(event?.startDate))
@@ -59,21 +57,11 @@ const EditEventPage = ({ user }: { user: User }) => {
       methods.setValue('fee.amount', event.fee?.amount || 0)
       methods.setValue('fee.description', event.fee?.description || '')
       methods.setValue('postRegistrationDescription', event.postRegistrationDescription || '')
-      //   if (event.benefit) {
-      //     const benefits: Benefit[] = []
-
-      //     for (const b of event.benefit) {
-      //       benefits.push({ amount: b.amount, type: b.type })
-      //     }
-      //     replace(benefits)
-      //   }
     }
   }, [event, methods])
 
   const onSubmit = (event: Event) => {
     updateDoc(doc(db, 'event', `${eventId}`).withConverter(eventConverter), event).then(() => {
-      // setIsSubmitting(false)
-      // router.push(`/event/${eventId}`)
       router.push('/home')
     })
 
@@ -89,7 +77,7 @@ const EditEventPage = ({ user }: { user: User }) => {
       <FormProvider {...methods}>
         <EventForm
           onSubmit={onSubmit}
-          organizationRef={organizationRef}
+          organizationRef={organizationRef!}
           initialImageUrl={event?.image}
           initialHasFee={event?.fee !== undefined}
           initialHasMaxRegDate={event?.maxRegistrationDate !== undefined}

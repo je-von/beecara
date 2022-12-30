@@ -21,7 +21,7 @@ import { storage } from '../../lib/firebaseConfig/init'
 interface Props {
   onSubmit: (event: Event) => void
   initialImageUrl?: string
-  organizationRef?: DocumentReference<Organization>
+  organizationRef: DocumentReference<Organization>
   initialHasFee?: boolean
   initialHasMaxRegDate?: boolean
   initialBenefits?: Benefit[]
@@ -59,7 +59,7 @@ const EventForm = ({ onSubmit, initialImageUrl, organizationRef, initialHasFee =
     if (initialBenefits) {
       replace(initialBenefits)
     }
-  }, [initialHasFee, initialHasFee, initialBenefits])
+  }, [initialHasFee, initialHasMaxRegDate, initialBenefits, replace])
 
   function onImageChange(e: any) {
     if (e.target.files && e.target.files.length > 0) setImageURL(URL.createObjectURL(e.target.files[0]))
@@ -114,7 +114,7 @@ const EventForm = ({ onSubmit, initialImageUrl, organizationRef, initialHasFee =
                 <p className="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">Select a photo</p>
               </div>
             )}
-            <input type="file" {...methods.register('image')} accept="image/*" className="opacity-0" onChange={onImageChange} />
+            <input type="file" {...methods.register('image', { required: initialImageUrl === undefined })} accept="image/*" className="opacity-0" onChange={onImageChange} />
           </label>
         </div>
         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Upload Image (jpg,png,svg,jpeg) *</label>
@@ -165,7 +165,9 @@ const EventForm = ({ onSubmit, initialImageUrl, organizationRef, initialHasFee =
             isDisabled={!hasMaxRegDate}
             validation={{
               required: hasMaxRegDate ? 'Max Registration Date must be filled!' : false,
-              validate: { 'Max Registration Date must be before Start Time!': (value) => moment(value).isBefore(methods.getValues().startDate) }
+              validate: hasMaxRegDate
+                ? { 'Max Registration Date must be between today and Start Time!': (value) => moment(value).isBefore(methods.getValues().startDate) && moment(value).isAfter(moment()) }
+                : {}
             }}
             title={'Max Registration Date'}
             titleLabel={
