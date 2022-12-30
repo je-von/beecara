@@ -22,6 +22,7 @@ import { DocumentReference, Timestamp, doc, getDoc, updateDoc } from 'firebase/f
 import { GetServerSideProps } from 'next'
 import { User } from '../../../lib/types/User'
 import { getServerCurrentUser } from '../../../lib/serverProps'
+import moment from 'moment'
 interface FormValues {
   name: string
   description: string
@@ -128,7 +129,8 @@ const EditEventPage = ({ user }: { user: User }) => {
     }
     updateDoc(doc(db, 'event', `${eventId}`).withConverter(eventConverter), updatedData).then(() => {
       setIsSubmitting(false)
-      router.push(`/event/${eventId}`)
+      // router.push(`/event/${eventId}`)
+      router.push('/home')
     })
 
     //TODO: show toast / alert after update
@@ -177,7 +179,7 @@ const EditEventPage = ({ user }: { user: User }) => {
           </div>
           <div className="lg:basis-2/3">
             <div className="flex flex-wrap -mx-3 ">
-              <Input name="name" inputType="text" validation={{ required: true, maxLength: 255 }} placeholder="Event" titleLabel="Event Name" width="1/2" />
+              <Input name="name" inputType="text" validation={{ required: 'Name must be filled!', maxLength: 255 }} placeholder="Event" titleLabel="Event Name" width="1/2" />
               <Input
                 value={organization?.name}
                 inputType="text"
@@ -197,17 +199,32 @@ const EditEventPage = ({ user }: { user: User }) => {
               <DynamicReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="org-info" />
             </div>
             <div className="flex flex-wrap -mx-3 ">
-              <Input name="description" inputType="textarea" validation={{ required: true }} placeholder="A Very Fun Event" titleLabel="Event Description" width="full" />
+              <Input name="description" inputType="textarea" validation={{ required: 'Description must be filled!' }} placeholder="A Very Fun Event" titleLabel="Event Description" width="full" />
             </div>
             <div className="flex flex-wrap -mx-3 ">
-              <Input name="startDate" inputType="datetime-local" validation={{ required: true }} titleLabel="Start Time" width="1/3" />
-              <Input name="endDate" inputType="datetime-local" validation={{ required: true }} titleLabel="End Time" width="1/3" />
+              <Input
+                name="startDate"
+                inputType="datetime-local"
+                validation={{ required: 'Start Time must be filled!', validate: { 'Start Time must be after today!': (value) => moment(value).isAfter(moment()) } }}
+                titleLabel="Start Time"
+                width="1/3"
+              />
+              <Input
+                name="endDate"
+                inputType="datetime-local"
+                validation={{ required: 'End Time must be filled!', validate: { 'End Time must be after Start Time!': (value) => moment(value).isAfter(methods.getValues().startDate) } }}
+                titleLabel="End Time"
+                width="1/3"
+              />
               {/* TODO: validate date must before start date */}
               <Input
                 name="maxRegistrationDate"
                 inputType="datetime-local"
                 isDisabled={!hasMaxRegDate}
-                validation={{ required: hasMaxRegDate }}
+                validation={{
+                  required: hasMaxRegDate ? 'Max Registration Date must be filled!' : false,
+                  validate: { 'Max Registration Date must be before Start Time!': (value) => moment(value).isBefore(methods.getValues().startDate) }
+                }}
                 title={'Max Registration Date'}
                 titleLabel={
                   <>
@@ -232,11 +249,11 @@ const EditEventPage = ({ user }: { user: User }) => {
               <DynamicReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="max-reg-date-info" />
             </div>
             <div className="flex flex-wrap -mx-3 ">
-              <Input name="location" inputType="text" validation={{ required: true, maxLength: 255 }} titleLabel="Location" width="1/2" placeholder="Location" />
+              <Input name="location" inputType="text" validation={{ required: 'Location must be filled!', maxLength: 255 }} titleLabel="Location" width="1/2" placeholder="Location" />
               <Input
                 name="capacity"
                 inputType="number"
-                validation={{ required: true, min: 1 }}
+                validation={{ required: 'Capacity must be at least 1', min: 1 }}
                 titleLabel="Capacity"
                 width="1/2"
                 placeholder="Capacity"
@@ -247,7 +264,7 @@ const EditEventPage = ({ user }: { user: User }) => {
               <Input
                 name="fee.amount"
                 inputType="number"
-                validation={{ min: hasFee ? 1000 : undefined, required: hasFee }}
+                validation={{ min: hasFee ? 1000 : undefined, required: hasFee ? 'Fee must be at filled!' : false }}
                 isDisabled={!hasFee}
                 title={'Fee'}
                 titleLabel={
@@ -274,7 +291,7 @@ const EditEventPage = ({ user }: { user: User }) => {
                   name="fee.description"
                   inputType="textarea"
                   isDisabled={!hasFee}
-                  validation={{ required: hasFee }}
+                  validation={{ required: hasFee ? 'Fee description must be filled!' : false }}
                   placeholder="Put the available payment methods here, e.g: the bank account number and the account holder name. Make sure to describe it clearly and as detail as possible to avoid payment errors at the user's end."
                   titleLabel="Fee Description"
                   width="full"

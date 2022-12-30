@@ -20,13 +20,13 @@ const RawInput = (props: any) => {
   if (props.type === 'textarea') {
     return <textarea {...register(props.name, props.validation)} {...props} className={'h-32 ' + props.className}></textarea>
   } else {
-    return <input {...register(props.name, props.validation)} {...props} />
+    return <input {...register(props.name, props.validation)} {...props} min={props?.validation?.min} />
   }
 }
 
 const Input = ({ name, validation, inputType, placeholder, titleLabel, title, width, isDisabled = false, value, additionalAppend, additionalPrepend }: Props) => {
   const { getFieldState, formState } = useFormContext()
-
+  console.log(getFieldState(name, formState).error)
   return (
     <div className={`${width === 'full' ? 'md:w-full' : width === '1/2' ? 'md:w-1/2' : 'md:w-1/3'} w-full px-3 mb-5 flex flex-col gap-2 `}>
       <label className="flex gap-2 uppercase tracking-wide text-gray-700 text-xs font-bold w-full">
@@ -49,7 +49,9 @@ const Input = ({ name, validation, inputType, placeholder, titleLabel, title, wi
         />
         {additionalAppend}
       </div>
-      {getFieldState(name, formState).error && <p className="text-red-500 text-xs italic">{getFieldState(name, formState).error?.message || `${title ? title : titleLabel} is invalid`}</p>}
+      {getFieldState(name, formState).error && (
+        <p className="text-red-500 text-xs italic">{getFieldState(name, formState).error?.message || getFieldState(name, formState).error?.type || `${title ? title : titleLabel} is invalid`}</p>
+      )}
     </div>
   )
 }
