@@ -19,6 +19,9 @@ const RegistrantTable = ({ event }: Props) => {
       isPresent: isPresent
     })
   }
+  if (!event?.registeredUsers || event?.registeredUsers?.length < 1) {
+    return <p className="text-gray-400">No registrant yet!</p>
+  }
   return (
     <div className="overflow-x-auto relative shadow-lg">
       <table className="w-full text-sm text-left text-gray-400 ">
