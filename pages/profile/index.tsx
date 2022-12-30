@@ -13,7 +13,7 @@ export { getServerSideProps }
 
 const ProfilePage = ({ user }: { user: User }) => {
   const today = useMemo(() => Timestamp.now(), [])
-  const { data, loading, error } = useEvents()
+  const { data, loading } = useEvents()
 
   return (
     <div className="lg:px-40 px-4 md:px-16 mt-8 flex lg:flex-row flex-col w-full gap-6 justify-between">
@@ -68,10 +68,11 @@ const ProfilePage = ({ user }: { user: User }) => {
           ) : (
             data
               ?.filter((d) => d.startDate && d.startDate > today)
-              .slice(0, 3)
-              .map(
-                (d) => d.registeredUsers?.length != 0 && d.registeredUsers?.filter((ru) => ru.userId == user?.userId).map((ru) => <Card key={d.eventId} event={d} horizontalLayout showSlot={false} />)
+              ?.filter(
+                (d) => d.registeredUsers?.length != 0 && d.registeredUsers?.find((ru) => ru.userId == user.userId) && d.registeredUsers?.find((ru) => ru.userId == user.userId)?.status !== 'Rejected'
               )
+              .slice(0, 3)
+              .map((d) => <Card key={d.eventId} event={d} horizontalLayout showSlot={false} />)
           )}
         </div>
       </div>

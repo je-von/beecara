@@ -1,5 +1,3 @@
-import { useState } from 'react'
-
 interface Props {
   content?: string
   onClose?: () => void
@@ -7,7 +5,7 @@ interface Props {
 }
 
 const Modal = ({ content, onClose, onRegister }: Props) => {
-  const [showModal, setShowModal] = useState(false)
+  // const [showModal, setShowModal] = useState(false)
   return (
     <>
       <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">

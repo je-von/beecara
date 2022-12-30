@@ -39,7 +39,7 @@ export default function AuthContextProvider({ children }: Props) {
   const [userId, setUserId] = useState<string | undefined>()
   const [loading, setLoading] = useState(true)
   const userRef = doc(db, 'user', `${userId}`).withConverter(userConverter)
-  const [user, loadingSnapshot, error, snapshot] = useDocumentData(userRef)
+  const [user, loadingSnapshot] = useDocumentData(userRef)
 
   useEffect(() => {
     const auth = getAuth()

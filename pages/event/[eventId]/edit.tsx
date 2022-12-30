@@ -36,7 +36,7 @@ const EditEventPage = ({ user }: { user: User }) => {
   const router = useRouter()
   const { eventId } = router.query
 
-  const { data: event, loading: loadingEvent } = useEvent(`${eventId}`, true)
+  const { data: event, loading } = useEvent(`${eventId}`, true)
 
   const organizationRef = event?.organization.withConverter(organizationConverter)
 
@@ -64,6 +64,8 @@ const EditEventPage = ({ user }: { user: User }) => {
       router.push('/home')
     })
   }
+
+  if (loading) return null
 
   return (
     <div className="lg:px-40 md:px-16 px-4 pt-5">

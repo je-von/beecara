@@ -16,7 +16,6 @@ interface Props {
 
 const RawInput = (props: any) => {
   const { register } = useFormContext()
-  // const { name = '', validation, ...others } = { ...props }
   if (props.type === 'textarea') {
     return <textarea {...register(props.name, props.validation)} {...props} className={'h-32 ' + props.className}></textarea>
   } else {
@@ -26,7 +25,6 @@ const RawInput = (props: any) => {
 
 const Input = ({ name, validation, inputType, placeholder, titleLabel, title, width, isDisabled = false, value, additionalAppend, additionalPrepend }: Props) => {
   const { getFieldState, formState } = useFormContext()
-  console.log(getFieldState(name, formState).error)
   return (
     <div className={`${width === 'full' ? 'md:w-full' : width === '1/2' ? 'md:w-1/2' : 'md:w-1/3'} w-full px-3 mb-5 flex flex-col gap-2 `}>
       <label className="flex gap-2 uppercase tracking-wide text-gray-700 text-xs font-bold w-full">

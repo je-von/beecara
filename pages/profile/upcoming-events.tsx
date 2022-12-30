@@ -11,7 +11,7 @@ import { User } from '../../lib/types/User'
 export { getServerSideProps }
 const UpcomingEvents = ({ user }: { user: User }) => {
   const today = useMemo(() => Timestamp.now(), [])
-  const { data, loading, error } = useEvents()
+  const { data, loading } = useEvents()
 
   return (
     <div className="lg:px-40 px-4 md:px-16 mt-8">
@@ -38,10 +38,11 @@ const UpcomingEvents = ({ user }: { user: User }) => {
               ) : (
                 data
                   ?.filter((d) => d.startDate && d.startDate > today)
-                  .map(
+                  ?.filter(
                     (d) =>
-                      d.registeredUsers?.length != 0 && d.registeredUsers?.filter((ru) => ru.userId == user.userId).map((ru) => <Card key={d.eventId} event={d} horizontalLayout showSlot={false} />)
+                      d.registeredUsers?.length != 0 && d.registeredUsers?.find((ru) => ru.userId == user.userId) && d.registeredUsers?.find((ru) => ru.userId == user.userId)?.status !== 'Rejected'
                   )
+                  .map((d) => <Card key={d.eventId} event={d} horizontalLayout showSlot={false} />)
               )}
             </div>
           </div>

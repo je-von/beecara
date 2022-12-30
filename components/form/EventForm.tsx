@@ -48,7 +48,7 @@ const EventForm = ({ onSubmit, initialImageUrl, organizationRef, initialHasFee =
   const [imageURL, setImageURL] = useState<string>()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const [organization, loadingOrg, error] = useDocumentData(organizationRef)
+  const [organization] = useDocumentData(organizationRef)
   const { fields, append, remove, replace } = useFieldArray({
     name: 'benefits',
     control: methods.control

@@ -6,10 +6,10 @@ import { RiArrowDropDownFill } from 'react-icons/ri'
 import { TiWarningOutline } from 'react-icons/ti'
 import { isProfileComplete } from '../../lib/types/User'
 
-export default function Header(props: any) {
+export default function Header() {
   const [showDropdown, setShowDropdown] = useState(false)
 
-  const { user, loading } = useAuth()
+  const { user } = useAuth()
 
   return (
     <div className="flex h-full flex-row lg:px-40 px-4 md:px-16">
