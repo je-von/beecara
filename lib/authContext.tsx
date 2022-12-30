@@ -5,6 +5,7 @@ import { doc } from 'firebase/firestore'
 import { db } from './firebaseConfig/init'
 import { User, userConverter } from './types/User'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
+import Router from 'next/router'
 
 // export type TIdTokenResult = {
 //   token: string
@@ -72,5 +73,5 @@ export const signOut = async () => {
   const auth = getAuth()
   destroyCookie(null, 'idToken')
   await signout(auth)
-  // Router.push('/')
+  Router.push('/')
 }

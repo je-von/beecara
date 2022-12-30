@@ -141,13 +141,6 @@ const EditEventPage = ({ user }: { user: any }) => {
     if (e.target.files && e.target.files.length > 0) setImageURL(URL.createObjectURL(e.target.files[0]))
   }
 
-  //TODO: middleware
-  //   if (!loadingEvent && !loadingOrg && !loadingAuth && (!user || user.adminOf?.id !== event?.organization.id)) {
-  //     console.log(user?.adminOf?.id, event?.organization.id)
-  //     // router.push('/')
-  //     return null
-  //   }
-
   return (
     <div className="lg:px-40 md:px-16 px-4 pt-5">
       <Head>
