@@ -48,7 +48,7 @@ const AddEventPage = ({ user, organizationId }: { user: User; organizationId: st
       </Head>
 
       <FormProvider {...methods}>
-        <EventForm onSubmit={onSubmit} organizationRef={organizationRef} />
+        <EventForm formTitle="Add Event" onSubmit={onSubmit} organizationRef={organizationRef} />
       </FormProvider>
     </div>
   )

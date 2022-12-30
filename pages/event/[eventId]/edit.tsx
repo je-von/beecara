@@ -75,6 +75,7 @@ const EditEventPage = ({ user }: { user: User }) => {
 
       <FormProvider {...methods}>
         <EventForm
+          formTitle="Edit Event"
           onSubmit={onSubmit}
           organizationRef={organizationRef!}
           initialImageUrl={event?.image}

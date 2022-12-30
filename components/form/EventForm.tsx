@@ -19,6 +19,7 @@ import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { storage } from '../../lib/firebaseConfig/init'
 
 interface Props {
+  formTitle: 'Add Event' | 'Edit Event'
   onSubmit: (event: Event) => void
   initialImageUrl?: string
   organizationRef: DocumentReference<Organization>
@@ -40,7 +41,7 @@ export interface EventFormValues {
   maxRegistrationDate: string
 }
 const benefitTypes = ['SAT Points', 'ComServ Hours', 'Others']
-const EventForm = ({ onSubmit, initialImageUrl, organizationRef, initialHasFee = false, initialHasMaxRegDate = false, initialBenefits }: Props) => {
+const EventForm = ({ formTitle, onSubmit, initialImageUrl, organizationRef, initialHasFee = false, initialHasMaxRegDate = false, initialBenefits }: Props) => {
   const [hasFee, setHasFee] = useState(false)
   const [hasMaxRegDate, setHasMaxRegDate] = useState(false)
   const router = useRouter()
@@ -95,7 +96,7 @@ const EventForm = ({ onSubmit, initialImageUrl, organizationRef, initialHasFee =
           <div onClick={() => router.back()}>
             <IoMdArrowBack className="mr-2 mt-[0.4rem] text-xl cursor-pointer stroke-black" strokeWidth={40} />
           </div>
-          <h1 className="text-2xl font-black font-secondary">Edit Event</h1>
+          <h1 className="text-2xl font-black font-secondary">{formTitle}</h1>
         </div>
 
         <div className=" flex items-center justify-center w-full h-full mt-5 mb-2">

@@ -48,7 +48,7 @@ const Input = ({ name, validation, inputType, placeholder, titleLabel, title, wi
         {additionalAppend}
       </div>
       {getFieldState(name, formState).error && (
-        <p className="text-red-500 text-xs italic">{getFieldState(name, formState).error?.message || getFieldState(name, formState).error?.type || `${title ? title : titleLabel} is invalid`}</p>
+        <p className="text-red-500 text-xs italic">{getFieldState(name, formState).error?.message || (getFieldState(name, formState).error?.type.includes(' ') && getFieldState(name, formState).error?.type) || `${title ? title : titleLabel} is invalid`}</p>
       )}
     </div>
   )
