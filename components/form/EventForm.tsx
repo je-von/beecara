@@ -141,7 +141,14 @@ const EventForm = ({ onSubmit, initialImageUrl, organizationRef, initialHasFee =
           <DynamicReactTooltip html multiline className="max-w-sm text-center leading-5" place="bottom" id="org-info" />
         </div>
         <div className="flex flex-wrap -mx-3 ">
-          <Input name="description" inputType="textarea" validation={{ required: 'Description must be filled!' }} placeholder="A Very Fun Event" titleLabel="Event Description" width="full" />
+          <Input
+            name="description"
+            inputType="textarea"
+            validation={{ required: 'Description must be filled!' }}
+            placeholder="Provide the event's description here. You can also put additional information here (e.g: contact person, terms and conditions, dos and don'ts, etc)."
+            titleLabel="Event Description"
+            width="full"
+          />
         </div>
         <div className="flex flex-wrap -mx-3 ">
           <Input
