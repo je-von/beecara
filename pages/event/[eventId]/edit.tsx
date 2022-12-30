@@ -12,6 +12,7 @@ import { GetServerSideProps } from 'next'
 import { User } from '../../../lib/types/User'
 import { getServerCurrentUser } from '../../../lib/serverProps'
 import EventForm, { EventFormValues } from '../../../components/form/EventForm'
+import { toast } from 'react-toastify'
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const user = await getServerCurrentUser(ctx)
@@ -62,10 +63,9 @@ const EditEventPage = ({ user }: { user: User }) => {
 
   const onSubmit = (event: Event) => {
     updateDoc(doc(db, 'event', `${eventId}`).withConverter(eventConverter), event).then(() => {
+      toast('Event updated successfully!', { type: 'success' })
       router.push('/home')
     })
-
-    //TODO: show toast / alert after update
   }
 
   return (

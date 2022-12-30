@@ -10,6 +10,7 @@ import Input from '../../components/form/FormInput'
 import getServerSideProps from '../../lib/serverProps'
 import { db } from '../../lib/firebaseConfig/init'
 import { User } from '../../lib/types/User'
+import { toast } from 'react-toastify'
 interface FormValues {
   lineID: string
   instagram: string
@@ -31,10 +32,9 @@ const EditProfilePage = ({ user }: { user: User }) => {
         phoneNumber: data.phoneNumber
       }).then(() => {
         setIsSubmitting(false)
-
+        toast('Profile updated successfully!', { type: 'success' })
         router.push('/profile')
       })
-    //TODO: show toast / alert after add
   }
 
   return (

@@ -1,4 +1,5 @@
 import { doc, updateDoc } from 'firebase/firestore'
+import { toast } from 'react-toastify'
 import { db } from '../../lib/firebaseConfig/init'
 import { Event, RegisteredUsers } from '../../lib/types/Event'
 import Button from '../button/Button'
@@ -7,11 +8,11 @@ interface Props {
   event?: Event
 }
 const RegistrantTable = ({ event }: Props) => {
-  const toggleParticipant = (userId: string, status: RegisteredUsers['status']) => {
-    updateDoc(doc(db, 'event', `${event?.eventId}/registeredUsers/${userId}`), {
+  const toggleParticipant = (registeredUser: RegisteredUsers, status: RegisteredUsers['status']) => {
+    updateDoc(doc(db, 'event', `${event?.eventId}/registeredUsers/${registeredUser.userId}`), {
       status: status
     }).then(() => {
-      console.log('participant ' + status) // TODO: create alert / toast
+      toast(`Participant ${registeredUser.user?.name} ${status}!`, { type: 'info' })
     })
   }
   const togglePresence = (userId: string, isPresent: boolean) => {
@@ -76,7 +77,7 @@ const RegistrantTable = ({ event }: Props) => {
                     <div className="flex gap-4 w-full justify-center">
                       <Button
                         onClick={() => {
-                          toggleParticipant(ru?.userId!, 'Registered')
+                          toggleParticipant(ru, 'Registered')
                         }}
                       >
                         Approve
@@ -84,7 +85,7 @@ const RegistrantTable = ({ event }: Props) => {
                       <Button
                         color={'red'}
                         onClick={() => {
-                          toggleParticipant(ru?.userId!, 'Rejected')
+                          toggleParticipant(ru, 'Rejected')
                         }}
                       >
                         Reject
@@ -97,7 +98,8 @@ const RegistrantTable = ({ event }: Props) => {
                 <td className="py-4 px-6 text-center">
                   <input
                     type="checkbox"
-                    checked={ru.isPresent}
+                    disabled={ru.status === 'Rejected'}
+                    checked={ru.isPresent && ru.status !== 'Rejected'}
                     className="bg-gray-100 border-gray-300 text-sky-400 focus:ring-sky-200 rounded"
                     onChange={(e) => togglePresence(ru.userId!, e.target.checked)}
                   />

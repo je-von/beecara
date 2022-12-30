@@ -47,7 +47,7 @@ export default function AuthContextProvider({ children }: Props) {
       //user returned from firebase not the state
       if (user) {
         // Save token for backend calls
-        user.getIdToken().then((token) =>
+        user.getIdToken(true).then((token) =>
           setCookie(null, 'idToken', token, {
             maxAge: 30 * 24 * 60 * 60,
             path: '/'
@@ -55,7 +55,7 @@ export default function AuthContextProvider({ children }: Props) {
         )
 
         // Save decoded token on the state
-        user.getIdTokenResult().then((result) => {
+        user.getIdTokenResult(true).then((result) => {
           setUserId(result.claims.user_id)
         })
       }

@@ -37,6 +37,7 @@ export const userConverter = {
 
 export const isProfileComplete = (user: User) => {
   return (
+    user &&
     user.phoneNumber !== undefined &&
     user.phoneNumber.trim().length > 0 &&
     user.instagram !== undefined &&

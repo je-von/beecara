@@ -84,13 +84,16 @@ export const eventConverter = {
 
 export const eventRegisteredUsersConverter = {
   toFirestore(ru: WithFieldValue<RegisteredUsers>): DocumentData {
-    return {
+    const data: DocumentData = {
       status: ru.status,
-      proof: ru.proof,
+      // proof: ru.proof,
       isPresent: ru.isPresent,
       paymentDeadline: ru.paymentDeadline
       // user: ru.user,
     }
+
+    if (ru.proof) data.proof = ru.proof
+    return data
   },
   fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): RegisteredUsers {
     const data = snapshot.data(options)! as RegisteredUsers

@@ -25,12 +25,14 @@ import '@fontsource/public-sans/900.css'
 
 import '../styles/globals.css'
 import 'react-loading-skeleton/dist/skeleton.css'
-
+import 'react-toastify/dist/ReactToastify.css'
+import { ToastContainer } from 'react-toastify'
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <FirebaseProvider>
       <Layout>
         <Component {...pageProps} />
+        <ToastContainer position="top-center" pauseOnHover={false} />
       </Layout>
     </FirebaseProvider>
   )

@@ -9,6 +9,7 @@ import { GetServerSideProps } from 'next'
 import { User } from '../../lib/types/User'
 import { getServerCurrentUser } from '../../lib/serverProps'
 import EventForm, { EventFormValues } from '../../components/form/EventForm'
+import { toast } from 'react-toastify'
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const user = await getServerCurrentUser(ctx)
@@ -39,10 +40,9 @@ const AddEventPage = ({ user, organizationId }: { user: User; organizationId: st
 
   const onSubmit = (event: Event) => {
     addDoc(collection(db, 'event').withConverter(eventConverter), event).then(() => {
+      toast('Event added successfully!', { type: 'success' })
       router.push('/home')
     })
-
-    //TODO: show toast / alert after add
   }
   return (
     <div className="lg:px-40 md:px-16 px-4 pt-5">

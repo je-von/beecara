@@ -17,6 +17,7 @@ import { getRegistrantCount } from '../../lib/hook/Event'
 import { isProfileComplete } from '../../lib/types/User'
 import { BiPencil } from 'react-icons/bi'
 import Link from 'next/link'
+import { toast } from 'react-toastify'
 
 interface RegistrationCardProps {
   registerStatus?: string
@@ -49,31 +50,30 @@ const RegistrationCard = ({ registerStatus, event }: RegistrationCardProps) => {
           updateDoc(doc(db, 'event', `${event?.eventId}/registeredUsers/${user?.userId}`).withConverter(eventRegisteredUsersConverter), {
             proof: value
             // status: "Registered",
+          }).then(() => {
+            toast('Proof uploaded successfully!', { type: 'success' })
           })
         })
       })
-      //TODO: show toast / alert after update
-      console.log('uploaded proof')
     }
   }
 
   const registerEvent = () => {
     //TODO: kasih terms and condition dulu mungkin, pokoknya ada prosesnya, biar gabisa gasengajar keklik. terus validasi juga, profile udah complete belom
-    // updateDoc(doc(db, 'event', `${eventId}`), {
-    //   users: arrayUnion(doc(db, 'user', `${userAuth?.userId}`)),
-    // }).then(() => {
-    //   console.log('Register Success') // TODO: create alert / toast
-    // })
     const expectedDeadline = moment().add(3, 'd') //TODO: fix deadline? ini jadi 3 hari setelah regis
     const startDate = moment(event?.startDate?.toDate())
     const isDeadlineBeforeStartDate = expectedDeadline.diff(startDate) < 0 // jadi kalo deadlinenya tryt setelah start date, ya pakenya start date eventnya
 
-    setDoc(doc(db, `event/${event.eventId}/registeredUsers/${user?.userId}`).withConverter(eventRegisteredUsersConverter), {
-      isPresent: false,
-      paymentDeadline: isDeadlineBeforeStartDate ? Timestamp.fromDate(expectedDeadline.toDate()) : (event?.startDate as Timestamp), //TODO: test
-      status: 'Pending',
-      proof: '' //TODO: fix
-    }).then(() => {
+    setDoc(
+      doc(db, `event/${event.eventId}/registeredUsers/${user?.userId}`).withConverter(eventRegisteredUsersConverter),
+      {
+        isPresent: false,
+        paymentDeadline: isDeadlineBeforeStartDate ? Timestamp.fromDate(expectedDeadline.toDate()) : (event?.startDate as Timestamp), //TODO: test
+        status: 'Pending'
+      }
+      // { mergeFields: ['isPresent', 'paymentDeadline', 'status'] }
+    ).then(() => {
+      toast('You are registered to this event! Please wait for the admin approval', { type: 'success' })
       setShowModal(false)
     })
   }
@@ -83,7 +83,8 @@ const RegistrationCard = ({ registerStatus, event }: RegistrationCardProps) => {
     updateDoc(doc(db, 'event', `${event.eventId}/registeredUsers/${user?.userId}`), {
       status: ''
     }).then(() => {
-      console.log('Unregister success') // TODO: create alert / toast
+      toast('You are unregistered from this event!', { type: 'info' })
+
       setShowModal(false)
     })
   }
