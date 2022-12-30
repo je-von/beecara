@@ -11,7 +11,7 @@ import Button from '../components/button/Button'
 const Home: NextPage = () => {
   const { user, loading } = useAuth()
   const router = useRouter()
-  if (loading) return null // todo: add spinner
+  if (loading) return null
 
   if (user) {
     router.push('/home')

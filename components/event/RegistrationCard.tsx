@@ -127,7 +127,6 @@ const RegistrationCard = ({ registerStatus, event }: RegistrationCardProps) => {
             <b className="text-sky-500 text-justify">Your registration is being reviewed by the organization&apos; admin!</b>
             {event?.fee?.amount !== 0 && proof !== null && (
               <div className="flex flex-col gap-1">
-                {/* TODO: kalo udah upload, show gambarnya */}
                 <b>Upload Payment Proof</b>
                 <p className="flex items-center whitespace-pre-wrap text-justify">{event?.fee?.description}</p>
                 <label className={`relative flex flex-col w-full border-4 border-dashed  hover:bg-gray-100 hover:border-gray-300 h-52 cursor-pointer`}>

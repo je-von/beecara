@@ -165,7 +165,6 @@ const EventForm = ({ onSubmit, initialImageUrl, organizationRef, initialHasFee =
             titleLabel="End Time"
             width="1/3"
           />
-          {/* TODO: validate date must before start date */}
           <Input
             name="maxRegistrationDate"
             inputType="datetime-local"
