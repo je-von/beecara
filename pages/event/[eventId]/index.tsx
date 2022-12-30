@@ -3,7 +3,6 @@ import { IoMdArrowBack } from 'react-icons/io'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import NotFoundPage from '../../404'
-import { useAuth } from '../../../lib/authContext'
 import BenefitTags from '../../../components/event/BenefitTags'
 import { getDateFormat, getTimeFormat } from '../../../lib/helper/util'
 import { useEvent, useUserRegisterStatus } from '../../../lib/hook/Event'
@@ -11,11 +10,14 @@ import Linkify from 'react-linkify'
 import RegistrationCard from '../../../components/event/RegistrationCard'
 import RegistrantTable from '../../../components/event/RegistrantTable'
 import { HiLocationMarker } from 'react-icons/hi'
+
+import getServerSideProps from '../../../lib/serverProps'
+import { useAuth } from '../../../lib/authContext'
+export { getServerSideProps }
 const EventDetail = () => {
   const router = useRouter()
-  const { user: userAuth } = useAuth()
   const { eventId } = router.query
-
+  const { user } = useAuth()
   const { data: event, loading, error } = useEvent(`${eventId}`, true)
   const { registerStatus } = useUserRegisterStatus(event)
 
@@ -100,7 +102,7 @@ const EventDetail = () => {
         {/* )} */}
       </div>
 
-      {userAuth?.adminOf?.id === event?.organization?.id && (
+      {user?.adminOf?.id === event?.organization?.id && (
         <div className="flex flex-col gap-5 mt-5">
           <h3>Registrants</h3>
           <RegistrantTable event={event} />

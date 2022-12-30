@@ -1,5 +1,4 @@
 import { FaCalendar, FaUser } from 'react-icons/fa'
-import { useAuth } from '../../lib/authContext'
 import { useRouter } from 'next/router'
 import { Timestamp } from 'firebase/firestore'
 import Card from '../../components/event/card'
@@ -9,20 +8,17 @@ import { BsChevronRight } from 'react-icons/bs'
 import { useMemo } from 'react'
 import { useEvents } from '../../lib/hook/Event'
 import { TiWarningOutline } from 'react-icons/ti'
-import { isProfileComplete } from '../../lib/types/User'
-const ProfilePage = () => {
+import { User, isProfileComplete } from '../../lib/types/User'
+import getServerSideProps from '../../lib/serverProps'
+export { getServerSideProps }
+
+const ProfilePage = ({ user }: { user: User }) => {
   const router = useRouter()
-  const { user, loading: loadAuth } = useAuth()
 
   const today = useMemo(() => Timestamp.now(), [])
   const { data, loading, error } = useEvents()
-  if (loadAuth || loading) {
+  if (loading) {
     return <>Loading</>
-  }
-
-  if (!loadAuth && !user) {
-    router.push('/')
-    return null
   }
 
   return (

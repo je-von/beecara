@@ -7,17 +7,17 @@ import { IoMdArrowBack } from 'react-icons/io'
 import ClipLoader from 'react-spinners/ClipLoader'
 import Button from '../../components/button/Button'
 import Input from '../../components/form/FormInput'
-import { useAuth } from '../../lib/authContext'
+import getServerSideProps from '../../lib/serverProps'
 import { db } from '../../lib/firebaseConfig/init'
+import { User } from '../../lib/types/User'
 interface FormValues {
   lineID: string
   instagram: string
   phoneNumber: string
 }
-
-const EditProfilePage = () => {
+export { getServerSideProps }
+const EditProfilePage = ({ user }: { user: User }) => {
   const router = useRouter()
-  const { user, loading } = useAuth()
   const methods = useForm<FormValues>()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -36,15 +36,6 @@ const EditProfilePage = () => {
       })
     //TODO: show toast / alert after add
   }
-
-  //TODO: add spinner / skeleton
-  if (loading) return <h1>Loading...</h1>
-
-  //TODO: middleware
-  //   if (!loading && (!user || !user.adminOf)) {
-  //     router.push('/')
-  //     return
-  //   }
 
   return (
     <div className="lg:px-40 md:px-16 px-4 pt-10">
