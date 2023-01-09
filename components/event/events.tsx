@@ -33,7 +33,7 @@ const EventList = () => {
     <div className="py-5 flex flex-col gap-4">
       <div className="px-4">
         <h1 className="text-2xl font-black font-secondary">Events</h1>
-        <p>Blablabla, kasih text gitu kek: register to any of the following events to increase your SAT ato apa gt!</p>
+        <p>Register for the following events to increase your SAT Points and Hour of Community Services!</p>
       </div>
       <div className="flex flex-col gap-4 px-4">
         <div className="flex md:flex-row flex-col gap-2 justify-between items-center">
