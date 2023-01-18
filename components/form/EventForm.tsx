@@ -6,7 +6,6 @@ import Input from '../form/FormInput'
 import { Fade } from 'react-awesome-reveal'
 import ClipLoader from 'react-spinners/ClipLoader'
 import Button from '../button/Button'
-import { IoMdArrowBack } from 'react-icons/io'
 import { DynamicReactTooltip } from '../../lib/helper/util'
 import moment from 'moment'
 import { SubmitHandler, useFieldArray, useFormContext } from 'react-hook-form'
@@ -17,6 +16,7 @@ import { Organization } from '../../lib/types/Organization'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { storage } from '../../lib/firebaseConfig/init'
+import { ArrowBack } from '../button/ArrowBack'
 
 interface Props {
   formTitle: 'Add Event' | 'Edit Event'
@@ -93,9 +93,7 @@ const EventForm = ({ formTitle, onSubmit, initialImageUrl, organizationRef, init
     <form className="flex lg:flex-row flex-col h-full gap-7 mb-10" onSubmit={methods.handleSubmit(handleSubmit)}>
       <div className="lg:basis-1/3 w-full lg:h-[70vh] md:h-[50vh] h-48 flex flex-col lg:mb-0 mb-5">
         <div className="flex items-start">
-          <div onClick={() => router.back()}>
-            <IoMdArrowBack className="mr-2 mt-[0.4rem] text-xl cursor-pointer stroke-black" strokeWidth={40} />
-          </div>
+          <ArrowBack />
           <h1 className="text-2xl font-black font-secondary">{formTitle}</h1>
         </div>
 

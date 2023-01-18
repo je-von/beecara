@@ -1,5 +1,4 @@
 import { FaCalendar, FaClock } from 'react-icons/fa'
-import { IoMdArrowBack } from 'react-icons/io'
 import { useRouter } from 'next/router'
 import NotFoundPage from '../../404'
 import BenefitTags from '../../../components/event/BenefitTags'
@@ -14,6 +13,7 @@ import getServerSideProps from '../../../lib/serverProps'
 import { useAuth } from '../../../lib/authContext'
 import Skeleton from 'react-loading-skeleton'
 import Image from 'next/image'
+import { ArrowBack } from '../../../components/button/ArrowBack'
 export { getServerSideProps }
 const EventDetail = () => {
   const router = useRouter()
@@ -29,9 +29,7 @@ const EventDetail = () => {
   return (
     <div className="lg:px-40 md:px-16 px-8 pb-9 pt-5 flex flex-col gap-5">
       <div className="flex items-start">
-        <div onClick={() => router.back()}>
-          <IoMdArrowBack className="mr-2 mt-[0.4rem] text-xl cursor-pointer stroke-black" strokeWidth={40} />
-        </div>
+        <ArrowBack />
         <h4 className="font-secondary text-2xl mb-1 gap-2 ">
           {loading ? (
             <Skeleton width={'50vw'} />

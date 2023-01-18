@@ -1,5 +1,4 @@
 import { FaCalendar } from 'react-icons/fa'
-import { IoMdArrowBack } from 'react-icons/io'
 import { Timestamp } from 'firebase/firestore'
 import Card, { SkeletonCard } from '../../components/event/card'
 import Link from 'next/link'
@@ -8,6 +7,7 @@ import { useEvents } from '../../lib/hook/Event'
 
 import getServerSideProps from '../../lib/serverProps'
 import { User } from '../../lib/types/User'
+import { ArrowBack } from '../../components/button/ArrowBack'
 export { getServerSideProps }
 const UpcomingEvents = ({ user }: { user: User }) => {
   const today = useMemo(() => Timestamp.now(), [])
@@ -16,9 +16,9 @@ const UpcomingEvents = ({ user }: { user: User }) => {
   return (
     <div className="lg:px-40 px-4 md:px-16 mt-8">
       <Link href={'/profile'} passHref>
-        <div className="flex gap-3 items-center cursor-pointer text-slate-700 hover:text-sky-800">
-          <IoMdArrowBack className="text-2xl" />
-          <h4 className="font-secondary text-2xl mb-1 gap-2 flex md:flex-row flex-col ">
+        <div className="flex gap-3 items-start cursor-pointer text-slate-700 hover:text-sky-800">
+          <ArrowBack href="/profile" />
+          <h4 className="font-secondary text-2xl mb-1 gap-2 flex md:flex-row flex-col">
             <b>Profile</b>
           </h4>
         </div>

@@ -3,7 +3,6 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
-import { IoMdArrowBack } from 'react-icons/io'
 import ClipLoader from 'react-spinners/ClipLoader'
 import Button from '../../components/button/Button'
 import Input from '../../components/form/FormInput'
@@ -11,6 +10,7 @@ import getServerSideProps from '../../lib/serverProps'
 import { db } from '../../lib/firebaseConfig/init'
 import { User } from '../../lib/types/User'
 import { toast } from 'react-toastify'
+import { ArrowBack } from '../../components/button/ArrowBack'
 interface FormValues {
   lineID: string
   instagram: string
@@ -46,9 +46,7 @@ const EditProfilePage = ({ user }: { user: User }) => {
       <FormProvider {...methods}>
         <form className="flex lg:flex-row flex-col h-full px-10 gap-7 mb-10" onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="lg:basis-1/3 flex">
-            <div onClick={() => router.back()}>
-              <IoMdArrowBack className="mr-2 text-xl cursor-pointer" />
-            </div>
+            <ArrowBack />
             <h1 className="text-2xl font-black font-secondary">Edit Profile</h1>
           </div>
           <div className="lg:basis-2/3">
